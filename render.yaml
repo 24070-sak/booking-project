@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: booking-backend
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: "pip install -r Backend/requirements.txt"
+    startCommand: "gunicorn run:app"
+    rootDir: Backend
