@@ -15,7 +15,6 @@ body {
     padding: 20px;
     color: black;
     align-items: center;
-    overflow: hidden;
 }
 
 /* Main Card */
@@ -117,6 +116,17 @@ img {
 
 .forgot-password a:hover {
     color: #083eb5;
+}
+
+#createAccount{
+    color: #0c5bff;
+    font-weight: 600;
+    text-decoration: none;
+}
+#createAccount:hover{
+ color:  #083eb5;;
+font-weight: 900;
+
 }
 
 /* Login Button */
