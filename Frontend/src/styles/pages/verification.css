@@ -1,0 +1,78 @@
+.verification-container{
+    width: 480px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    animation: fadeIn 0.5s ease;
+    margin: auto;
+    align-self: center;
+    justify-self: center;
+}
+.verification-container .verification-div{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+.verification-container .verification-title{
+    font-size: 24px;
+}
+.verification-container .verification-message{
+    font-size: 18px;
+    p{
+        color: rgba(0, 0, 255, 0.63);
+        font-size: 19px;
+    }
+}
+#continue{
+    padding: 16px 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0c5bff, #0a44c7);
+    color: white;
+    width: 350px;
+    align-self: center;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 19px;
+}
+
+.otp-inputs{
+    display: flex;
+    gap: 5px;
+
+}
+.otp-input{
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.678);
+    box-shadow: 0 10px 30px rgba(55, 55, 55, 0.12);
+    border: none;
+    color: black;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    outline: none;
+}
+.renvoyer-code{
+    font-size: 22px;
+    color: #0a44c7;
+    cursor: pointer;
+}
+/* Chrome, Edge, Safari, Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+ -moz-appearance: textfield;
+}
