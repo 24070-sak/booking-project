@@ -64,7 +64,11 @@ function Login() {
         </button>
       </form>
 
-      <div className="separator">ou</div>
+      <div className="line">
+            <hr />
+            <span>ou</span>
+            <hr />
+        </div>
 
       <div className="social-login">
         <div className="login-google">
@@ -77,7 +81,7 @@ function Login() {
           <p>Se connecter avec facebook</p>
         </div>
       </div>
-      
+      <p id="note">Tu n'est pas un compte ? <span id="createAccount"><a href="/inscription">Cree un compte</a></span></p>
     </div>
   );
 }
