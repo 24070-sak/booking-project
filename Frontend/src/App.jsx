@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
+import VerificationPage from "./pages/EmailVerification";
 
 function App() {
   return (
@@ -11,6 +12,8 @@ function App() {
 
         {/* Login page */}
         <Route path="/login" element={<Login />} />
+        {/* Verification page */}
+        <Route path="/verification" element={<VerificationPage />} />
       </Routes>
     </>
   );
