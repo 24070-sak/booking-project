@@ -9,7 +9,8 @@ const API = import.meta.env.VITE_API_URL || "";
 function Login() {
     const [showPsswd,setShowPsswd] = useState(false)
   return (
-    <div className="container">
+    <body className="body">
+          <div className="login-container">
 
       <div className="login-header">
         <img className="logo" src={logo} alt="logo" />
@@ -83,6 +84,7 @@ function Login() {
       </div>
       <p id="note">Tu n'est pas un compte ? <span id="createAccount"><a href="/inscription">Cree un compte</a></span></p>
     </div>
+    </body>
   );
 }
 

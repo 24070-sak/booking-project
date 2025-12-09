@@ -3,13 +3,13 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import VerificationPage from "./pages/EmailVerification";
 import Register from "./pages/Register";
-
+import Home from "./pages/Home";
 function App() {
   return (
     <>
       <Routes>
         {/* Home page */}
-        <Route path="/" element={<h1>Bienvenu a Hotely!</h1>} />
+        <Route path="/" element={<Home />} />
 
         {/* Login page */}
         <Route path="/connexion" element={<Login />} />

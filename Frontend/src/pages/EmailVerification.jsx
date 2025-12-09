@@ -3,7 +3,8 @@ import logo  from '../assets/logos/logo.png'
 
 function VerificationPage(){
     return (
-        <div className='verification-container'>
+       <body className="body">
+         <div className='verification-container'>
             <img src={logo} alt="logo" className='logo'/>
             <p className='verification-title'>Code de verification</p>
             <div className="verification-message">
@@ -21,6 +22,7 @@ function VerificationPage(){
             </div>
             <p className='renvoyer-code'>Renvoyer le code</p>
         </div>
+        </body>
     )
 }
 export default VerificationPage;
