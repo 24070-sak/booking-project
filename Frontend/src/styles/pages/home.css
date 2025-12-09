@@ -1,0 +1,55 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    width: 1000px;
+    height: 100%;
+    margin: auto;
+    gap: 30px;
+}
+
+.home-logo {
+    width: 100px;
+    height: auto;
+}
+.labels{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    span{
+        gap: 10px;
+        background-color: rgba(255, 255, 255, 0.521);
+        color: black;
+        align-self: center;
+        justify-self: center;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        padding: 12px 18px;
+        transition: background-color 0.3s ease; 
+        border: 1px solid lightgray;
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        i{
+            margin-right: 8px;
+            color: gray;
+            &:hover {
+            color: rgb(11, 106, 214);
+        }
+        }
+        
+
+    }
+}
+.messages{
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+.home-title{
+    font-weight: bold;
+    font-size: 28px;
+}
+.home-sub-title{
+    font-size: 14px;
+}

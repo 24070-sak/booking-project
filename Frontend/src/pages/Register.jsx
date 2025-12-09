@@ -10,7 +10,8 @@ function Register() {
   const [showPsswd, setShowPsswd] = useState(false);
 
   return (
-    <div className="register-container">
+    <body className="body">
+      <div className="register-container">
       {/* HEADER */}
       <div className="register-header">
         <img className="register-logo" src={logo} alt="logo" />
@@ -126,6 +127,7 @@ function Register() {
       </div>
         <p id="note">Tu a deja un compte ? <span id="createAccount"><a href="/connexion">Se connecter</a></span></p>
     </div>
+    </body>
   );
 }
 
