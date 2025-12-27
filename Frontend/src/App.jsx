@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import VerificationPage from "./pages/EmailVerification";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 function App() {
   return (
     <>
@@ -17,6 +18,8 @@ function App() {
         <Route path="/verification" element={<VerificationPage />} />
         {/* Register page */}
         <Route path="/inscription" element={<Register />} />
+        {/* Dashboard page */}
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
   );
