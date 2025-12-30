@@ -1,27 +1,205 @@
-.header {
+.header-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-top: -20px;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #e8f0fe 0%, #f6f1ff 100%);
+    padding: 20px 60px 80px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 40px 40px;
+}
+
+/* Decorative background elements */
+.header-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(11, 106, 214, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.header-top {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 20px 0;
-    margin-bottom: 10px;
+    max-width: 1200px;
+    margin: 0 auto 60px;
+    position: relative;
+    z-index: 1;
 }
 
-.header img {
+.header-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.messages {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.home-title {
+    font-weight: 800;
+    font-size: 56px;
+    background: linear-gradient(135deg, #0b6ad6 0%, #1e3a8a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin: 0;
+}
+
+.home-sub-title {
+    font-size: 20px;
+    color: #64748b;
+    font-weight: 400;
+    margin: 0;
+}
+
+.search-container-header {
+    width: 100%;
+    max-width: 900px;
+    position: relative;
+    z-index: 10;
+}
+
+/* Modern Labels / Buttons */
+.labels {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+}
+
+.labels span,
+.labels a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #1e293b;
+    border-radius: 100px;
+    /* Pill shape */
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    padding: 10px 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    text-decoration: none;
+}
+
+.labels span:hover,
+.labels a:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(11, 106, 214, 0.15);
+    border-color: rgba(11, 106, 214, 0.2);
+    color: #0b6ad6;
+}
+
+/* Special style for Login button */
+.labels #login {
+    background: #0b6ad6;
+    color: white;
+    border: 1px solid #0b6ad6;
+    box-shadow: 0 4px 12px rgba(11, 106, 214, 0.2);
+}
+
+.labels #login:hover {
+    background: #0952a5;
+    border-color: #0952a5;
+    color: white;
+    box-shadow: 0 8px 24px rgba(11, 106, 214, 0.3);
+}
+
+.labels #login i {
+    color: white;
+}
+
+.labels span i,
+.labels a i {
+    color: #64748b;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.labels span:hover i,
+.labels a:hover i {
+    color: #0b6ad6;
+    transform: scale(1.1);
+}
+
+/* Login icon shouldn't change color on hover since text is white */
+.labels #login:hover i {
+    color: white;
+}
+
+.home-logo {
+    width: 120px;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.home-logo:hover {
+    transform: scale(1.05);
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .header-wrapper {
+        padding: 20px 20px 60px;
+        border-radius: 0 0 30px 30px;
+    }
+
+    .home-title {
+        font-size: 42px;
+    }
+}
+
 @media (max-width: 768px) {
-    .header {
+    .header-top {
         flex-direction: column;
         gap: 20px;
-        align-items: flex-start;
+        align-items: center;
+        margin-bottom: 40px;
     }
 
     .labels {
         width: 100%;
-        justify-content: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .home-title {
+        font-size: 32px;
+    }
+
+    .home-sub-title {
+        font-size: 16px;
+        padding: 0 20px;
     }
 }
