@@ -8,8 +8,11 @@ import image2 from '../assets/imgs/hot2.avif'
 import image3 from '../assets/imgs/hot3.avif'
 import image4 from '../assets/imgs/hot4.avif'
 import image5 from '../assets/imgs/hot5.webp'
-import SearchBar from "../components/SearchBar";
 import HotelCard from "../components/HotelCard";
+import bed from '../assets/imgs/bed.png'
+import shield from '../assets/imgs/shield.png'
+import search from '../assets/imgs/search.png'
+import Footer from "../components/Footer";
 
 function Home() {
     const hotels = [
@@ -55,17 +58,6 @@ function Home() {
         <div className="home-body">
             <div className="home-container">
                 <Header />
-                <div className="messages">
-                    <p className="home-title">
-                        Explorez les hotels de Mauritanie
-                    </p>
-                    <p className="home-sub-title">
-                        Nous comparons les prix des plusieurs hotels
-                    </p>
-                </div>
-                <div className="search-border">
-                    <SearchBar />
-                </div>
                 <div className="card-container">
                     <div className="paragraphe">
                         <h2>Offres des hotels en ce moment</h2>
@@ -85,7 +77,25 @@ function Home() {
                         ))}
                     </div>
                 </div>
+                <div className="our-logos">
+                    <div className="logo-item">
+                        <img src={bed} alt="Bed Icon" />
+                        <span>Economisez gros</span>
+                        <p>Economisez gros sur vos reservations Proftez des meilleures offres des maintenant! </p>
+                    </div>
+                    <div className="logo-item">
+                        <img src={shield} alt="Shield Icon" />
+                        <span>Fiable service</span>
+                        <p>Profitez d’un service fiable à chaque réservation Votre confiance est notre priorité </p>
+                    </div>
+                    <div className="logo-item">
+                        <img src={search} alt="Search Icon" />
+                        <span>Simple Recherche</span>
+                        <p>Recherche simple et intuitive pour trouver votre hotel parfait</p>
+                    </div>
+                </div>
             </div>
+            <Footer />
         </div>
     )
 }

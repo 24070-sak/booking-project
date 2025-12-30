@@ -1,12 +1,13 @@
 .home-container {
     display: flex;
     flex-direction: column;
-    width: 1100px;
+    width: 1200px;
     max-width: 95%;
     height: 100%;
     margin: auto;
-    gap: 40px;
+    gap: 60px;
     animation: fadeIn 0.6s ease-out;
+    padding-bottom: 40px;
 }
 
 @keyframes fadeIn {
@@ -21,164 +22,53 @@
     }
 }
 
-.home-logo {
-    width: 110px;
-    height: auto;
-    transition: transform 0.3s ease;
-}
-
-.home-logo:hover {
-    transform: scale(1.05);
-}
-
-.labels {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
-}
-
-.labels span,
-.labels a {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #1a1a1a;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 12px 20px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    text-decoration: none;
-}
-
-.labels span:hover,
-.labels a:hover {
-    background: rgba(255, 255, 255, 0.95);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(11, 106, 214, 0.15);
-    border-color: rgba(11, 106, 214, 0.2);
-}
-
-.labels span i,
-.labels a i {
-    color: #0b6ad6;
-    font-size: 16px;
-    transition: transform 0.3s ease;
-}
-
-.labels span:hover i,
-.labels a:hover i {
-    transform: scale(1.1);
-}
-
-.messages {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-left: 20px;
-    animation: slideInLeft 0.7s ease-out;
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.home-title {
-    font-weight: 700;
-    font-size: 42px;
-    background: linear-gradient(135deg, #0b6ad6 0%, #1e3a8a 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.5px;
-    line-height: 1.2;
-}
-
-.home-sub-title {
-    font-size: 18px;
-    color: #4a5568;
-    font-weight: 400;
-    line-height: 1.6;
-}
-
-.welcome-image {
-    width: 400px;
-    height: auto;
-}
-
-.welcome-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-.search-border {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 16px;
-    padding: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    transition: all 0.3s ease;
-}
-
-.search-border:hover {
-    box-shadow: 0 12px 40px rgba(11, 106, 214, 0.12);
-    transform: translateY(-2px);
-}
-
+/* Section Titles & Links */
 .paragraphe {
     font-size: 16px;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     line-height: 1.5;
     color: #333;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: 20px;
 }
 
 .paragraphe h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1a1a1a;
+    font-size: 32px;
+    font-weight: 800;
+    color: #1e293b;
     margin: 0;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .paragraphe p {
     color: #0b6ad6;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 15px;
     margin: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
     transition: all 0.3s ease;
-    padding: 8px 12px;
-    border-radius: 8px;
+    padding: 10px 20px;
+    border-radius: 100px;
+    background: rgba(11, 106, 214, 0.05);
+    border: 1px solid rgba(11, 106, 214, 0.1);
 }
 
 .paragraphe p:hover {
-    color: #0952a5;
-    background: rgba(11, 106, 214, 0.08);
-    transform: translateX(4px);
+    color: #fff;
+    background: #0b6ad6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(11, 106, 214, 0.2);
+    border-color: #0b6ad6;
 }
 
 .paragraphe p i {
@@ -189,10 +79,11 @@
     transform: translateX(4px);
 }
 
+/* Card Container */
 .card-container {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 20px;
     animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
@@ -211,45 +102,155 @@
 .hotels-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    gap: 30px;
     width: 100%;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
+    .hotels-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
     .hotels-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
     .hotels-grid {
         grid-template-columns: 1fr;
     }
 }
 
+/* Logos Section */
+.our-logos {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    animation: slideInLeft 0.7s ease-out;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 20px 0;
+
+    .logo-item {
+        flex: 1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        padding: 32px 24px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow:
+            0 4px 20px rgba(0, 0, 0, 0.03),
+            0 1px 3px rgba(0, 0, 0, 0.02);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: fadeInScale 0.6s ease-out backwards;
+
+        &:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        &:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        &:hover {
+            transform: translateY(-10px);
+            background: #fff;
+            box-shadow:
+                0 20px 40px rgba(11, 106, 214, 0.1),
+                0 0 0 1px rgba(11, 106, 214, 0.1);
+        }
+
+        img {
+            width: 180px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+            transition: transform 0.4s ease;
+        }
+
+        &:hover img {
+            transform: scale(1.1) rotate(2deg);
+        }
+
+        span {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        p {
+            font-size: 15px;
+            color: #64748b;
+            text-align: center;
+            line-height: 1.6;
+            margin: 0;
+        }
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 /* Responsive Design */
-@media (max-width: 1100px) {
+@media (max-width: 1250px) {
     .home-container {
         width: 95%;
     }
 }
 
+@media (max-width: 900px) {
+    .our-logos {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
 @media (max-width: 768px) {
-    .home-title {
-        font-size: 32px;
-    }
-
-    .home-sub-title {
-        font-size: 16px;
-    }
-
-    .labels {
-        flex-wrap: wrap;
-    }
-
     .paragraphe {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 16px;
+    }
+
+    .paragraphe h2 {
+        font-size: 28px;
     }
 }
