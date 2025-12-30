@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 const API = import.meta.env.VITE_API_URL || "";
 import { useState, useEffect } from "react";
 import logo from '../assets/logos/logo.png'
@@ -29,9 +30,9 @@ function Dashboard() {
           <span className="label" id="settings" onClick={handleLabelClick}>Settings</span>
         </div>
         <div>
-            <span id="logout">Logout</span>
+          <Link to="/connexion" id="logout">Logout</Link>
         </div>
-        
+
       </div>
       <div className="dashboard-body">
 
