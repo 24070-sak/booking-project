@@ -5,6 +5,7 @@ import VerificationPage from "./pages/EmailVerification";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
+import Settings from "./pages/Settings";
 function App() {
   return (
     <>
@@ -20,6 +21,8 @@ function App() {
         <Route path="/inscription" element={<Register />} />
         {/* Dashboard page */}
         <Route path="/dashboard" element={<Dashboard />} />
+        {/* Settings page */}
+        <Route path="/parametre" element={<Settings />} />
       </Routes>
     </>
   );
