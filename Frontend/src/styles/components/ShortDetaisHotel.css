@@ -1,0 +1,114 @@
+.property-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.property-row:hover {
+  background: #fafafa;
+}
+
+.property-main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 3;
+}
+
+.property-image img {
+  width: 60px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #f5f5f5;
+  max-width: 100%;
+}
+
+.property-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.property-location {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.property-status-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.published {
+  background-color: #e6f7f0;
+  color: #28a745;
+}
+.draft {
+  background-color: #f2f2f7;
+  color: #6c757d;
+}
+.pending {
+  background-color: #fff4e6;
+  color: #fd7e14;
+}
+
+.property-price {
+  flex: 1;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.property-actions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+.action-btn:hover {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+.action-btn .icon {
+  font-size: 1.2rem !important;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .action-btn span {
+    display: none;
+  }
+  .property-location {
+    display: none;
+  }
+}
