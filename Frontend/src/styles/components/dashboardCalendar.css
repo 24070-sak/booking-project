@@ -1,0 +1,216 @@
+/* Dashboard Calendar - Modern Styles */
+
+.dashboard-calendar-content h2 {
+    color: #2d3748;
+    margin: 0;
+    font-size: 24px;
+}
+
+.calendar-header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-nav h3 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 16px;
+    min-width: 140px;
+    text-align: center;
+}
+
+.btn-nav {
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #667eea;
+    transition: all 0.2s ease;
+    font-weight: bold;
+}
+
+.btn-nav:hover {
+    background: #f7fafc;
+    border-color: #667eea;
+    color: #5568d3;
+}
+
+/* Calendar Container */
+.calendar-container {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+/* Calendar Grid */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.weekday {
+    font-weight: 600;
+    color: #718096;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    background: #f7fafc;
+    padding: 8px;
+    border-radius: 12px;
+}
+
+.calendar-day {
+    min-height: 120px;
+    background: white;
+    border-radius: 8px;
+    padding: 8px;
+    position: relative;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.calendar-day:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    z-index: 1;
+}
+
+.calendar-day.empty {
+    background: transparent;
+    border: none;
+}
+
+.day-number {
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: block;
+}
+
+/* Reservation Item */
+.reservation-item {
+    font-size: 11px;
+    color: white;
+    padding: 4px 6px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.1s ease;
+}
+
+.reservation-item:hover {
+    transform: scale(1.02);
+    z-index: 2;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+    .calendar-container {
+        padding: 16px;
+    }
+
+    .calendar-day {
+        min-height: 80px;
+        padding: 4px;
+    }
+
+    .reservation-item {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+    .calendar-header-controls {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .calendar-nav {
+        width: 100%;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+
+    .calendar-weekdays {
+        display: none;
+        /* Hide weekday headers on mobile to save space */
+    }
+
+    .calendar-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: transparent;
+        padding: 0;
+    }
+
+    .calendar-day.empty {
+        display: none;
+    }
+
+    .calendar-day {
+        min-height: auto;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Show only days with reservations or current day */
+    /* This logic would ideally be in JS, but for CSS we can just style them as list items */
+
+    .day-number {
+        background: #f7fafc;
+        padding: 8px;
+        margin: -8px -8px 8px -8px;
+        border-bottom: 1px solid #e2e8f0;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .day-number::after {
+        content: 'View Details';
+        font-size: 11px;
+        color: #667eea;
+        font-weight: normal;
+    }
+}
