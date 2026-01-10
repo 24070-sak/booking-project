@@ -1,0 +1,434 @@
+/* Dashboard Properties - Modern Styles */
+
+/* Properties Form Card */
+.dashboard-properties-form {
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-properties-form:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.dashboard-properties-form .form-section {
+    margin-bottom: 24px;
+}
+
+/* Modern Labels */
+.dashboard-properties-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #667eea;
+}
+
+/* Enhanced Input Fields */
+.dashboard-properties-form input[type="text"],
+.dashboard-properties-form input[type="number"],
+.dashboard-properties-form input[type="file"],
+.dashboard-properties-form select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    color: #2d3748;
+    font-family: 'Inter', sans-serif;
+}
+
+.dashboard-properties-form input[type="text"]:focus,
+.dashboard-properties-form input[type="number"]:focus,
+.dashboard-properties-form select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1),
+        0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-1px);
+}
+
+.dashboard-properties-form input[type="file"] {
+    padding: 12px;
+    cursor: pointer;
+    border-style: dashed;
+}
+
+.dashboard-properties-form input[type="file"]:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.02);
+}
+
+/* Form Rows and Columns */
+.dashboard-properties-form .row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.dashboard-properties-form .col {
+    flex: 1;
+}
+
+.dashboard-properties-form .price-input-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dashboard-properties-form small {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Modern Button Styles */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(113, 128, 150, 0.2);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(113, 128, 150, 0.3);
+}
+
+.btn-danger {
+    color: #e53e3e;
+    background: linear-gradient(135deg, rgba(229, 62, 62, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, rgba(229, 62, 62, 0.15) 0%, rgba(220, 53, 69, 0.1) 100%);
+    color: #c53030;
+    transform: translateX(3px);
+}
+
+.btn-edit {
+    color: #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 10px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-edit:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #5568d3;
+    transform: translateX(3px);
+}
+
+/* Properties Table Enhancements */
+.properties-list {
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.properties-list table {
+    border-spacing: 0;
+}
+
+.properties-list thead {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+}
+
+.properties-list th {
+    font-weight: 600;
+    color: #667eea;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.properties-list tbody tr {
+    transition: all 0.2s ease;
+}
+
+.properties-list tbody tr:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.02) 100%);
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.properties-list img {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid #e2e8f0;
+}
+
+.properties-list img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #667eea;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN FOR PROPERTIES
+   ============================================ */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+    .dashboard-properties-form {
+        padding: 24px;
+        border-radius: 12px;
+    }
+
+    .dashboard-properties-form .row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .dashboard-properties-form .price-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* Make table scrollable on tablets */
+    .properties-list {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .properties-list table {
+        min-width: 600px;
+    }
+
+    .properties-list th,
+    .properties-list td {
+        padding: 12px !important;
+        font-size: 13px;
+    }
+
+    .properties-list img {
+        width: 40px !important;
+        height: 40px !important;
+    }
+}
+
+/* Mobile Phones (480px and below) */
+@media (max-width: 480px) {
+    .dashboard-properties-form {
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .dashboard-properties-form input[type="text"],
+    .dashboard-properties-form input[type="number"],
+    .dashboard-properties-form input[type="file"],
+    .dashboard-properties-form select {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .btn-secondary {
+        width: 100%;
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    /* Card-based layout for properties on mobile */
+    .properties-list table,
+    .properties-list thead,
+    .properties-list tbody,
+    .properties-list th,
+    .properties-list td,
+    .properties-list tr {
+        display: block;
+    }
+
+    .properties-list thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .properties-list tr {
+        margin-bottom: 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 15px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .properties-list td {
+        border: none;
+        position: relative;
+        padding: 10px 0 10px 120px !important;
+        text-align: left !important;
+        min-height: 40px;
+    }
+
+    .properties-list td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 110px;
+        font-weight: 600;
+        color: #667eea;
+        text-transform: uppercase;
+        font-size: 11px;
+    }
+
+    /* First cell with image */
+    .properties-list td:first-child {
+        padding: 10px 0 !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid #e2e8f0;
+        margin-bottom: 10px;
+        padding-bottom: 15px !important;
+    }
+
+    .properties-list td:first-child:before {
+        display: none;
+    }
+
+    .properties-list img {
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 8px !important;
+    }
+
+    /* Action buttons */
+    .properties-list td:last-child {
+        padding: 10px 0 0 0 !important;
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        padding-top: 15px !important;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .properties-list td:last-child:before {
+        display: none;
+    }
+
+    .btn-edit,
+    .btn-danger {
+        flex: 1;
+        text-align: center;
+        padding: 10px 16px !important;
+    }
+}
+
+/* Extra Small Phones (360px and below) */
+@media (max-width: 360px) {
+    .dashboard-properties-form {
+        padding: 16px;
+    }
+
+    .dashboard-properties-form input[type="text"],
+    .dashboard-properties-form input[type="number"],
+    .dashboard-properties-form input[type="file"],
+    .dashboard-properties-form select {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .properties-list tr {
+        padding: 12px;
+    }
+
+    .properties-list td {
+        padding: 8px 0 8px 100px !important;
+    }
+
+    .properties-list td:before {
+        width: 95px;
+        font-size: 10px;
+    }
+}

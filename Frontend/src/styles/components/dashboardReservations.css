@@ -1,0 +1,193 @@
+/* Dashboard Reservations - Modern Styles */
+
+.dashboard-reservations-content h2 {
+    color: #2d3748;
+    margin-bottom: 24px;
+    font-size: 24px;
+}
+
+/* Reservations Table */
+.reservations-list {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    animation: slideUp 0.4s ease-out;
+}
+
+.reservations-list table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.reservations-list thead {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+}
+
+.reservations-list th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #667eea;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.reservations-list td {
+    padding: 16px;
+    color: #4a5568;
+    font-size: 14px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.reservations-list tbody tr {
+    transition: all 0.2s ease;
+}
+
+.reservations-list tbody tr:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.02) 100%);
+}
+
+.reservations-list tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-confirmed {
+    background-color: #e6f7e6;
+    color: #28a745;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #ffc107;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #dc3545;
+}
+
+/* Action Buttons */
+.btn-details {
+    color: #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-details:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #5568d3;
+    transform: translateX(3px);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+    .reservations-list {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .reservations-list table {
+        min-width: 800px;
+    }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+    .reservations-list {
+        background: transparent;
+        box-shadow: none;
+        border: none;
+        overflow: visible;
+    }
+
+    .reservations-list table,
+    .reservations-list thead,
+    .reservations-list tbody,
+    .reservations-list th,
+    .reservations-list td,
+    .reservations-list tr {
+        display: block;
+    }
+
+    .reservations-list thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .reservations-list tr {
+        margin-bottom: 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .reservations-list td {
+        border: none;
+        position: relative;
+        padding: 8px 0 8px 120px;
+        text-align: left;
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+    }
+
+    .reservations-list td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 110px;
+        font-weight: 600;
+        color: #667eea;
+        text-transform: uppercase;
+        font-size: 11px;
+    }
+
+    /* Adjust specific cells */
+    .reservations-list td:first-child {
+        font-weight: bold;
+        color: #667eea;
+        padding-top: 0;
+    }
+
+    .reservations-list td:last-child {
+        padding: 16px 0 0 0;
+        margin-top: 12px;
+        border-top: 1px solid #e2e8f0;
+        justify-content: flex-end;
+    }
+
+    .reservations-list td:last-child:before {
+        display: none;
+    }
+
+    .btn-details {
+        width: 100%;
+        text-align: center;
+    }
+}
