@@ -31,9 +31,10 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const handleLabelClick = (e) => {
-    const targetId = e.target.id;
-    if (targetId) {
-      setActiveTab(targetId);
+    // Find the closest parent with class 'label' or the element itself if it has the class
+    const label = e.target.closest('.label');
+    if (label && label.id) {
+      setActiveTab(label.id);
     }
   };
 
@@ -107,7 +108,10 @@ function Dashboard() {
           </span>
         </div>
         <div>
-          <Link to="/connexion" id="logout">
+          <Link to="/connexion" id="logout" onClick={() => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          }}>
             <LogoutIcon className="icon" />
             Logout
           </Link>

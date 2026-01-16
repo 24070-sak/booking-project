@@ -1,9 +1,9 @@
 const API = import.meta.env.VITE_API_URL || "";
-import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import '../styles/components/hotelCard.css'
 
 
-function HotelCard({ title, location, price, imageUrl, rating, dateAvailable }) {
+function HotelCard({ id, title, location, price, imageUrl, rating, dateAvailable }) {
     return (
         <div className="Card">
             <img src={imageUrl} alt={title} className="card-image" />
@@ -13,12 +13,14 @@ function HotelCard({ title, location, price, imageUrl, rating, dateAvailable }) 
                 <p className="card-price">{price}</p>
                 <p className="card-date">{dateAvailable}</p>
                 <div className="card-rating">
-                    {rating}
+                    Av. Note {rating} ⭐
                 </div>
-                <button className="card-button">
-                    Voir plus
-                    <i className="fa-solid fa-arrow-right"></i>
-                </button>
+                <Link to={`/hotel/${id}`} className="card-button-link">
+                    <button className="card-button">
+                        Voir plus
+                        <i className="fa-solid fa-arrow-right"></i>
+                    </button>
+                </Link>
             </div>
         </div>
 
