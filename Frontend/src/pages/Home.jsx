@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
 const API = import.meta.env.VITE_API_URL || "";
+import { getAllHotels } from "../services/hotelService";
 import logo from '../assets/logos/logo.png'
 import '../styles/pages/home.css'
 import Header from "../components/Header";
-import image1 from '../assets/imgs/hot1.avif'
-import image2 from '../assets/imgs/hot2.avif'
-import image3 from '../assets/imgs/hot3.avif'
-import image4 from '../assets/imgs/hot4.avif'
-import image5 from '../assets/imgs/hot5.webp'
 import HotelCard from "../components/HotelCard";
 import bed from '../assets/imgs/bed.png'
 import shield from '../assets/imgs/shield.png'
@@ -15,44 +11,28 @@ import search from '../assets/imgs/search.png'
 import Footer from "../components/Footer";
 
 function Home() {
-    const hotels = [
-        {
-            id: 1,
-            title: "Hotel Azalai",
-            location: "Nouakchott",
-            price: "120€/nuit",
-            imageUrl: image1,
-            rating: 4.5,
-            dateAvailable: "Disponible dès le 20 Août"
-        },
-        {
-            id: 2,
-            title: "Hotel Monotel",
-            location: "Nouakchott",
-            price: "95€/nuit",
-            imageUrl: image2,
-            rating: 4.2,
-            dateAvailable: "Disponible dès le 15 Août"
-        },
-        {
-            id: 3,
-            title: "Hotel Tfeila",
-            location: "Nouadhibou",
-            price: "85€/nuit",
-            imageUrl: image3,
-            rating: 4.0,
-            dateAvailable: "Disponible dès le 18 Août"
-        },
-        {
-            id: 4,
-            title: "Hotel Sahara",
-            location: "Atar",
-            price: "75€/nuit",
-            imageUrl: image4,
-            rating: 4.3,
-            dateAvailable: "Disponible dès le 22 Août"
+    const [hotels, setHotels] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        async function fetchHotels() {
+            try {
+                // On récupère tous les hôtels
+                const data = await getAllHotels();
+                if (data.hotels) {
+                    setHotels(data.hotels);
+                }
+            } catch (err) {
+                console.error("Erreur chargement hotels:", err);
+                setError("Impossible de charger les hôtels.");
+            } finally {
+                setLoading(false);
+            }
         }
-    ];
+
+        fetchHotels();
+    }, []);
 
     return (
         <div className="home-body">
@@ -63,16 +43,21 @@ function Home() {
                         <h2>Offres des hotels en ce moment</h2>
                         <p>Voir plus d'offres <i className="fa-solid fa-arrow-right"></i></p>
                     </div>
+
+                    {loading && <p style={{ textAlign: 'center' }}>Chargement des offres...</p>}
+                    {error && <p style={{ textAlign: 'center', color: 'red' }}>{error}</p>}
+
                     <div className="hotels-grid">
                         {hotels.map((hotel) => (
                             <HotelCard
                                 key={hotel.id}
-                                title={hotel.title}
+                                id={hotel.id}
+                                title={hotel.name}
                                 location={hotel.location}
-                                price={hotel.price}
-                                imageUrl={hotel.imageUrl}
+                                price={`Dès 80€/nuit`} // Prix indicatif
+                                imageUrl={hotel.image_url}
                                 rating={hotel.rating}
-                                dateAvailable={hotel.dateAvailable}
+                                dateAvailable={"Disponible"}
                             />
                         ))}
                     </div>

@@ -1,16 +1,31 @@
-import React from 'react';
-import { reservationsData, propertiesData } from '../data/mockData';
+import React, { useState, useEffect } from 'react';
+import { getUserBookings } from '../services/bookingService';
 import '../styles/components/dashboardReservations.css';
 
 const DashboardReservations = () => {
-    // Helper to get property name
-    const getPropertyName = (id) => {
-        const prop = propertiesData.find(p => p.id === id);
-        return prop ? prop.name : 'Unknown Property';
-    };
+    const [bookings, setBookings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        async function fetchBookings() {
+            try {
+                const data = await getUserBookings();
+                if (data.bookings) {
+                    setBookings(data.bookings);
+                }
+            } catch (err) {
+                console.error("Erreur chargement bookings:", err);
+                setError("Impossible de charger les réservations");
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchBookings();
+    }, []);
 
     const getStatusClass = (status) => {
-        switch (status.toLowerCase()) {
+        switch (status?.toLowerCase()) {
             case 'confirmed': return 'status-confirmed';
             case 'pending': return 'status-pending';
             case 'cancelled': return 'status-cancelled';
@@ -18,47 +33,50 @@ const DashboardReservations = () => {
         }
     };
 
+    if (loading) return <div>Chargement...</div>;
+    if (error) return <div style={{ color: 'red' }}>{error}</div>;
+
     return (
         <div className="dashboard-content dashboard-reservations-content">
             <div style={{ marginBottom: '20px' }}>
-                <h2>Reservations</h2>
+                <h2>Mes Réservations</h2>
             </div>
 
             <div className="reservations-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Guest</th>
-                            <th>Property</th>
-                            <th>Check-In</th>
-                            <th>Check-Out</th>
-                            <th>Total (MRU)</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {reservationsData.map(res => (
-                            <tr key={res.id}>
-                                <td data-label="ID">#{res.id}</td>
-                                <td data-label="Guest" style={{ fontWeight: 'bold' }}>{res.guestName}</td>
-                                <td data-label="Property">{getPropertyName(res.propertyId)}</td>
-                                <td data-label="Check-In">{res.checkIn}</td>
-                                <td data-label="Check-Out">{res.checkOut}</td>
-                                <td data-label="Total (MRU)">{res.total}</td>
-                                <td data-label="Status">
-                                    <span className={`status-badge ${getStatusClass(res.status)}`}>
-                                        {res.status}
-                                    </span>
-                                </td>
-                                <td data-label="Actions">
-                                    <button className="btn-details">Details</button>
-                                </td>
+                {bookings.length > 0 ? (
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Référence</th>
+                                <th>Dates</th>
+                                <th>Hôtel/Chambre</th>
+                                <th>Total (Total)</th>
+                                <th>Status</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {bookings.map(res => (
+                                <tr key={res.id}>
+                                    <td data-label="ID">#{res.booking_reference}</td>
+                                    <td data-label="Dates">
+                                        {new Date(res.check_in_date).toLocaleDateString()} - {new Date(res.check_out_date).toLocaleDateString()}
+                                    </td>
+                                    <td data-label="Chambre">
+                                        {res.room ? (res.room.name + (res.room.hotel ? " - " + res.room.hotel.name : "")) : "Chambre inconnue"}
+                                    </td>
+                                    <td data-label="Total">{res.total_price} €</td>
+                                    <td data-label="Status">
+                                        <span className={`status-badge ${getStatusClass(res.status)}`}>
+                                            {res.status}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <p>Aucune réservation trouvée.</p>
+                )}
             </div>
         </div>
     );

@@ -6,6 +6,8 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
+import HotelDetails from "./pages/HotelDetails";
+import RoomDetails from "./pages/RoomDetails";
 function App() {
   return (
     <>
@@ -23,6 +25,12 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         {/* Settings page */}
         <Route path="/parametre" element={<Settings />} />
+
+        {/* Hotel Details page */}
+        <Route path="/hotel/:id" element={<HotelDetails />} />
+
+        {/* Room Details page */}
+        <Route path="/room/:id" element={<RoomDetails />} />
       </Routes>
     </>
   );
