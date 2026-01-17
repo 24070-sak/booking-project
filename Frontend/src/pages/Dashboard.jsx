@@ -29,6 +29,16 @@ import {
 
 function Dashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const isAdmin = user?.role === 'admin';
 
   const handleLabelClick = (e) => {
     // Find the closest parent with class 'label' or the element itself if it has the class
@@ -43,7 +53,7 @@ function Dashboard() {
       case 'dashboard':
         return <DashboardOverview />;
       case 'properties':
-        return <DashboardProperties />;
+        return isAdmin ? <DashboardProperties /> : <DashboardOverview />;
       case 'reservations':
         return <DashboardReservations />;
       case 'calendar':
@@ -52,7 +62,7 @@ function Dashboard() {
         return <DashboardReviews />;
       case 'messages':
         return <DashboardMessages />;
-      case 'payements':
+      case 'payments':
         return <DashboardPayments />;
       case 'analytics':
         return <DashboardAnalytics />;
@@ -72,39 +82,50 @@ function Dashboard() {
         <div className="dashboard-labels">
           <span className={`label ${activeTab === 'dashboard' ? 'selected' : ''}`} id="dashboard" onClick={handleLabelClick}>
             <DashboardIcon className="icon" />
-            Dashboard
+            <span>Dashboard</span>
           </span>
-          <span className={`label ${activeTab === 'properties' ? 'selected' : ''}`} id="properties" onClick={handleLabelClick}>
-            <PropertiesIcon className="icon" />
-            Properties
-          </span>
-          <span className={`label ${activeTab === 'reservations' ? 'selected' : ''}`} id="reservations" onClick={handleLabelClick}>
-            <ReservationsIcon className="icon" />
-            Reservations
-          </span>
-          <span className={`label ${activeTab === 'calendar' ? 'selected' : ''}`} id="calendar" onClick={handleLabelClick}>
-            <CalendarIcon className="icon" />
-            Calendar
-          </span>
-          <span className={`label ${activeTab === 'reviews' ? 'selected' : ''}`} id="reviews" onClick={handleLabelClick}>
-            <ReviewsIcon className="icon" />
-            Reviews
-          </span>
-          <span className={`label ${activeTab === 'messages' ? 'selected' : ''}`} id="messages" onClick={handleLabelClick}>
-            <MessagesIcon className="icon" />
-            Messages
-          </span>
-          <span className={`label ${activeTab === 'payements' ? 'selected' : ''}`} id="payements" onClick={handleLabelClick}>
-            <PaymentsIcon className="icon" />
-            Payments
-          </span>
-          <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
-            <AnalyticsIcon className="icon" />
-            Analytics
-          </span>
+
+          {isAdmin ? (
+            // Onglets ADMIN
+            <>
+              <span className={`label ${activeTab === 'properties' ? 'selected' : ''}`} id="properties" onClick={handleLabelClick}>
+                <PropertiesIcon className="icon" />
+                <span>Properties</span>
+              </span>
+              <span className={`label ${activeTab === 'reservations' ? 'selected' : ''}`} id="reservations" onClick={handleLabelClick}>
+                <ReservationsIcon className="icon" />
+                <span>All Reservations</span>
+              </span>
+            </>
+          ) : (
+            // Onglets CLIENT
+            <>
+              <span className={`label ${activeTab === 'reservations' ? 'selected' : ''}`} id="reservations" onClick={handleLabelClick}>
+                <ReservationsIcon className="icon" />
+                <span>Mes Réservations</span>
+              </span>
+              <span className={`label ${activeTab === 'messages' ? 'selected' : ''}`} id="messages" onClick={handleLabelClick}>
+                <MessagesIcon className="icon" />
+                <span>Messages</span>
+              </span>
+              <span className={`label ${activeTab === 'payments' ? 'selected' : ''}`} id="payments" onClick={handleLabelClick}>
+                <PaymentsIcon className="icon" />
+                <span>Payments</span>
+              </span>
+              <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
+                <AnalyticsIcon className="icon" />
+                <span>Analytics</span>
+              </span>
+              <span className={`label ${activeTab === 'reviews' ? 'selected' : ''}`} id="reviews" onClick={handleLabelClick}>
+                <ReviewsIcon className="icon" />
+                <span>Reviews</span>
+              </span>
+            </>
+          )}
+
           <span className={`label ${activeTab === 'settings' ? 'selected' : ''}`} id="settings" onClick={handleLabelClick}>
             <SettingsIcon className="icon" />
-            Settings
+            <span>Settings</span>
           </span>
         </div>
         <div>

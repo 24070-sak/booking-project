@@ -9,8 +9,10 @@ import facebook from "../assets/logos/facebook.png";
 function Register() {
   const [showPsswd, setShowPsswd] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: ""
   });
@@ -38,16 +40,12 @@ function Register() {
     setLoading(true);
 
     try {
-      // Séparer prénom et nom (très basique)
-      const names = formData.fullName.split(' ');
-      const firstName = names[0];
-      const lastName = names.slice(1).join(' ') || 'User';
-
       const userData = {
         email: formData.email,
         password: formData.password,
-        first_name: firstName,
-        last_name: lastName
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        phone: formData.phone
       };
 
       const data = await register(userData);
@@ -79,23 +77,45 @@ function Register() {
         {/* FORM */}
         <form className="register-form" onSubmit={handleSubmit}>
 
-          {/* NOM COMPLET */}
-          <div className="form-group">
-            <label className="form-label" htmlFor="fullName">
-              Nom complet
-            </label>
-            <div className="input-container">
-              <i className="fa-solid fa-user"></i>
-              <input
-                id="fullName"
-                type="text"
-                className="form-input"
-                placeholder="Nom complet"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                required
-              />
+          <div className="form-row" style={{ display: 'flex', gap: '10px' }}>
+            {/* PRENOM */}
+            <div className="form-group" style={{ flex: 1 }}>
+              <label className="form-label" htmlFor="firstName">
+                Prénom
+              </label>
+              <div className="input-container">
+                <i className="fa-solid fa-user"></i>
+                <input
+                  id="firstName"
+                  type="text"
+                  className="form-input"
+                  placeholder="Prénom"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* NOM */}
+            <div className="form-group" style={{ flex: 1 }}>
+              <label className="form-label" htmlFor="lastName">
+                Nom
+              </label>
+              <div className="input-container">
+                <i className="fa-solid fa-user"></i>
+                <input
+                  id="lastName"
+                  type="text"
+                  className="form-input"
+                  placeholder="Nom"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
           </div>
 
@@ -113,6 +133,26 @@ function Register() {
                 placeholder="Email"
                 name="email"
                 value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          {/* TELEPHONE */}
+          <div className="form-group">
+            <label className="form-label" htmlFor="phone">
+              Numéro de téléphone
+            </label>
+            <div className="input-container">
+              <i className="fa-solid fa-phone"></i>
+              <input
+                id="phone"
+                type="tel"
+                className="form-input"
+                placeholder="Numéro de téléphone"
+                name="phone"
+                value={formData.phone}
                 onChange={handleChange}
                 required
               />

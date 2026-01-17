@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models.user import User
+from app.utils.helpers import update_db_dump
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -32,6 +33,9 @@ def register():
     
     db.session.add(user)
     db.session.commit()
+    
+    # Synchroniser le fichier SQL
+    update_db_dump()
     
     # Générer les tokens
     access_token = create_access_token(identity=str(user.id))
@@ -115,6 +119,9 @@ def update_profile():
         user.phone = data['phone']
     
     db.session.commit()
+    
+    # Synchroniser le fichier SQL
+    update_db_dump()
     
     return jsonify({
         'message': 'Profil mis à jour',

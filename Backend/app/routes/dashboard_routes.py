@@ -6,30 +6,47 @@ from app.models.room import Room
 from sqlalchemy import func
 from app.extensions import db
 
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.models.user import User
+
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/api/dashboard')
 
 @dashboard_bp.route('/stats', methods=['GET'])
+@jwt_required()
 def get_dashboard_stats():
-    """Récupère les statistiques globales pour le dashboard"""
+    """Récupère les statistiques pour l'utilisateur actuel"""
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
     
-    # 1. Total Bookings
-    total_bookings = Booking.query.count()
+    if not user:
+        return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+    # 1. Total Bookings (Filtered by user)
+    total_bookings = Booking.query.filter_by(user_id=user.id).count()
     
-    # 2. Total Revenue (Somme des paiements 'completed' ou 'confirmed')
-    # On suppose que le champ 'status' dans Payment est 'completed'
+    # 2. Total Revenue (Somme des paiements 'completed' de l'utilisateur)
     total_revenue_result = (
         db.session.query(func.sum(Payment.amount))
+        .join(Booking, Payment.booking_id == Booking.id)
+        .filter(Booking.user_id == user.id)
         .filter(Payment.status == 'completed')
         .scalar()
     )
     total_revenue = total_revenue_result if total_revenue_result else 0.0
 
-    # 3. Active Properties
-    active_properties = Hotel.query.count()
+    # 3. Active Properties (For simplicity, if admin, count hotels. If client, maybe count distinct hotels booked)
+    if user.role == 'admin':
+        active_properties = Hotel.query.count()
+    else:
+        active_properties = db.session.query(func.count(func.distinct(Room.hotel_id)))\
+            .join(Booking, Booking.room_id == Room.id)\
+            .filter(Booking.user_id == user.id)\
+            .scalar() or 0
     
-    # 4. Recent Activity (Exemple simplifié : 5 dernières réservations)
+    # 4. Recent Activity (Filtré par utilisateur)
     recent_bookings = (
-        Booking.query.order_by(Booking.created_at.desc())
+        Booking.query.filter_by(user_id=user.id)
+        .order_by(Booking.created_at.desc())
         .limit(5)
         .all()
     )

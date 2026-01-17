@@ -5,8 +5,102 @@ from app.models.room import Room, RoomType, Amenity
 from app.models.booking import Booking
 from app.models.review import Review
 from sqlalchemy import func
+from app.utils.helpers import admin_required, update_db_dump
 
 room_bp = Blueprint('rooms', __name__, url_prefix='/api/rooms')
+
+@room_bp.route('', methods=['POST'])
+@jwt_required()
+@admin_required()
+def create_room():
+    """Créer une nouvelle chambre (Admin seulement)"""
+    data = request.get_json()
+    
+    # Validation basique
+    required = ['room_number', 'name', 'room_type_id', 'price_per_night']
+    for field in required:
+        if not data.get(field):
+            return jsonify({'error': f'Le champ {field} est requis'}), 400
+            
+    # Vérifier l'existence du numéro de chambre
+    if Room.query.filter_by(room_number=data['room_number']).first():
+        return jsonify({'error': 'Ce numéro de chambre existe déjà'}), 400
+        
+    new_room = Room(
+        room_number=data['room_number'],
+        name=data['name'],
+        description=data.get('description'),
+        room_type_id=data['room_type_id'],
+        hotel_id=data.get('hotel_id'),
+        price_per_night=data['price_per_night'],
+        floor=data.get('floor'),
+        size_sqm=data.get('size_sqm'),
+        bed_type=data.get('bed_type', 'double'),
+        max_guests=data.get('max_guests', 2),
+        image_url=data.get('image_url')
+    )
+    
+    db.session.add(new_room)
+    db.session.commit()
+    
+    # Synchroniser le fichier SQL
+    update_db_dump()
+    
+    return jsonify({'message': 'Chambre créée avec succès', 'room': new_room.to_dict()}), 201
+
+@room_bp.route('/<int:room_id>', methods=['PUT'])
+@jwt_required()
+@admin_required()
+def update_room(room_id):
+    """Mettre à jour une chambre"""
+    room = Room.query.get(room_id)
+    if not room:
+        return jsonify({'error': 'Chambre non trouvée'}), 404
+        
+    data = request.get_json()
+    
+    if 'room_number' in data:
+        # Vérifier si le nouveau numéro est déjà pris par une autre chambre
+        existing = Room.query.filter_by(room_number=data['room_number']).first()
+        if existing and existing.id != room_id:
+            return jsonify({'error': 'Ce numéro de chambre est déjà utilisé'}), 400
+        room.room_number = data['room_number']
+        
+    if 'name' in data: room.name = data['name']
+    if 'description' in data: room.description = data['description']
+    if 'room_type_id' in data: room.room_type_id = data['room_type_id']
+    if 'hotel_id' in data: room.hotel_id = data['hotel_id']
+    if 'price_per_night' in data: room.price_per_night = data['price_per_night']
+    if 'floor' in data: room.floor = data['floor']
+    if 'size_sqm' in data: room.size_sqm = data['size_sqm']
+    if 'bed_type' in data: room.bed_type = data['bed_type']
+    if 'max_guests' in data: room.max_guests = data['max_guests']
+    if 'is_available' in data: room.is_available = data['is_available']
+    if 'image_url' in data: room.image_url = data['image_url']
+        
+    db.session.commit()
+    
+    # Synchroniser le fichier SQL
+    update_db_dump()
+    
+    return jsonify({'message': 'Chambre mise à jour', 'room': room.to_dict()}), 200
+
+@room_bp.route('/<int:room_id>', methods=['DELETE'])
+@jwt_required()
+@admin_required()
+def delete_room(room_id):
+    """Supprimer une chambre"""
+    room = Room.query.get(room_id)
+    if not room:
+        return jsonify({'error': 'Chambre non trouvée'}), 404
+        
+    db.session.delete(room)
+    db.session.commit()
+    
+    # Synchroniser le fichier SQL
+    update_db_dump()
+    
+    return jsonify({'message': 'Chambre supprimée'}), 200
 
 
 @room_bp.route('', methods=['GET'])

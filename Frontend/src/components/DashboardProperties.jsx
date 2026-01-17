@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { getAllHotels, createHotel, updateHotel, deleteHotel } from '../services/hotelService';
+import { getAllHotels, createHotel, updateHotel, deleteHotel, getHotelRooms } from '../services/hotelService';
+import { createRoom, updateRoom, deleteRoom, getRoomTypes } from '../services/roomService';
 import '../styles/components/dashboardProperties.css';
 
-// Import hotel images (keep existing imports for default or fallback)
+// Import hotel images
 import hot1 from '../assets/imgs/hot1.avif';
 import hot2 from '../assets/imgs/hot2.avif';
 import hot3 from '../assets/imgs/hot3.avif';
@@ -12,18 +13,35 @@ import hotel1 from '../assets/imgs/hotel1.jpeg';
 import hotel2 from '../assets/imgs/hotel2.jpeg';
 
 const DashboardProperties = () => {
+    // Hotel State
     const [editingPropertyId, setEditingPropertyId] = useState(null);
     const [isAddingProperty, setIsAddingProperty] = useState(false);
     const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Form State
-    const [price, setPrice] = useState(''); // Note: Backend "Hotel" model doesn't have price, but "Room" does. We might just store it locally or ignore for now if not in Hotel model.
+    // Room Management State
+    const [viewingRoomsHotelId, setViewingRoomsHotelId] = useState(null);
+    const [hotelRooms, setHotelRooms] = useState([]);
+    const [isAddingRoom, setIsAddingRoom] = useState(false);
+    const [editingRoomId, setEditingRoomId] = useState(null);
+    const [roomTypes, setRoomTypes] = useState([]);
+
+    // Hotel Form State
     const [propertyName, setPropertyName] = useState('');
     const [location, setLocation] = useState('');
-    const [status, setStatus] = useState('Published'); // Not in backend model yet
     const [description, setDescription] = useState('');
     const [imageUrl, setImageUrl] = useState('');
+
+    // Room Form State
+    const [roomForm, setRoomForm] = useState({
+        room_number: '',
+        name: '',
+        description: '',
+        room_type_id: '',
+        price_per_night: '',
+        max_guests: 2,
+        image_url: ''
+    });
 
     const hotelImages = [hot1, hot2, hot3, hot4, hot5, hotel1, hotel2];
 
@@ -41,8 +59,18 @@ const DashboardProperties = () => {
         }
     };
 
+    const fetchRoomTypes = async () => {
+        try {
+            const data = await getRoomTypes();
+            setRoomTypes(data.room_types || []);
+        } catch (error) {
+            console.error("Error fetching room types:", error);
+        }
+    };
+
     useEffect(() => {
         fetchProperties();
+        fetchRoomTypes();
     }, []);
 
     useEffect(() => {
@@ -53,31 +81,45 @@ const DashboardProperties = () => {
                 setLocation(property.location);
                 setDescription(property.description || '');
                 setImageUrl(property.image_url || '');
-                // Status and Price are not in Hotel model, ignoring for fill
             }
         } else if (isAddingProperty) {
             setPropertyName('');
             setLocation('');
-            setStatus('Published');
             setDescription('');
             setImageUrl('');
-            setPrice('');
         }
     }, [editingPropertyId, isAddingProperty, properties]);
 
     const handleEditClick = (id) => {
         setEditingPropertyId(id);
         setIsAddingProperty(false);
+        setViewingRoomsHotelId(null);
     };
 
     const handleAddClick = () => {
         setIsAddingProperty(true);
         setEditingPropertyId(null);
+        setViewingRoomsHotelId(null);
+    };
+
+    const handleViewRoomsClick = async (hotelId) => {
+        setViewingRoomsHotelId(hotelId);
+        setEditingPropertyId(null);
+        setIsAddingProperty(false);
+        try {
+            const data = await getHotelRooms(hotelId);
+            setHotelRooms(data.rooms || []);
+        } catch (error) {
+            alert("Erreur lors de la récupération des chambres");
+        }
     };
 
     const handleBackClick = () => {
         setEditingPropertyId(null);
         setIsAddingProperty(false);
+        setViewingRoomsHotelId(null);
+        setIsAddingRoom(false);
+        setEditingRoomId(null);
     };
 
     const handleDeleteClick = async (id) => {
@@ -97,7 +139,7 @@ const DashboardProperties = () => {
             location: location,
             description: description,
             image_url: imageUrl,
-            rating: 0 // Default
+            rating: 0
         };
 
         try {
@@ -113,69 +155,176 @@ const DashboardProperties = () => {
         }
     };
 
+    // Room Handlers
+    const handleAddRoomClick = () => {
+        setIsAddingRoom(true);
+        setEditingRoomId(null);
+        setRoomForm({
+            room_number: '',
+            name: '',
+            description: '',
+            room_type_id: roomTypes[0]?.id || '',
+            price_per_night: '',
+            max_guests: 2,
+            image_url: ''
+        });
+    };
+
+    const handleEditRoomClick = (room) => {
+        setEditingRoomId(room.id);
+        setIsAddingRoom(false);
+        setRoomForm({
+            room_number: room.room_number,
+            name: room.name,
+            description: room.description || '',
+            room_type_id: room.room_type_id,
+            price_per_night: room.price_per_night,
+            max_guests: room.max_guests,
+            image_url: room.image_url || ''
+        });
+    };
+
+    const handleDeleteRoomClick = async (roomId) => {
+        if (window.confirm("Supprimer cette chambre ?")) {
+            try {
+                await deleteRoom(roomId);
+                handleViewRoomsClick(viewingRoomsHotelId);
+            } catch (error) {
+                alert("Erreur: " + error.message);
+            }
+        }
+    };
+
+    const handleRoomSubmit = async () => {
+        const data = { ...roomForm, hotel_id: viewingRoomsHotelId };
+        try {
+            if (isAddingRoom) {
+                await createRoom(data);
+            } else {
+                await updateRoom(editingRoomId, data);
+            }
+            setIsAddingRoom(false);
+            setEditingRoomId(null);
+            handleViewRoomsClick(viewingRoomsHotelId);
+        } catch (error) {
+            alert("Erreur: " + error.message);
+        }
+    };
+
     if (editingPropertyId || isAddingProperty) {
         return (
             <div className="dashboard-content">
                 <div className="header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                     <h1>{isAddingProperty ? 'Add New Property' : 'Update Property'}</h1>
-                    <button onClick={handleBackClick} className="btn-secondary">
-                        Retour
-                    </button>
+                    <button onClick={handleBackClick} className="btn-secondary">Retour</button>
                 </div>
-
                 <div className="dashboard-properties-form">
-                    {!isAddingProperty && <h2 style={{ marginBottom: '20px' }}>Property Details (ID: {editingPropertyId})</h2>}
-
                     <div className="row">
                         <div className="col">
-                            <label htmlFor="Name">Property Name</label>
-                            <input
-                                type="text"
-                                value={propertyName}
-                                onChange={(e) => setPropertyName(e.target.value)}
-                                id="Name"
-                                placeholder="e.g. Sunset Villa"
-                            />
+                            <label>Property Name</label>
+                            <input type="text" value={propertyName} onChange={(e) => setPropertyName(e.target.value)} />
                         </div>
                         <div className="col">
-                            <label htmlFor="location">Location</label>
-                            <input
-                                type="text"
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                                id="location"
-                                placeholder="City or Address"
-                            />
+                            <label>Location</label>
+                            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
                         </div>
                     </div>
-
                     <div className="form-section">
-                        <label htmlFor="imageUrl">Image URL</label>
-                        <input
-                            type="text"
-                            value={imageUrl}
-                            onChange={(e) => setImageUrl(e.target.value)}
-                            id="imageUrl"
-                            placeholder="https://..."
-                        />
+                        <label>Image URL</label>
+                        <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
                     </div>
-
                     <div className="form-section">
-                        <label htmlFor="description">Description</label>
-                        <textarea
-                            style={{ width: '100%', padding: '10px' }}
-                            placeholder="Enter Property description here ... "
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            id="description"
-                        />
+                        <label>Description</label>
+                        <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
                     </div>
+                    <div style={{ marginTop: '20px' }}>
+                        <button className="btn-primary" onClick={handleSubmit}>Enregistrer</button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-                    <div style={{ marginTop: '30px', textAlign: 'right' }}>
-                        <button className="btn-primary" onClick={handleSubmit}>
-                            {isAddingProperty ? 'Add Property' : 'Save Changes'}
-                        </button>
+    if (viewingRoomsHotelId) {
+        const hotel = properties.find(p => p.id === viewingRoomsHotelId);
+        return (
+            <div className="dashboard-content">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <h2>Chambres de : {hotel?.name}</h2>
+                    <div>
+                        <button onClick={handleAddRoomClick} className="btn-primary" style={{ marginRight: '10px' }}>+ Ajouter une chambre</button>
+                        <button onClick={handleBackClick} className="btn-secondary">Retour</button>
                     </div>
+                </div>
+
+                {(isAddingRoom || editingRoomId) && (
+                    <div className="dashboard-properties-form" style={{ marginBottom: '30px', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
+                        <h3>{isAddingRoom ? 'Nouvelle Chambre' : 'Modifier Chambre'}</h3>
+                        <div className="row">
+                            <div className="col">
+                                <label>Numéro</label>
+                                <input type="text" value={roomForm.room_number} onChange={e => setRoomForm({ ...roomForm, room_number: e.target.value })} />
+                            </div>
+                            <div className="col">
+                                <label>Nom</label>
+                                <input type="text" value={roomForm.name} onChange={e => setRoomForm({ ...roomForm, name: e.target.value })} />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <label>Type</label>
+                                <select value={roomForm.room_type_id} onChange={e => setRoomForm({ ...roomForm, room_type_id: e.target.value })}>
+                                    {roomTypes.map(rt => <option key={rt.id} value={rt.id}>{rt.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="col">
+                                <label>Prix / Nuit</label>
+                                <input type="number" value={roomForm.price_per_night} onChange={e => setRoomForm({ ...roomForm, price_per_night: e.target.value })} />
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col">
+                                <label>Capacité Max</label>
+                                <input type="number" value={roomForm.max_guests} onChange={e => setRoomForm({ ...roomForm, max_guests: e.target.value })} />
+                            </div>
+                            <div className="col">
+                                <label>Image URL</label>
+                                <input type="text" value={roomForm.image_url} onChange={e => setRoomForm({ ...roomForm, image_url: e.target.value })} />
+                            </div>
+                        </div>
+                        <div style={{ marginTop: '15px' }}>
+                            <button className="btn-primary" onClick={handleRoomSubmit}>Enregistrer Chambre</button>
+                            <button className="btn-secondary" onClick={() => { setIsAddingRoom(false); setEditingRoomId(null); }} style={{ marginLeft: '10px' }}>Annuler</button>
+                        </div>
+                    </div>
+                )}
+
+                <div className="properties-list">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Numéro</th>
+                                <th>Nom</th>
+                                <th>Type</th>
+                                <th>Prix</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {hotelRooms.map(room => (
+                                <tr key={room.id}>
+                                    <td>{room.room_number}</td>
+                                    <td>{room.name}</td>
+                                    <td>{roomTypes.find(t => t.id === room.room_type_id)?.name || room.room_type_id}</td>
+                                    <td>{room.price_per_night} €</td>
+                                    <td>
+                                        <button onClick={() => handleEditRoomClick(room)} className="btn-edit">Edit</button>
+                                        <button onClick={() => handleDeleteRoomClick(room.id)} className="btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         );
@@ -186,48 +335,31 @@ const DashboardProperties = () => {
     return (
         <div className="dashboard-content">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2>My Properties</h2>
-                <button onClick={handleAddClick} style={{
-                    backgroundColor: '#0b3e75',
-                    color: 'white',
-                    padding: '10px 20px',
-                    borderRadius: '5px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    fontSize: '16px'
-                }}>
-                    + Add New Property
-                </button>
+                <h2>Gestion des Hôtels</h2>
+                <button onClick={handleAddClick} className="btn-primary">+ Ajouter un Hôtel</button>
             </div>
 
-            <div className="properties-list" style={{ background: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead style={{ backgroundColor: '#f9f9f9', borderBottom: '2px solid #eee' }}>
+            <div className="properties-list">
+                <table>
+                    <thead>
                         <tr>
-                            <th style={{ padding: '15px', textAlign: 'left' }}>Name</th>
-                            <th style={{ padding: '15px', textAlign: 'left' }}>Location</th>
-                            <th style={{ padding: '15px', textAlign: 'left' }}>Rating</th>
-                            <th style={{ padding: '15px', textAlign: 'left' }}>Actions</th>
+                            <th>Nom</th>
+                            <th>Localisation</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {properties.map((property, index) => (
-                            <tr key={property.id} style={{ borderBottom: '1px solid #eee' }}>
-                                <td style={{ padding: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <img src={property.image_url || hotelImages[index % hotelImages.length]} alt={property.name} style={{ width: '50px', height: '50px', borderRadius: '5px', objectFit: 'cover' }} />
+                            <tr key={property.id}>
+                                <td>
+                                    <img src={property.image_url || hotelImages[index % hotelImages.length]} alt={property.name} />
                                     <span>{property.name}</span>
                                 </td>
-                                <td data-label="Location" style={{ padding: '15px' }}>{property.location}</td>
-                                <td data-label="Rating" style={{ padding: '15px' }}>{property.rating}</td>
-                                <td data-label="Actions" style={{ padding: '15px' }}>
-                                    <button
-                                        onClick={() => handleEditClick(property.id)}
-                                        className="btn-edit"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button className="btn-danger" onClick={() => handleDeleteClick(property.id)}>Delete</button>
+                                <td>{property.location}</td>
+                                <td>
+                                    <button onClick={() => handleViewRoomsClick(property.id)} className="btn-secondary">Chambres</button>
+                                    <button onClick={() => handleEditClick(property.id)} className="btn-edit">Edit</button>
+                                    <button onClick={() => handleDeleteClick(property.id)} className="btn-danger">Delete</button>
                                 </td>
                             </tr>
                         ))}

@@ -43,6 +43,8 @@
 
 /* Labels */
 .form-label {
+    display: block;
+    text-align: left;
     font-weight: 600;
     color: #0c2b66;
     margin-bottom: 6px;
@@ -50,41 +52,51 @@
 
 /* Input Fields */
 .form-input {
-    width: 100%;
-    height: 45px;
-    border-radius: 10px;
-    border: 2px solid rgba(0, 0, 0, 0.15);
-    background: #fff;
-    font-size: 16px;
-    padding-left: 45px;
-    outline: none;
-    transition: 0.25s;
-    color: black;
+    width: 100% !important;
+    height: 50px !important;
+    border-radius: 12px !important;
+    border: 2px solid rgba(12, 43, 102, 0.1) !important;
+    background: #f8fafc !important;
+    font-size: 16px !important;
+    padding-left: 45px !important;
+    padding-right: 15px !important;
+    outline: none !important;
+    transition: 0.25s !important;
+    color: #1e293b !important;
+    box-sizing: border-box !important;
 }
 
 .form-input:focus {
     border-color: #0c5bff;
-    box-shadow: 0 0 0 3px rgba(12, 91, 255, 0.2);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(12, 91, 255, 0.1);
 }
 
 /* Input Icon */
 .input-container {
-    position: relative;
+    position: relative !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 .input-container i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #8897a2;
-    font-size: 17px;
+    position: absolute !important;
+    left: 15px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #64748b !important;
+    font-size: 18px !important;
+    transition: 0.3s !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
 }
 
-.input-container #toggle{
-    right: 15px;
-    left: auto;
-    cursor: pointer;
+.input-container #toggle {
+    right: 20px !important;
+    left: auto !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
 }
 
 /* Register Button */
@@ -99,12 +111,15 @@
     transition: 0.3s;
     margin-top: 10px;
 }
-i:hover{
+
+i:hover {
     color: #0a44c7;
 }
-.input-container input:focus + i,
+
+.input-container input:focus+i,
 .input-container:focus-within i {
-    color: #4A90E2; /* color you want */
+    color: #4A90E2;
+    /* color you want */
 }
 
 .register-button:hover {
@@ -145,6 +160,7 @@ i:hover{
 .social-login img {
     width: 26px;
 }
+
 .line {
     display: flex;
     align-items: center;
@@ -168,6 +184,13 @@ i:hover{
 
 /* Fade Animation */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
