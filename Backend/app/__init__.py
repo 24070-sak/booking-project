@@ -24,11 +24,21 @@ def create_app(config_name='development'):
     from app.models.hotel import Hotel
     
     # Enregistrement des blueprints (routes)
-    from app.routes import auth_bp, room_bp, booking_bp, hotel_routes
+    from app.routes import auth_bp, room_bp, booking_bp
+    from app.routes.hotel_routes import hotel_bp
+    from app.routes.dashboard_routes import dashboard_bp
+    from app.routes.payment_routes import payment_bp
+    from app.routes.review_routes import review_bp
+    from app.routes.message_routes import message_bp
+    
     app.register_blueprint(auth_bp)
-    app.register_blueprint(room_bp)
     app.register_blueprint(booking_bp)
-    app.register_blueprint(hotel_routes.hotel_bp)
+    app.register_blueprint(room_bp)
+    app.register_blueprint(hotel_bp)
+    app.register_blueprint(dashboard_bp)
+    app.register_blueprint(payment_bp)
+    app.register_blueprint(review_bp)
+    app.register_blueprint(message_bp)
     
     # Route de santé
     @app.route('/api/health')

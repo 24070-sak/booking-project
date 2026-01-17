@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
-from app.models.booking import Booking, Payment
+from app.models.booking import Booking
+from app.models.payment import Payment
 from app.models.room import Room
 from app.models.user import User
 from datetime import datetime

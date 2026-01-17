@@ -20,6 +20,58 @@ export async function getHotelById(id) {
     return response.json();
 }
 
+export async function createHotel(hotelData) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/hotels`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(hotelData)
+    });
+
+    if (!response.ok) {
+        throw new Error("Impossible de créer l'hôtel");
+    }
+
+    return response.json();
+}
+
+export async function updateHotel(id, hotelData) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/hotels/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(hotelData)
+    });
+
+    if (!response.ok) {
+        throw new Error("Impossible de mettre à jour l'hôtel");
+    }
+
+    return response.json();
+}
+
+export async function deleteHotel(id) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/hotels/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error("Impossible de supprimer l'hôtel");
+    }
+
+    return response.json();
+}
+
 export async function getHotelRooms(id) {
     const response = await fetch(`${API_URL}/hotels/${id}/rooms`);
 

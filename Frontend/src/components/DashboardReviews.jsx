@@ -1,12 +1,24 @@
-import React from 'react';
-import { reviewsData, propertiesData } from '../data/mockData';
+import React, { useState, useEffect } from 'react';
+import { getReviews } from '../services/dashboardService';
 import '../styles/components/dashboardReviews.css';
 
 const DashboardReviews = () => {
-    const getPropertyName = (id) => {
-        const prop = propertiesData.find(p => p.id === id);
-        return prop ? prop.name : 'Unknown Property';
-    };
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchReviews() {
+            try {
+                const data = await getReviews();
+                setReviews(data.reviews);
+            } catch (error) {
+                console.error("Error fetching reviews:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchReviews();
+    }, []);
 
     const renderStars = (rating) => {
         const stars = [];
@@ -20,40 +32,46 @@ const DashboardReviews = () => {
         return stars;
     };
 
+    if (loading) return <div>Chargement...</div>;
+
     return (
         <div className="dashboard-content dashboard-reviews-content">
             <h2>Guest Reviews</h2>
 
             <div className="reviews-list">
-                {reviewsData.map(review => (
-                    <div key={review.id} className="review-card">
-                        <div className="review-header">
-                            <div className="review-user-info">
-                                <div className="user-avatar">
-                                    {review.user.charAt(0)}
+                {reviews.length > 0 ? (
+                    reviews.map(review => (
+                        <div key={review.id} className="review-card">
+                            <div className="review-header">
+                                <div className="review-user-info">
+                                    <div className="user-avatar">
+                                        {review.user_name.charAt(0)}
+                                    </div>
+                                    <div className="user-details">
+                                        <h4>{review.user_name}</h4>
+                                        <span>Stayed at <strong>{review.hotel_name}</strong></span>
+                                    </div>
                                 </div>
-                                <div className="user-details">
-                                    <h4>{review.user}</h4>
-                                    <span>Stayed at <strong>{getPropertyName(review.propertyId)}</strong></span>
-                                </div>
+                                <span className="review-date">{new Date(review.created_at).toLocaleDateString()}</span>
                             </div>
-                            <span className="review-date">{review.date}</span>
-                        </div>
 
-                        <div className="review-rating">
-                            {renderStars(review.rating)}
-                            <span className="rating-number">{review.rating}.0</span>
-                        </div>
+                            <div className="review-rating">
+                                {renderStars(review.rating)}
+                                <span className="rating-number">{review.rating}.0</span>
+                            </div>
 
-                        <p className="review-comment">"{review.comment}"</p>
+                            <p className="review-comment">"{review.comment}"</p>
 
-                        <div className="review-actions">
-                            <button className="btn-reply">
-                                <i className="fa-solid fa-reply"></i> Reply
-                            </button>
+                            <div className="review-actions">
+                                <button className="btn-reply">
+                                    <i className="fa-solid fa-reply"></i> Reply
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <p>Aucun avis pour le moment.</p>
+                )}
             </div>
         </div>
     );
