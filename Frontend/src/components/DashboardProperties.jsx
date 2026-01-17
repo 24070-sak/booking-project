@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { getAllHotels, createHotel, updateHotel, deleteHotel } from '../services/hotelService';
 import '../styles/components/dashboardProperties.css';
-import { propertiesData } from '../data/mockData';
 
-// Import hotel images
+// Import hotel images (keep existing imports for default or fallback)
 import hot1 from '../assets/imgs/hot1.avif';
 import hot2 from '../assets/imgs/hot2.avif';
 import hot3 from '../assets/imgs/hot3.avif';
@@ -15,40 +14,56 @@ import hotel2 from '../assets/imgs/hotel2.jpeg';
 const DashboardProperties = () => {
     const [editingPropertyId, setEditingPropertyId] = useState(null);
     const [isAddingProperty, setIsAddingProperty] = useState(false);
-    const [properties, setProperties] = useState(propertiesData);
-
-    // Array of hotel images to cycle through
-    const hotelImages = [hot1, hot2, hot3, hot4, hot5, hotel1, hotel2];
+    const [properties, setProperties] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     // Form State
-    const [price, setPrice] = useState('');
+    const [price, setPrice] = useState(''); // Note: Backend "Hotel" model doesn't have price, but "Room" does. We might just store it locally or ignore for now if not in Hotel model.
     const [propertyName, setPropertyName] = useState('');
     const [location, setLocation] = useState('');
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState('Published'); // Not in backend model yet
     const [description, setDescription] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
+
+    const hotelImages = [hot1, hot2, hot3, hot4, hot5, hotel1, hotel2];
+
+    const fetchProperties = async () => {
+        try {
+            setLoading(true);
+            const data = await getAllHotels();
+            if (data.hotels) {
+                setProperties(data.hotels);
+            }
+        } catch (error) {
+            console.error("Error fetching hotels:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProperties();
+    }, []);
 
     useEffect(() => {
         if (editingPropertyId) {
-            // Simulate fetching data for the selected property
-            console.log("Fetching data for property ID:", editingPropertyId);
-            // In a real app, you would find the property from the list or fetch from API
             const property = properties.find(p => p.id === editingPropertyId);
             if (property) {
-                setPrice(property.price);
                 setPropertyName(property.name);
                 setLocation(property.location);
-                setStatus(property.status);
-                setDescription('A beautiful place...'); // Dummy description
+                setDescription(property.description || '');
+                setImageUrl(property.image_url || '');
+                // Status and Price are not in Hotel model, ignoring for fill
             }
         } else if (isAddingProperty) {
-            // Reset form for adding new property
-            setPrice('');
             setPropertyName('');
             setLocation('');
             setStatus('Published');
             setDescription('');
+            setImageUrl('');
+            setPrice('');
         }
-    }, [editingPropertyId, isAddingProperty]);
+    }, [editingPropertyId, isAddingProperty, properties]);
 
     const handleEditClick = (id) => {
         setEditingPropertyId(id);
@@ -63,6 +78,39 @@ const DashboardProperties = () => {
     const handleBackClick = () => {
         setEditingPropertyId(null);
         setIsAddingProperty(false);
+    };
+
+    const handleDeleteClick = async (id) => {
+        if (window.confirm("Are you sure you want to delete this property?")) {
+            try {
+                await deleteHotel(id);
+                fetchProperties();
+            } catch (error) {
+                alert("Failed to delete property: " + error.message);
+            }
+        }
+    };
+
+    const handleSubmit = async () => {
+        const hotelData = {
+            name: propertyName,
+            location: location,
+            description: description,
+            image_url: imageUrl,
+            rating: 0 // Default
+        };
+
+        try {
+            if (isAddingProperty) {
+                await createHotel(hotelData);
+            } else if (editingPropertyId) {
+                await updateHotel(editingPropertyId, hotelData);
+            }
+            fetchProperties();
+            handleBackClick();
+        } catch (error) {
+            alert("Operation failed: " + error.message);
+        }
     };
 
     if (editingPropertyId || isAddingProperty) {
@@ -91,27 +139,31 @@ const DashboardProperties = () => {
                         </div>
                         <div className="col">
                             <label htmlFor="location">Location</label>
-                            <select name="" id="location" value={location} onChange={(e) => setLocation(e.target.value)}>
-                                <option value="">Select Location</option>
-                                <option value="Nouakchott">Nouakchott</option>
-                                <option value="Tevregh Zeyna">Tevregh Zeyna</option>
-                                <option value="Atar">Atar</option>
-                            </select>
+                            <input
+                                type="text"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                id="location"
+                                placeholder="City or Address"
+                            />
                         </div>
                     </div>
 
                     <div className="form-section">
-                        <label htmlFor="status">Status</label>
-                        <select name="" id="status" value={status} onChange={(e) => setStatus(e.target.value)}>
-                            <option value="Published">Published</option>
-                            <option value="Draft">Draft</option>
-                        </select>
+                        <label htmlFor="imageUrl">Image URL</label>
+                        <input
+                            type="text"
+                            value={imageUrl}
+                            onChange={(e) => setImageUrl(e.target.value)}
+                            id="imageUrl"
+                            placeholder="https://..."
+                        />
                     </div>
 
                     <div className="form-section">
                         <label htmlFor="description">Description</label>
-                        <input
-                            type="text"
+                        <textarea
+                            style={{ width: '100%', padding: '10px' }}
                             placeholder="Enter Property description here ... "
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -119,22 +171,8 @@ const DashboardProperties = () => {
                         />
                     </div>
 
-                    <div className="form-section">
-                        <label htmlFor="price">Price per day (MRU) <small style={{ backgroundColor: '#6c757d' }}>{price}</small></label>
-                        <div className="price-input-group">
-                            <input
-                                type="number"
-                                name=""
-                                id="price"
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
-                            />
-                            <input type="file" name="" id="file" />
-                        </div>
-                    </div>
-
                     <div style={{ marginTop: '30px', textAlign: 'right' }}>
-                        <button className="btn-primary">
+                        <button className="btn-primary" onClick={handleSubmit}>
                             {isAddingProperty ? 'Add Property' : 'Save Changes'}
                         </button>
                     </div>
@@ -142,6 +180,8 @@ const DashboardProperties = () => {
             </div>
         );
     }
+
+    if (loading) return <div>Chargement...</div>;
 
     return (
         <div className="dashboard-content">
@@ -167,8 +207,7 @@ const DashboardProperties = () => {
                         <tr>
                             <th style={{ padding: '15px', textAlign: 'left' }}>Name</th>
                             <th style={{ padding: '15px', textAlign: 'left' }}>Location</th>
-                            <th style={{ padding: '15px', textAlign: 'left' }}>Status</th>
-                            <th style={{ padding: '15px', textAlign: 'left' }}>Price (MRU)</th>
+                            <th style={{ padding: '15px', textAlign: 'left' }}>Rating</th>
                             <th style={{ padding: '15px', textAlign: 'left' }}>Actions</th>
                         </tr>
                     </thead>
@@ -176,22 +215,11 @@ const DashboardProperties = () => {
                         {properties.map((property, index) => (
                             <tr key={property.id} style={{ borderBottom: '1px solid #eee' }}>
                                 <td style={{ padding: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <img src={hotelImages[index % hotelImages.length]} alt={property.name} style={{ width: '50px', height: '50px', borderRadius: '5px', objectFit: 'cover' }} />
+                                    <img src={property.image_url || hotelImages[index % hotelImages.length]} alt={property.name} style={{ width: '50px', height: '50px', borderRadius: '5px', objectFit: 'cover' }} />
                                     <span>{property.name}</span>
                                 </td>
                                 <td data-label="Location" style={{ padding: '15px' }}>{property.location}</td>
-                                <td data-label="Status" style={{ padding: '15px' }}>
-                                    <span style={{
-                                        padding: '5px 10px',
-                                        borderRadius: '15px',
-                                        backgroundColor: property.status === 'Published' ? '#e6f7e6' : '#fff3cd',
-                                        color: property.status === 'Published' ? '#28a745' : '#856404',
-                                        fontSize: '12px'
-                                    }}>
-                                        {property.status}
-                                    </span>
-                                </td>
-                                <td data-label="Price (MRU)" style={{ padding: '15px' }}>{property.price}</td>
+                                <td data-label="Rating" style={{ padding: '15px' }}>{property.rating}</td>
                                 <td data-label="Actions" style={{ padding: '15px' }}>
                                     <button
                                         onClick={() => handleEditClick(property.id)}
@@ -199,7 +227,7 @@ const DashboardProperties = () => {
                                     >
                                         Edit
                                     </button>
-                                    <button className="btn-danger">Delete</button>
+                                    <button className="btn-danger" onClick={() => handleDeleteClick(property.id)}>Delete</button>
                                 </td>
                             </tr>
                         ))}
