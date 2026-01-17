@@ -5,6 +5,7 @@ from app.models.booking import Booking
 from app.models.payment import Payment
 from app.models.room import Room
 from app.models.user import User
+from app.utils.helpers import update_db_dump
 from datetime import datetime
 
 booking_bp = Blueprint('bookings', __name__, url_prefix='/api/bookings')
@@ -73,6 +74,9 @@ def create_booking():
     
     db.session.add(booking)
     db.session.commit()
+    
+    # Synchroniser le fichier SQL
+    update_db_dump()
     
     return jsonify({
         'message': 'Réservation créée',
@@ -146,6 +150,9 @@ def cancel_booking(booking_id):
         booking.payment.status = 'refunded'
     
     db.session.commit()
+    
+    # Synchroniser le fichier SQL
+    update_db_dump()
     
     return jsonify({
         'message': 'Réservation annulée',
@@ -221,6 +228,9 @@ def process_payment(booking_id):
     booking.status = 'confirmed'
     
     db.session.commit()
+    
+    # Synchroniser le fichier SQL
+    update_db_dump()
     
     return jsonify({
         'message': 'Paiement effectué',

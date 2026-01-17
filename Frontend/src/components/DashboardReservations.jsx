@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { getUserBookings } from '../services/bookingService';
+import { getUserBookings, getAllBookings } from '../services/bookingService';
 import '../styles/components/dashboardReservations.css';
 
 const DashboardReservations = () => {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
         async function fetchBookings() {
             try {
-                const data = await getUserBookings();
+                const storedUser = localStorage.getItem('user');
+                const user = storedUser ? JSON.parse(storedUser) : null;
+                const adminStatus = user?.role === 'admin';
+                setIsAdmin(adminStatus);
+
+                const data = adminStatus ? await getAllBookings() : await getUserBookings();
+
                 if (data.bookings) {
                     setBookings(data.bookings);
                 }
@@ -48,9 +55,10 @@ const DashboardReservations = () => {
                         <thead>
                             <tr>
                                 <th>Référence</th>
+                                {isAdmin && <th>Client</th>}
                                 <th>Dates</th>
                                 <th>Hôtel/Chambre</th>
-                                <th>Total (Total)</th>
+                                <th>Total</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -58,6 +66,7 @@ const DashboardReservations = () => {
                             {bookings.map(res => (
                                 <tr key={res.id}>
                                     <td data-label="ID">#{res.booking_reference}</td>
+                                    {isAdmin && <td data-label="Client">{res.user?.email || "Inconnu"}</td>}
                                     <td data-label="Dates">
                                         {new Date(res.check_in_date).toLocaleDateString()} - {new Date(res.check_out_date).toLocaleDateString()}
                                     </td>

@@ -1,207 +1,209 @@
 -- ============================================================
--- BASE DE DONNÉES BOOKING - À coller dans phpMyAdmin
+-- BASE DE DONNÉES BOOKING - STRUCTURE ET DONNÉES (AUTO-SYNC)
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS booking_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE booking_system;
 
--- Table utilisateurs
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(120) NOT NULL UNIQUE,
-    password_hash VARCHAR(256) NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    phone VARCHAR(20),
-    role ENUM('client', 'admin', 'manager') DEFAULT 'client',
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+SET FOREIGN_KEY_CHECKS = 0;
 
--- Table types de chambres
-CREATE TABLE room_types (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE,
-    description TEXT,
-    base_price DECIMAL(10, 2) NOT NULL,
-    max_occupancy INT DEFAULT 2
-);
+DROP TABLE IF EXISTS `alembic_version`;
+CREATE TABLE `alembic_version` (
+  `version_num` varchar(32) NOT NULL,
+  PRIMARY KEY (`version_num`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `alembic_version` WRITE;
+INSERT INTO `alembic_version` VALUES ('50cfbab86f53');
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `amenities`;
+CREATE TABLE `amenities` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `icon` varchar(50) DEFAULT NULL,
+  `description` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `amenities` WRITE;
+INSERT INTO `amenities` VALUES (41,'WiFi Gratuit','fa-wifi',NULL),(42,'Climatisation','fa-snowflake',NULL),(43,'TV Écran Plat','fa-tv',NULL),(44,'Petit-déjeuner inclus','fa-mug-hot',NULL),(45,'Vue sur mer','fa-water',NULL),(46,'Coffre-fort','fa-vault',NULL),(47,'Minibar','fa-wine-bottle',NULL),(48,'Service de chambre','fa-bell-concierge',NULL);
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `bookings`;
+CREATE TABLE `bookings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `booking_reference` varchar(20) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `check_in_date` date NOT NULL,
+  `check_out_date` date NOT NULL,
+  `num_guests` int(11) DEFAULT NULL,
+  `total_price` float NOT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  `special_requests` text DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_bookings_booking_reference` (`booking_reference`),
+  KEY `room_id` (`room_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`),
+  CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `bookings` WRITE;
+INSERT INTO `bookings` VALUES (1,'BK20260116FDE453',10,15,'2026-01-17','2026-01-18',1,75,'pending',NULL,'2026-01-16 22:53:49','2026-01-16 22:53:49'),(2,'BK20260116D5663C',5,9,'2026-04-01','2026-04-05',1,480,'pending',NULL,'2026-01-16 22:55:45','2026-01-16 22:55:45'),(3,'BK202601177CA818',26,45,'2026-01-17','2026-01-18',1,115,'pending',NULL,'2026-01-17 21:11:40','2026-01-17 21:11:40'),(4,'BK20260117AD516A',26,46,'2026-01-17','2026-01-18',1,85,'pending',NULL,'2026-01-17 21:19:05','2026-01-17 21:19:05'),(5,'BK202601179419FC',26,44,'2026-01-17','2026-01-25',1,760,'pending',NULL,'2026-01-17 21:33:11','2026-01-17 21:33:11');
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `hotels`;
+CREATE TABLE `hotels` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `location` varchar(100) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `image_url` varchar(500) DEFAULT NULL,
+  `rating` float DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `hotels` WRITE;
+INSERT INTO `hotels` VALUES (22,'Hotel Azalai','Nouakchott','L\'hôtel Azalaï Nouakchott est situé en plein centre-ville...','https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',0,'2026-01-17 18:21:31'),(23,'Hotel Monotel','Nouakchott','Monotel Dar El Barka offre un cadre luxueux...','https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',4.2,'2026-01-17 18:21:31'),(24,'Hotel Tfeila','Nouadhibou','Hôtel historique avec vue sur la mer...','https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',4,'2026-01-17 18:21:31'),(25,'Hotel Sahara','Atar','Au cœur du désert, le confort moderne...','https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800',4.3,'2026-01-17 18:21:31');
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `messages`;
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) DEFAULT NULL,
+  `subject` varchar(200) NOT NULL,
+  `content` text NOT NULL,
+  `is_read` tinyint(1) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `receiver_id` (`receiver_id`),
+  KEY `sender_id` (`sender_id`),
+  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `messages` WRITE;
+INSERT INTO `messages` VALUES (1,7,5,'Question sur ma réservation','Bonjour, j\'aimerais savoir si le petit déjeuner est inclus.',1,'2026-01-16 21:52:21'),(2,5,7,'Re: Question sur ma réservation','Bonjour, oui le petit déjeuner continental est inclus dans votre offre.',1,'2026-01-16 21:52:21'),(3,7,NULL,'Problème technique','Je n\'arrive pas à modifier mes dates de séjour sur le site.',1,'2026-01-16 21:52:21'),(4,6,7,'Re: Question sur ma réservation','jf',1,'2026-01-17 18:02:08'),(5,6,7,'Re: Question sur ma réservation','bienvenue',1,'2026-01-17 18:02:26'),(6,26,NULL,'bienvenue','bienvenue',1,'2026-01-17 21:17:20'),(7,26,NULL,'Re: bienvenue','bienvenue',1,'2026-01-17 21:17:38');
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `payments`;
+CREATE TABLE `payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `booking_id` int(11) NOT NULL,
+  `amount` float NOT NULL,
+  `currency` varchar(3) DEFAULT NULL,
+  `payment_method` varchar(50) DEFAULT NULL,
+  `transaction_id` varchar(100) DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  `paid_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `booking_id` (`booking_id`),
+  UNIQUE KEY `transaction_id` (`transaction_id`),
+  CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `payments` WRITE;
+INSERT INTO `payments` VALUES (1,1,75,'EUR','credit_card','TXN_BK20260116FDE453','completed','2026-01-17 00:37:08','2026-01-17 00:37:08'),(2,2,480,'EUR','credit_card','TXN_BK20260116D5663C','completed','2026-01-17 00:37:08','2026-01-17 00:37:08');
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `reviews`;
+CREATE TABLE `reviews` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `rating` int(11) NOT NULL,
+  `comment` text DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `room_id` (`room_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`),
+  CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `reviews` WRITE;
+INSERT INTO `reviews` VALUES (1,5,9,5,'Excellent séjour, chambre magnifique !',1,'2026-01-17 00:37:08','2026-01-17 00:37:08'),(2,6,10,4,'Très bien, mais un peu bruyant.',1,'2026-01-16 00:37:08','2026-01-17 00:37:08'),(3,7,11,3,'Moyen, le service pourrait être amélioré.',0,'2026-01-15 00:37:08','2026-01-17 00:37:08');
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `room_amenities`;
+CREATE TABLE `room_amenities` (
+  `room_id` int(11) NOT NULL,
+  `amenity_id` int(11) NOT NULL,
+  PRIMARY KEY (`room_id`,`amenity_id`),
+  KEY `amenity_id` (`amenity_id`),
+  CONSTRAINT `room_amenities_ibfk_1` FOREIGN KEY (`amenity_id`) REFERENCES `amenities` (`id`),
+  CONSTRAINT `room_amenities_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `room_amenities` WRITE;
+INSERT INTO `room_amenities` VALUES (41,41),(41,42),(41,44),(41,45),(41,46),(41,48),(42,41),(42,42),(42,43),(42,45),(43,41),(43,42),(43,43),(43,45),(43,46),(43,47),(44,41),(44,42),(44,44),(44,46),(44,47),(45,43),(45,45),(45,47),(45,48),(46,41),(46,43),(46,44),(46,46),(46,48),(47,41),(47,43),(47,46),(47,48),(48,41),(48,42),(48,43),(48,45),(48,47);
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `room_images`;
+CREATE TABLE `room_images` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_id` int(11) NOT NULL,
+  `image_url` varchar(500) NOT NULL,
+  `caption` varchar(200) DEFAULT NULL,
+  `is_primary` tinyint(1) DEFAULT NULL,
+  `display_order` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `room_id` (`room_id`),
+  CONSTRAINT `room_images_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `room_images` WRITE;
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `room_types`;
+CREATE TABLE `room_types` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `base_price` float NOT NULL,
+  `max_occupancy` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `room_types` WRITE;
+INSERT INTO `room_types` VALUES (6,'Standard',NULL,50,2);
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `rooms`;
+CREATE TABLE `rooms` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_number` varchar(10) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `room_type_id` int(11) NOT NULL,
+  `hotel_id` int(11) DEFAULT NULL,
+  `price_per_night` float NOT NULL,
+  `floor` int(11) DEFAULT NULL,
+  `size_sqm` float DEFAULT NULL,
+  `bed_type` varchar(50) DEFAULT NULL,
+  `max_guests` int(11) DEFAULT NULL,
+  `is_available` tinyint(1) DEFAULT NULL,
+  `image_url` varchar(500) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `room_number` (`room_number`),
+  KEY `hotel_id` (`hotel_id`),
+  KEY `room_type_id` (`room_type_id`),
+  CONSTRAINT `rooms_ibfk_1` FOREIGN KEY (`hotel_id`) REFERENCES `hotels` (`id`),
+  CONSTRAINT `rooms_ibfk_2` FOREIGN KEY (`room_type_id`) REFERENCES `room_types` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `rooms` WRITE;
+INSERT INTO `rooms` VALUES (41,'R-39384','Chambre Standard','Belle chambre au Hotel Azalai',6,22,120,NULL,NULL,NULL,2,1,'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800','2026-01-17 18:21:31','2026-01-17 18:21:31'),(42,'R-67195','Suite Junior','Belle chambre au Hotel Azalai',6,22,180,NULL,NULL,NULL,2,1,'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800','2026-01-17 18:21:31','2026-01-17 18:21:31'),(43,'R-39983','Suite Présidentielle','Belle chambre au Hotel Azalai',6,22,350,NULL,NULL,NULL,2,1,'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800','2026-01-17 18:21:31','2026-01-17 18:21:31'),(44,'R-55148','Chambre Double','Belle chambre au Hotel Monotel',6,23,95,NULL,NULL,NULL,2,1,'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800','2026-01-17 18:21:31','2026-01-17 18:21:31'),(45,'R-54374','Chambre Vue Piscine','Belle chambre au Hotel Monotel',6,23,115,NULL,NULL,NULL,2,1,'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800','2026-01-17 18:21:31','2026-01-17 18:21:31'),(46,'R-72581','Chambre Classique','Belle chambre au Hotel Tfeila',6,24,85,NULL,NULL,NULL,2,1,'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800','2026-01-17 18:21:31','2026-01-17 18:21:31'),(47,'R-71298','Bungalow','Belle chambre au Hotel Sahara',6,25,75,NULL,NULL,NULL,2,1,'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800','2026-01-17 18:21:31','2026-01-17 18:21:31'),(48,'R-84947','Tente de Luxe','Belle chambre au Hotel Sahara',6,25,90,NULL,NULL,NULL,2,1,'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800','2026-01-17 18:21:31','2026-01-17 18:21:31');
+UNLOCK TABLES;
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(120) NOT NULL,
+  `password_hash` varchar(256) NOT NULL,
+  `first_name` varchar(50) NOT NULL,
+  `last_name` varchar(50) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `role` varchar(20) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_users_email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+LOCK TABLES `users` WRITE;
+INSERT INTO `users` VALUES (25,'admin@hotel.com','scrypt:32768:8:1$QyvP5k3QrMZAhufU$2ac0d4c282f81aaf804182c5aee8b4653c776d46fb80a1ee5d23c85ca278b150aa5db6f637d714091f7cc39d83fe0f90a9b2a7489720a8c1b78888e36f0b847f','Admin','System','+222 12 34 56 78','admin',1,'2026-01-17 18:21:31','2026-01-17 18:21:31'),(26,'24102@supnum.mr','scrypt:32768:8:1$wLgkKBqlHlyfWJdF$044736ccccce2a52867ae8fd86083c6580d82c3ea6aebdca9bab6ef8286f8343482d74dfeee0c774851774313a3c89e958d4bbdbe1fc839047d722c1a2cec0f4','Abdurrahmane','User','+222 20103014','client',1,'2026-01-17 18:21:31','2026-01-17 21:32:39'),(27,'manager@hotel.com','scrypt:32768:8:1$Ekm7tZXzX9VAxypl$37057549659509d52e77051d174c9b5ebc5d357ceb44c7fbfa698ad1872d83b7eacbd662861804ccc1fbf1054c9fb3ac59d1b11b5b25159b64f35cb004096eed','Manager','Hotel','+222 22 33 44 55','manager',1,'2026-01-17 18:21:31','2026-01-17 18:21:31'),(28,'client@test.com','scrypt:32768:8:1$VGmpERsTzhvkANaa$4ed138f6ae3bc73ffd21591543d8923f803d3deed4ec28dacf8315c7c22b4ef4c3ff4258a5c23f061989bfea414e8752d84867e7848aaa5d22829785735c3f93','Jean','Dupont','+222 33 44 55 66','client',1,'2026-01-17 18:21:31','2026-01-17 18:21:31'),(29,'24070@supnum.mr','scrypt:32768:8:1$xy05hm1mKdqFgpie$82b50de1feda91dd85fe8c1aca56b5bd970d8c25a858b1cc25db4ebad58be75b41b2b500b120b760dcc11370ffe803b47666ddce0af0db08d2733df69b9dbe12','med mahmoud','sak','20103014','client',1,'2026-01-17 20:20:00','2026-01-17 20:21:30');
+UNLOCK TABLES;
 
--- Table équipements
-CREATE TABLE amenities (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE,
-    icon VARCHAR(50),
-    description VARCHAR(200)
-);
-
--- Table chambres
-CREATE TABLE rooms (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    room_number VARCHAR(10) NOT NULL UNIQUE,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    room_type_id INT NOT NULL,
-    price_per_night DECIMAL(10, 2) NOT NULL,
-    floor INT,
-    size_sqm DECIMAL(6, 2),
-    bed_type ENUM('single', 'double', 'king', 'twin') DEFAULT 'double',
-    max_guests INT DEFAULT 2,
-    is_available BOOLEAN DEFAULT TRUE,
-    image_url VARCHAR(500),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (room_type_id) REFERENCES room_types(id)
-);
-
--- Table équipements des chambres
-CREATE TABLE room_amenities (
-    room_id INT NOT NULL,
-    amenity_id INT NOT NULL,
-    PRIMARY KEY (room_id, amenity_id),
-    FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
-    FOREIGN KEY (amenity_id) REFERENCES amenities(id) ON DELETE CASCADE
-);
-
--- Table images des chambres
-CREATE TABLE room_images (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    room_id INT NOT NULL,
-    image_url VARCHAR(500) NOT NULL,
-    caption VARCHAR(200),
-    is_primary BOOLEAN DEFAULT FALSE,
-    display_order INT DEFAULT 0,
-    FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
-);
-
--- Table réservations
-CREATE TABLE bookings (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    booking_reference VARCHAR(20) NOT NULL UNIQUE,
-    user_id INT NOT NULL,
-    room_id INT NOT NULL,
-    check_in_date DATE NOT NULL,
-    check_out_date DATE NOT NULL,
-    num_guests INT DEFAULT 1,
-    total_price DECIMAL(10, 2) NOT NULL,
-    status ENUM('pending', 'confirmed', 'cancelled', 'completed') DEFAULT 'pending',
-    special_requests TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (room_id) REFERENCES rooms(id)
-);
-
--- Table paiements
-CREATE TABLE payments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    booking_id INT NOT NULL UNIQUE,
-    amount DECIMAL(10, 2) NOT NULL,
-    currency VARCHAR(3) DEFAULT 'EUR',
-    payment_method ENUM('credit_card', 'paypal', 'bank_transfer') DEFAULT 'credit_card',
-    transaction_id VARCHAR(100) UNIQUE,
-    status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending',
-    paid_at TIMESTAMP NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
-);
-
--- Table avis
-CREATE TABLE reviews (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    room_id INT NOT NULL,
-    rating TINYINT NOT NULL,
-    comment TEXT,
-    is_verified BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
-);
-
--- ============================================================
--- DONNÉES D'EXEMPLE
--- ============================================================
-
--- Utilisateurs
-INSERT INTO users (email, password_hash, first_name, last_name, phone, role) VALUES
-('admin@hotel.com', 'hash_admin', 'Admin', 'System', '+33123456789', 'admin'),
-('manager@hotel.com', 'hash_manager', 'Marie', 'Dupont', '+33198765432', 'manager'),
-('jean.martin@email.com', 'hash_client', 'Jean', 'Martin', '+33612345678', 'client'),
-('sophie.bernard@email.com', 'hash_client', 'Sophie', 'Bernard', '+33687654321', 'client'),
-('pierre.durand@email.com', 'hash_client', 'Pierre', 'Durand', '+33611223344', 'client');
-
--- Types de chambres
-INSERT INTO room_types (name, description, base_price, max_occupancy) VALUES
-('Standard', 'Chambre confortable', 89.00, 2),
-('Superieure', 'Chambre spacieuse avec vue', 129.00, 2),
-('Deluxe', 'Chambre luxueuse avec salon', 199.00, 3),
-('Suite', 'Suite avec terrasse et jacuzzi', 349.00, 4),
-('Familiale', 'Grande chambre pour familles', 159.00, 5);
-
--- Équipements
-INSERT INTO amenities (name, icon, description) VALUES
-('WiFi Gratuit', 'fa-wifi', 'Connexion WiFi haut debit'),
-('Climatisation', 'fa-snowflake', 'Climatisation reversible'),
-('TV Ecran Plat', 'fa-tv', 'TV 55 pouces avec Netflix'),
-('Mini-bar', 'fa-glass-martini', 'Mini-bar garni'),
-('Coffre-fort', 'fa-lock', 'Coffre-fort electronique'),
-('Seche-cheveux', 'fa-wind', 'Seche-cheveux professionnel'),
-('Room Service 24h', 'fa-concierge-bell', 'Service en chambre 24/7'),
-('Vue Mer', 'fa-water', 'Vue panoramique sur la mer'),
-('Balcon', 'fa-door-open', 'Balcon prive'),
-('Baignoire', 'fa-bath', 'Baignoire balneo'),
-('Machine a cafe', 'fa-coffee', 'Machine Nespresso'),
-('Peignoirs', 'fa-tshirt', 'Peignoirs et chaussons');
-
--- Chambres
-INSERT INTO rooms (room_number, name, description, room_type_id, price_per_night, floor, size_sqm, bed_type, max_guests, image_url) VALUES
-('101', 'Chambre Standard Confort', 'Chambre agreable avec lit double', 1, 89.00, 1, 22.00, 'double', 2, 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800'),
-('102', 'Chambre Standard Twin', 'Chambre avec deux lits simples', 1, 89.00, 1, 24.00, 'twin', 2, 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800'),
-('201', 'Chambre Superieure Vue Jardin', 'Chambre spacieuse avec vue jardin', 2, 129.00, 2, 30.00, 'king', 2, 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800'),
-('202', 'Chambre Superieure Vue Mer', 'Chambre avec vue mer et balcon', 2, 149.00, 2, 32.00, 'king', 2, 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800'),
-('301', 'Chambre Deluxe Prestige', 'Chambre de luxe avec salon', 3, 199.00, 3, 45.00, 'king', 3, 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800'),
-('302', 'Chambre Deluxe Panoramique', 'Vue panoramique a 180 degres', 3, 219.00, 3, 50.00, 'king', 3, 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800'),
-('401', 'Suite Royale', 'Suite avec terrasse et jacuzzi', 4, 349.00, 4, 75.00, 'king', 4, 'https://images.unsplash.com/photo-1591088398332-8a7791972843?w=800'),
-('402', 'Suite Presidentielle', 'Notre plus belle suite', 4, 449.00, 4, 100.00, 'king', 4, 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=800'),
-('501', 'Chambre Familiale Cocon', 'Grande chambre pour familles', 5, 159.00, 5, 40.00, 'king', 5, 'https://images.unsplash.com/photo-1566195992011-5f6b21e539aa?w=800'),
-('502', 'Chambre Familiale Communicante', 'Deux chambres communicantes', 5, 189.00, 5, 55.00, 'double', 6, 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800');
-
--- Équipements des chambres
-INSERT INTO room_amenities (room_id, amenity_id) VALUES
-(1,1),(1,2),(1,3),(1,5),(1,6),
-(2,1),(2,2),(2,3),(2,5),(2,6),
-(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(3,11),
-(4,1),(4,2),(4,3),(4,4),(4,5),(4,6),(4,11),
-(5,1),(5,2),(5,3),(5,4),(5,5),(5,6),(5,7),(5,9),(5,11),
-(6,1),(6,2),(6,3),(6,4),(6,5),(6,6),(6,7),(6,9),(6,11),
-(7,1),(7,2),(7,3),(7,4),(7,5),(7,6),(7,7),(7,8),(7,9),(7,10),(7,11),(7,12),
-(8,1),(8,2),(8,3),(8,4),(8,5),(8,6),(8,7),(8,8),(8,9),(8,10),(8,11),(8,12),
-(9,1),(9,2),(9,3),(9,4),(9,5),(9,6),
-(10,1),(10,2),(10,3),(10,4),(10,5),(10,6);
-
--- Réservations
-INSERT INTO bookings (booking_reference, user_id, room_id, check_in_date, check_out_date, num_guests, total_price, status, special_requests) VALUES
-('BK20260106A1B2C3', 3, 1, '2026-01-06', '2026-01-09', 2, 267.00, 'completed', 'Arrivee tardive vers 22h'),
-('BK20260114D4E5F6', 4, 5, '2026-01-14', '2026-01-19', 2, 995.00, 'confirmed', 'Champagne anniversaire'),
-('BK20260131G7H8I9', 5, 7, '2026-01-31', '2026-02-03', 3, 1047.00, 'confirmed', 'Vue mer souhaitee'),
-('BK20260215J0K1L2', 3, 3, '2026-02-15', '2026-02-17', 2, 258.00, 'pending', NULL),
-('BK20260121M3N4O5', 4, 9, '2026-01-21', '2026-01-24', 4, 477.00, 'cancelled', NULL);
-
--- Paiements
-INSERT INTO payments (booking_id, amount, currency, payment_method, transaction_id, status, paid_at) VALUES
-(1, 267.00, 'EUR', 'credit_card', 'TXN_001', 'completed', '2026-01-04 10:00:00'),
-(2, 995.00, 'EUR', 'credit_card', 'TXN_002', 'completed', '2026-01-11 14:30:00'),
-(3, 1047.00, 'EUR', 'paypal', 'TXN_003', 'completed', '2026-01-15 09:15:00'),
-(4, 258.00, 'EUR', 'credit_card', 'TXN_004', 'pending', NULL),
-(5, 477.00, 'EUR', 'credit_card', 'TXN_005', 'refunded', '2026-01-13 16:00:00');
-
--- Avis
-INSERT INTO reviews (user_id, room_id, rating, comment, is_verified) VALUES
-(3, 1, 4, 'Tres bonne chambre, propre et confortable.', TRUE),
-(4, 5, 5, 'Sejour exceptionnel ! Chambre magnifique.', TRUE),
-(5, 3, 5, 'Chambre spacieuse et tres bien equipee.', TRUE),
-(3, 7, 5, 'La suite royale merite son nom !', TRUE),
-(4, 9, 4, 'Parfait pour les familles !', TRUE);
+SET FOREIGN_KEY_CHECKS = 1;

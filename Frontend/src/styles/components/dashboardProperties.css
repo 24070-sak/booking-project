@@ -141,61 +141,13 @@
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
-.btn-secondary {
-    background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(113, 128, 150, 0.2);
-}
-
-.btn-secondary:hover {
-    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(113, 128, 150, 0.3);
-}
-
-.btn-danger {
-    color: #e53e3e;
-    background: linear-gradient(135deg, rgba(229, 62, 62, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-danger:hover {
-    background: linear-gradient(135deg, rgba(229, 62, 62, 0.15) 0%, rgba(220, 53, 69, 0.1) 100%);
-    color: #c53030;
-    transform: translateX(3px);
-}
-
-.btn-edit {
-    color: #667eea;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    margin-right: 10px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-edit:hover {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.1) 100%);
-    color: #5568d3;
-    transform: translateX(3px);
-}
-
 /* Properties Table Enhancements */
 .properties-list {
+    margin-top: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
     animation: slideUp 0.4s ease-out;
 }
 
@@ -212,19 +164,33 @@
 }
 
 .properties-list table {
+    width: 100%;
+    border-collapse: separate;
     border-spacing: 0;
 }
 
 .properties-list thead {
-    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    background: #f8fafc;
+    border-bottom: 2px solid #edf2f7;
 }
 
 .properties-list th {
-    font-weight: 600;
-    color: #667eea;
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 700;
+    color: #4a5568;
     text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.5px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    border-bottom: 2px solid #edf2f7;
+}
+
+.properties-list td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+    color: #2d3748;
+    font-size: 14px;
 }
 
 .properties-list tbody tr {
@@ -232,20 +198,73 @@
 }
 
 .properties-list tbody tr:hover {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.02) 100%);
-    transform: scale(1.01);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background: #fdfdfd;
+}
+
+/* Image alignment in table */
+.properties-list td:first-child {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 250px;
 }
 
 .properties-list img {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid #e2e8f0;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
 }
 
-.properties-list img:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border-color: #667eea;
+/* Actions column styling */
+.properties-list td:last-child {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Individual Action Buttons */
+.btn-secondary,
+.btn-edit,
+.btn-danger {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+}
+
+.btn-secondary {
+    background: #4a5568;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #2d3748;
+}
+
+.btn-edit {
+    background: #ebf4ff;
+    color: #3182ce;
+}
+
+.btn-edit:hover {
+    background: #bee3f8;
+}
+
+.btn-danger {
+    background: #fff5f5;
+    color: #e53e3e;
+}
+
+.btn-danger:hover {
+    background: #fed7d7;
 }
 
 /* ============================================

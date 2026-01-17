@@ -44,3 +44,23 @@ export async function getUserBookings() {
 
     return response.json();
 }
+
+export async function getAllBookings() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        throw new Error("Non connecté");
+    }
+
+    const response = await fetch(`${API_URL}/bookings/admin/all`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error("Impossible de récupérer toutes les réservations");
+    }
+
+    return response.json();
+}

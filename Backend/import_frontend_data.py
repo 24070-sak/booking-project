@@ -65,6 +65,17 @@ def import_data():
         )
         admin.set_password('admin123')
         db.session.add(admin)
+
+        # User's specific account
+        user_account = User(
+            email='24102@supnum.mr',
+            first_name='Abdurrahmane',
+            last_name='User',
+            role='client',
+            phone='+222 00 00 00 00'
+        )
+        user_account.set_password('1234')
+        db.session.add(user_account)
         
         # Manager
         manager = User(

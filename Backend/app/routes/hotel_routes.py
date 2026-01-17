@@ -3,6 +3,7 @@ from app.models.hotel import Hotel
 from app.models.room import Room
 from app.extensions import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.utils.helpers import admin_required, update_db_dump
 
 hotel_bp = Blueprint('hotels', __name__, url_prefix='/api/hotels')
 
@@ -17,8 +18,9 @@ def get_hotels():
 
 @hotel_bp.route('', methods=['POST'])
 @jwt_required()
+@admin_required()
 def create_hotel():
-    """Créer un nouvel hôtel (Admin seulement - TODO: check role)"""
+    """Créer un nouvel hôtel (Admin seulement)"""
     data = request.get_json()
     
     # Validation basique
@@ -36,6 +38,9 @@ def create_hotel():
     db.session.add(new_hotel)
     db.session.commit()
     
+    # Synchroniser le fichier SQL
+    update_db_dump()
+    
     return jsonify({'message': 'Hôtel créé avec succès', 'hotel': new_hotel.to_dict()}), 201
 
 @hotel_bp.route('/<int:hotel_id>', methods=['GET'])
@@ -49,6 +54,7 @@ def get_hotel_details(hotel_id):
 
 @hotel_bp.route('/<int:hotel_id>', methods=['PUT'])
 @jwt_required()
+@admin_required()
 def update_hotel(hotel_id):
     """Mettre à jour un hôtel"""
     hotel = Hotel.query.get(hotel_id)
@@ -70,10 +76,14 @@ def update_hotel(hotel_id):
         
     db.session.commit()
     
+    # Synchroniser le fichier SQL
+    update_db_dump()
+    
     return jsonify({'message': 'Hôtel mis à jour', 'hotel': hotel.to_dict()}), 200
 
 @hotel_bp.route('/<int:hotel_id>', methods=['DELETE'])
 @jwt_required()
+@admin_required()
 def delete_hotel(hotel_id):
     """Supprimer un hôtel"""
     hotel = Hotel.query.get(hotel_id)
@@ -82,6 +92,9 @@ def delete_hotel(hotel_id):
         
     db.session.delete(hotel)
     db.session.commit()
+    
+    # Synchroniser le fichier SQL
+    update_db_dump()
     
     return jsonify({'message': 'Hôtel supprimé'}), 200
 

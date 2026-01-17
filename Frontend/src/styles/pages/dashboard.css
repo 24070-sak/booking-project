@@ -98,13 +98,13 @@ body {
 }
 
 .logo-container {
-  width: 110px;
-  height: 110px;
+  width: 90px;
+  height: 90px;
   background: rgba(255, 255, 255, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 30px auto 40px;
+  margin: 20px auto 30px;
   border-radius: var(--border-radius-full);
   backdrop-filter: blur(10px);
   border: 3px solid rgba(255, 255, 255, 0.3);
@@ -121,7 +121,7 @@ body {
 }
 
 .logo-container .logo {
-  width: 75%;
+  width: 70%;
   height: auto;
   object-fit: contain;
   filter: none;
@@ -132,8 +132,8 @@ body {
   flex-direction: column;
   width: 100%;
   flex: 1;
-  gap: 6px;
-  padding: 0 15px 20px 15px;
+  gap: 4px;
+  padding: 0 15px 15px 15px;
   box-sizing: border-box;
   position: relative;
   z-index: 1;
@@ -141,14 +141,14 @@ body {
 
 .dashboard-labels .label {
   cursor: pointer;
-  padding: 14px 18px;
+  padding: 12px 18px;
   text-align: left;
   transition: var(--transition-fast);
   color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 15px;
+  font-size: 14px;
   border-radius: var(--border-radius-sm);
   font-weight: 500;
   position: relative;
@@ -195,9 +195,9 @@ body {
 
 /* Icon styling for navigation items */
 .dashboard-labels .label .icon {
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
   opacity: 0.8;
   transition: var(--transition-fast);
   fill: currentColor;
@@ -213,8 +213,8 @@ body {
 #logout {
   cursor: pointer;
   font-weight: 600;
-  margin: 20px 15px 30px 15px;
-  padding: 14px 20px;
+  margin: 10px 15px 20px 15px;
+  padding: 10px 15px;
   text-align: center;
   color: var(--text-white);
   text-decoration: none;
@@ -224,11 +224,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   z-index: 1;
   overflow: hidden;
+  font-size: 14px;
 }
 
 #logout::before {
@@ -246,8 +247,8 @@ body {
 }
 
 #logout:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3);
   border-color: transparent;
 }
 
@@ -311,196 +312,121 @@ body {
   .dashboard {
     flex-direction: column;
     max-width: 100%;
-    margin: 10px;
-    width: calc(100% - 20px);
-    min-height: auto;
-    border-radius: var(--border-radius-md);
+    margin: 0;
+    /* Remove margin on mobile for full width */
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .dashboard-header {
     width: 100%;
     min-height: auto;
-    height: auto;
-    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
-    padding-bottom: 20px;
+    height: 60px;
+    /* Fixed height for top header */
+    background: var(--sidebar-bg);
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-radius: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .dashboard-header::before {
+    display: none;
+    /* Simplify header */
   }
 
   .logo-container {
-    width: 80px;
-    height: 80px;
-    margin: 20px auto 25px;
-  }
-
-  .logo-container .logo {
-    width: 70%;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    background: white;
+    padding: 2px;
   }
 
   .dashboard-labels {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: white;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 0 15px 15px 15px;
-    justify-content: center;
+    padding: 0;
+    box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    z-index: 1000;
   }
 
   .dashboard-labels .label {
-    flex: 0 1 auto;
-    min-width: fit-content;
-    padding: 10px 14px;
-    font-size: 14px;
-    gap: 8px;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    gap: 4px;
+    border-radius: 0;
+    color: #a0aec0;
+    font-size: 10px;
+    text-align: center;
+    background: none !important;
+    /* Remove background highlights */
+    box-shadow: none !important;
+  }
+
+  .dashboard-labels .label::before {
+    display: none;
+  }
+
+  .dashboard-labels .label.selected {
+    color: var(--primary-color);
   }
 
   .dashboard-labels .label .icon {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
+    width: 22px;
+    height: 22px;
+    margin-bottom: 2px;
   }
 
   .dashboard-labels .label:hover {
-    transform: translateX(0) translateY(-2px);
+    transform: none;
+    padding-left: 5px;
   }
 
   #logout {
-    margin: 15px 15px 20px 15px;
-    padding: 12px 18px;
-    font-size: 15px;
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 13px;
+    background: rgba(255, 255, 255, 0.1);
+    height: 34px;
+    min-width: auto;
   }
 
   .dashboard-body {
-    border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
-    max-height: none;
     padding: 20px;
+    padding-bottom: 90px;
+    /* Space for bottom bar */
+    flex: 1;
+    border-radius: 0;
+    max-height: none;
   }
 }
 
 /* Mobile Phones (480px and below) */
 @media (max-width: 480px) {
-  .dashboard {
-    margin: 5px;
-    width: calc(100% - 10px);
-    border-radius: var(--border-radius-sm);
-  }
-
-  .dashboard-header {
-    border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
-  }
-
-  .logo-container {
-    width: 70px;
-    height: 70px;
-    margin: 15px auto 20px;
-  }
-
-  .dashboard-labels {
-    padding: 0 10px 10px 10px;
-    gap: 6px;
-  }
-
-  .dashboard-labels .label {
-    padding: 8px 12px;
-    font-size: 13px;
-    gap: 6px;
-    border-radius: 6px;
-  }
-
-  .dashboard-labels .label .icon {
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-  }
-
-  /* Hide text on very small screens, show only icons */
-  .dashboard-labels .label span:not(.icon) {
+  .dashboard-labels .label span {
     display: none;
-  }
-
-  /* Show icons only on mobile */
-  .dashboard-labels .label {
-    justify-content: center;
-    min-width: 45px;
-  }
-
-  #logout {
-    margin: 10px 10px 15px 10px;
-    padding: 10px 16px;
-    font-size: 14px;
-    gap: 8px;
-  }
-
-  .dashboard-body {
-    padding: 15px;
-    border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
-  }
-
-  /* Scrollbar for mobile */
-  .dashboard-body::-webkit-scrollbar {
-    width: 6px;
-  }
-}
-
-/* Extra Small Phones (360px and below) */
-@media (max-width: 360px) {
-  .dashboard {
-    margin: 3px;
-    width: calc(100% - 6px);
-  }
-
-  .logo-container {
-    width: 60px;
-    height: 60px;
-    margin: 12px auto 15px;
-  }
-
-  .dashboard-labels {
-    gap: 5px;
-  }
-
-  .dashboard-labels .label {
-    padding: 7px 10px;
-    font-size: 12px;
-    min-width: 42px;
+    /* Hide text on very small screens, keep only icons */
   }
 
   .dashboard-labels .label .icon {
-    width: 14px;
-    height: 14px;
-    min-width: 14px;
-  }
-
-  #logout {
-    margin: 8px;
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-
-  .dashboard-body {
-    padding: 12px;
-  }
-}
-
-/* Landscape Mode for Phones */
-@media (max-width: 768px) and (orientation: landscape) {
-  .dashboard-header {
-    flex-direction: row;
-    align-items: center;
-    padding: 15px;
-  }
-
-  .logo-container {
-    width: 60px;
-    height: 60px;
-    margin: 0 20px 0 0;
-  }
-
-  .dashboard-labels {
-    flex: 1;
-    padding: 0 15px;
-    justify-content: flex-start;
-  }
-
-  #logout {
-    margin: 0 0 0 15px;
-    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
   }
 }
