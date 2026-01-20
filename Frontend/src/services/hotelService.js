@@ -10,6 +10,21 @@ export async function getAllHotels() {
     return response.json();
 }
 
+export async function getMyHotels() {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/hotels/my`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error("Impossible de récupérer vos hôtels");
+    }
+
+    return response.json();
+}
+
 export async function getHotelById(id) {
     const response = await fetch(`${API_URL}/hotels/${id}`);
 

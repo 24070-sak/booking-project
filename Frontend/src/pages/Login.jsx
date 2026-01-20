@@ -35,13 +35,21 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.access_token);
 
-      // Rediriger vers le dashboard
-      navigate("/dashboard");
+      // Rediriger vers le dashboard ou l'accueil selon permissions
+      if (data.user.access_dashboard) {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+  const handleSocialLogin = (platform) => {
+    const backendUrl = "http://127.0.0.1:5000/api/auth";
+    window.location.href = `${backendUrl}/${platform.toLowerCase()}`;
   };
 
   return (
@@ -87,7 +95,7 @@ function Login() {
               <i className="fa-solid fa-lock"></i>
               <input
                 id="password"
-                type={showPsswd ? "text" : "password"}
+                type="text"
                 className="form-input"
                 placeholder="Mot de passe"
                 name="password"
@@ -115,12 +123,12 @@ function Login() {
         </div>
 
         <div className="social-login">
-          <div className="login-google">
+          <div className="login-google" onClick={() => handleSocialLogin('Google')} style={{ cursor: 'pointer' }}>
             <img src={google} alt="google icon" />
             <p>Se connecter avec google</p>
           </div>
 
-          <div className="login-facebook">
+          <div className="login-facebook" onClick={() => handleSocialLogin('Facebook')} style={{ cursor: 'pointer' }}>
             <img src={facebook} alt="facebook icon" />
             <p>Se connecter avec facebook</p>
           </div>

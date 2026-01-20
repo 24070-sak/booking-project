@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from app.extensions import db, migrate, bcrypt, jwt
+from app.extensions import db, migrate, bcrypt, jwt, oauth
 from app.config import config
 
 def create_app(config_name='development'):
@@ -18,6 +18,28 @@ def create_app(config_name='development'):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    oauth.init_app(app)
+    
+    # Configuration OAuth Providers
+    oauth.register(
+        name='google',
+        client_id=app.config['GOOGLE_CLIENT_ID'],
+        client_secret=app.config['GOOGLE_CLIENT_SECRET'],
+        server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+        client_kwargs={'scope': 'openid email profile'}
+    )
+    
+    oauth.register(
+        name='facebook',
+        client_id=app.config['FACEBOOK_CLIENT_ID'],
+        client_secret=app.config['FACEBOOK_CLIENT_SECRET'],
+        access_token_url='https://graph.facebook.com/oauth/access_token',
+        access_token_params=None,
+        authorize_url='https://www.facebook.com/dialog/oauth',
+        authorize_params=None,
+        api_base_url='https://graph.facebook.com/',
+        client_kwargs={'scope': 'email public_profile'}
+    )
     
     # Import des modèles
     from app.models import User, Room, RoomType, Amenity, RoomImage, Booking, Payment, Review

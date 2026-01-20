@@ -19,6 +19,7 @@ class Review(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'user_name': f"{self.user.first_name} {self.user.last_name}" if self.user else "Anonyme",
+            'user_picture': self.user.profile_picture if self.user else None,
             'room_id': self.room_id,
             'room_name': self.room.name if self.room else "Chambre inconnue",
             'hotel_name': self.room.hotel.name if self.room and self.room.hotel else "Hôtel inconnu",

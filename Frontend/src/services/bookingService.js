@@ -45,6 +45,26 @@ export async function getUserBookings() {
     return response.json();
 }
 
+export async function getOwnerBookings() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        throw new Error("Non connecté");
+    }
+
+    const response = await fetch(`${API_URL}/bookings/owner/all`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error("Impossible de récupérer les réservations des propriétés");
+    }
+
+    return response.json();
+}
+
 export async function getAllBookings() {
     const token = localStorage.getItem("token");
 

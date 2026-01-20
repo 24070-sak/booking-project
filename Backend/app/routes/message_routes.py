@@ -3,6 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models.message import Message
 from app.models.user import User
+from app.models.booking import Booking
+from app.models.room import Room
 
 message_bp = Blueprint('messages', __name__, url_prefix='/api/messages')
 
@@ -19,6 +21,26 @@ def get_messages():
     if user.role in ['admin', 'manager']:
         # Admin voit tout
         messages = Message.query.order_by(Message.created_at.desc()).all()
+    elif user.access_dashboard and user.hotels.count() > 0:
+        # Owner voit les messages des clients qui ont réservé ses hôtels
+        owned_hotel_ids = [h.id for h in user.hotels]
+        
+        # Get all users who booked the owner's hotels
+        guest_ids = db.session.query(Booking.user_id.distinct())\
+            .join(Room, Booking.room_id == Room.id)\
+            .filter(Room.hotel_id.in_(owned_hotel_ids))\
+            .all()
+        guest_ids = [gid[0] for gid in guest_ids]
+        
+        # Owner sees messages from/to these guests and their own messages
+        messages = Message.query.filter(
+            db.or_(
+                Message.sender_id.in_(guest_ids),
+                Message.receiver_id.in_(guest_ids),
+                Message.sender_id == user_id,
+                Message.receiver_id == user_id
+            )
+        ).order_by(Message.created_at.desc()).all()
     else:
         # Client voit ses messages (envoyés ou reçus)
         messages = Message.query.filter(

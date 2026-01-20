@@ -8,6 +8,10 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import HotelDetails from "./pages/HotelDetails";
 import RoomDetails from "./pages/RoomDetails";
+import SocialCallback from "./pages/SocialCallback";
+import ControlCenter from "./pages/ControlCenter";
+import Profile from "./pages/Profile";
+
 function App() {
   return (
     <>
@@ -21,10 +25,16 @@ function App() {
         <Route path="/verification" element={<VerificationPage />} />
         {/* Register page */}
         <Route path="/inscription" element={<Register />} />
+        {/* Social Callback page */}
+        <Route path="/social-callback" element={<SocialCallback />} />
         {/* Dashboard page */}
         <Route path="/dashboard" element={<Dashboard />} />
+        {/* Control Center page */}
+        <Route path="/control-center" element={<ControlCenter />} />
         {/* Settings page */}
         <Route path="/parametre" element={<Settings />} />
+        {/* Profile page */}
+        <Route path="/profile" element={<Profile />} />
 
         {/* Hotel Details page */}
         <Route path="/hotel/:id" element={<HotelDetails />} />

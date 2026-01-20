@@ -88,3 +88,9 @@ export async function getRoomTypes() {
     if (!response.ok) throw new Error("Impossible de récupérer les types de chambres");
     return response.json();
 }
+
+export async function getAmenities() {
+    const response = await fetch(`${API_URL}/rooms/amenities`);
+    if (!response.ok) throw new Error("Impossible de récupérer les équipements");
+    return response.json();
+}
