@@ -1,19 +1,46 @@
-/* Dashboard Properties - Modern Styles */
+/* Dashboard Properties - Official Professional Style */
+
+.dashboard-properties-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.dashboard-properties-content h2 {
+    color: #1a202c;
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    position: relative;
+    padding-bottom: 4px;
+}
+
+.dashboard-properties-content h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #2c5282 0%, #4299e1 100%);
+    border-radius: 2px;
+}
+
 
 /* Properties Form Card */
 .dashboard-properties-form {
-    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    background: linear-gradient(to bottom, #ffffff 0%, #f7fafc 100%);
     padding: 32px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08),
-        0 1px 3px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(102, 126, 234, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 32px;
+    transition: all 0.3s ease;
 }
 
 .dashboard-properties-form:hover {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
-        0 2px 8px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
 }
 
 .dashboard-properties-form .form-section {
@@ -24,40 +51,45 @@
 .dashboard-properties-form label {
     display: block;
     margin-bottom: 10px;
-    font-weight: 600;
-    color: #2d3748;
-    font-size: 14px;
-    letter-spacing: 0.3px;
+    font-weight: 700;
+    color: #2c5282;
+    font-size: 13px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    font-size: 12px;
-    color: #667eea;
 }
 
 /* Enhanced Input Fields */
 .dashboard-properties-form input[type="text"],
 .dashboard-properties-form input[type="number"],
 .dashboard-properties-form input[type="file"],
-.dashboard-properties-form select {
+.dashboard-properties-form select,
+.dashboard-properties-form textarea {
     width: 100%;
-    padding: 14px 16px;
+    padding: 12px 16px;
     border: 2px solid #e2e8f0;
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 15px;
     box-sizing: border-box;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
     background: white;
     color: #2d3748;
-    font-family: 'Inter', sans-serif;
+    font-family: inherit;
 }
 
 .dashboard-properties-form input[type="text"]:focus,
 .dashboard-properties-form input[type="number"]:focus,
-.dashboard-properties-form select:focus {
+.dashboard-properties-form select:focus,
+.dashboard-properties-form textarea:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1),
-        0 4px 12px rgba(102, 126, 234, 0.15);
+    border-color: #2c5282;
+    box-shadow: 0 0 0 3px rgba(44, 82, 130, 0.1);
     transform: translateY(-1px);
+}
+
+.dashboard-properties-form textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
 }
 
 .dashboard-properties-form input[type="file"] {
@@ -67,8 +99,8 @@
 }
 
 .dashboard-properties-form input[type="file"]:hover {
-    border-color: #667eea;
-    background: rgba(102, 126, 234, 0.02);
+    border-color: #2c5282;
+    background: #f7fafc;
 }
 
 /* Form Rows and Columns */
@@ -80,65 +112,53 @@
 
 .dashboard-properties-form .col {
     flex: 1;
+    min-width: 0;
 }
 
 .dashboard-properties-form .price-input-group {
     display: flex;
     align-items: center;
     gap: 16px;
+    flex-wrap: wrap;
 }
 
 .dashboard-properties-form small {
     display: inline-block;
     margin-left: 12px;
     padding: 6px 12px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 6px;
+    background: linear-gradient(135deg, #2c5282 0%, #2a4365 100%);
     color: white;
     font-size: 13px;
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 8px rgba(44, 82, 130, 0.3);
 }
 
 /* Modern Button Styles */
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2c5282 0%, #2a4365 100%);
     color: white;
-    padding: 14px 28px;
+    padding: 12px 28px;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 15px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.btn-primary:hover::before {
-    left: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(44, 82, 130, 0.3);
 }
 
 .btn-primary:hover {
+    background: linear-gradient(135deg, #2a4365 0%, #1a365d 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 16px rgba(44, 82, 130, 0.4);
 }
 
 .btn-primary:active {
     transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 2px 8px rgba(44, 82, 130, 0.3);
 }
 
 /* Properties Table Enhancements */
@@ -146,21 +166,9 @@
     margin-top: 25px;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    animation: slideUp 0.4s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    border: 1px solid #e2e8f0;
 }
 
 .properties-list table {
@@ -170,19 +178,19 @@
 }
 
 .properties-list thead {
-    background: #f8fafc;
-    border-bottom: 2px solid #edf2f7;
+    background: linear-gradient(to bottom, #f7fafc 0%, #edf2f7 100%);
+    border-bottom: 2px solid #e2e8f0;
 }
 
 .properties-list th {
     padding: 16px 20px;
     text-align: left;
     font-weight: 700;
-    color: #4a5568;
+    color: #2c5282;
     text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    border-bottom: 2px solid #edf2f7;
+    font-size: 12px;
+    letter-spacing: 0.8px;
+    border-bottom: 2px solid #e2e8f0;
 }
 
 .properties-list td {
@@ -194,11 +202,13 @@
 }
 
 .properties-list tbody tr {
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .properties-list tbody tr:hover {
-    background: #fdfdfd;
+    background: linear-gradient(to right, #f7fafc 0%, #ffffff 100%);
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* Image alignment in table */
@@ -210,12 +220,18 @@
 }
 
 .properties-list img {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 8px;
     object-fit: cover;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e2e8f0;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.properties-list img:hover {
+    transform: scale(1.1);
+    border-color: #2c5282;
+    box-shadow: 0 4px 12px rgba(44, 82, 130, 0.2);
 }
 
 /* Actions column styling */
@@ -223,6 +239,7 @@
     display: flex;
     gap: 8px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 /* Individual Action Buttons */
@@ -230,52 +247,98 @@
 .btn-edit,
 .btn-danger {
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     min-width: 90px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
 .btn-secondary {
-    background: #4a5568;
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
     color: white;
+    box-shadow: 0 2px 8px rgba(74, 85, 104, 0.3);
 }
 
 .btn-secondary:hover {
-    background: #2d3748;
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 85, 104, 0.4);
 }
 
 .btn-edit {
-    background: #ebf4ff;
-    color: #3182ce;
+    background: #edf2f7;
+    color: #2c5282;
+    border: 2px solid #e2e8f0;
 }
 
 .btn-edit:hover {
-    background: #bee3f8;
+    background: #e2e8f0;
+    border-color: #2c5282;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 82, 130, 0.2);
 }
 
 .btn-danger {
     background: #fff5f5;
-    color: #e53e3e;
+    color: #c53030;
+    border: 2px solid #feb2b2;
 }
 
 .btn-danger:hover {
     background: #fed7d7;
+    border-color: #fc8181;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(197, 48, 48, 0.3);
+}
+
+.btn-secondary:active,
+.btn-edit:active,
+.btn-danger:active {
+    transform: translateY(0);
 }
 
 /* ============================================
    RESPONSIVE DESIGN FOR PROPERTIES
    ============================================ */
 
+/* Large Tablets (992px and below) */
+@media (max-width: 992px) {
+    .dashboard-properties-content {
+        padding: 0 16px;
+    }
+
+    .properties-list td:first-child {
+        min-width: 200px;
+    }
+
+    .properties-list img {
+        width: 48px;
+        height: 48px;
+    }
+}
+
 /* Tablet (768px and below) */
 @media (max-width: 768px) {
+    .dashboard-properties-content {
+        padding: 0 12px;
+    }
+
+    .dashboard-properties-content h2 {
+        font-size: 24px;
+    }
+
     .dashboard-properties-form {
         padding: 24px;
-        border-radius: 12px;
+        border-radius: 10px;
     }
 
     .dashboard-properties-form .row {
@@ -288,10 +351,10 @@
         align-items: stretch;
     }
 
-    /* Make table scrollable on tablets */
     .properties-list {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        border-radius: 10px;
     }
 
     .properties-list table {
@@ -300,29 +363,49 @@
 
     .properties-list th,
     .properties-list td {
-        padding: 12px !important;
+        padding: 14px 16px !important;
         font-size: 13px;
     }
 
     .properties-list img {
-        width: 40px !important;
-        height: 40px !important;
+        width: 44px !important;
+        height: 44px !important;
+    }
+
+    .btn-secondary,
+    .btn-edit,
+    .btn-danger {
+        min-width: 80px;
+        font-size: 12px;
+        padding: 7px 14px;
     }
 }
 
 /* Mobile Phones (480px and below) */
 @media (max-width: 480px) {
+    .dashboard-properties-content {
+        padding: 0 8px;
+    }
+
+    .dashboard-properties-content h2 {
+        font-size: 22px;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
     .dashboard-properties-form {
         padding: 20px;
-        border-radius: 10px;
+        border-radius: 8px;
     }
 
     .dashboard-properties-form input[type="text"],
     .dashboard-properties-form input[type="number"],
     .dashboard-properties-form input[type="file"],
-    .dashboard-properties-form select {
+    .dashboard-properties-form select,
+    .dashboard-properties-form textarea {
         padding: 12px 14px;
         font-size: 14px;
+        border-radius: 6px;
     }
 
     .btn-primary {
@@ -338,6 +421,10 @@
     }
 
     /* Card-based layout for properties on mobile */
+    .properties-list {
+        border-radius: 8px;
+    }
+
     .properties-list table,
     .properties-list thead,
     .properties-list tbody,
@@ -354,42 +441,50 @@
     }
 
     .properties-list tr {
-        margin-bottom: 15px;
+        margin-bottom: 16px;
         border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 15px;
+        border-radius: 8px;
+        padding: 16px;
         background: white;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+    }
+
+    .properties-list tr:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
     }
 
     .properties-list td {
         border: none;
         position: relative;
-        padding: 10px 0 10px 120px !important;
+        padding: 12px 0 12px 130px !important;
         text-align: left !important;
-        min-height: 40px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
     }
 
     .properties-list td:before {
         content: attr(data-label);
         position: absolute;
         left: 0;
-        width: 110px;
-        font-weight: 600;
-        color: #667eea;
+        width: 120px;
+        font-weight: 700;
+        color: #2c5282;
         text-transform: uppercase;
         font-size: 11px;
+        letter-spacing: 0.5px;
     }
 
-    /* First cell with image */
     .properties-list td:first-child {
-        padding: 10px 0 !important;
+        padding: 12px 0 !important;
         display: flex;
         align-items: center;
-        gap: 10px;
-        border-bottom: 1px solid #e2e8f0;
-        margin-bottom: 10px;
-        padding-bottom: 15px !important;
+        gap: 12px;
+        border-bottom: 2px solid #edf2f7;
+        margin-bottom: 12px;
+        padding-bottom: 16px !important;
     }
 
     .properties-list td:first-child:before {
@@ -397,19 +492,19 @@
     }
 
     .properties-list img {
-        width: 50px !important;
-        height: 50px !important;
+        width: 56px !important;
+        height: 56px !important;
         border-radius: 8px !important;
     }
 
-    /* Action buttons */
     .properties-list td:last-child {
-        padding: 10px 0 0 0 !important;
+        padding: 12px 0 0 0 !important;
         display: flex;
         gap: 10px;
-        margin-top: 10px;
-        padding-top: 15px !important;
-        border-top: 1px solid #e2e8f0;
+        margin-top: 12px;
+        padding-top: 16px !important;
+        border-top: 2px solid #edf2f7;
+        flex-wrap: wrap;
     }
 
     .properties-list td:last-child:before {
@@ -421,11 +516,20 @@
         flex: 1;
         text-align: center;
         padding: 10px 16px !important;
+        min-width: auto;
     }
 }
 
 /* Extra Small Phones (360px and below) */
 @media (max-width: 360px) {
+    .dashboard-properties-content {
+        padding: 0 6px;
+    }
+
+    .dashboard-properties-content h2 {
+        font-size: 20px;
+    }
+
     .dashboard-properties-form {
         padding: 16px;
     }
@@ -433,21 +537,35 @@
     .dashboard-properties-form input[type="text"],
     .dashboard-properties-form input[type="number"],
     .dashboard-properties-form input[type="file"],
-    .dashboard-properties-form select {
+    .dashboard-properties-form select,
+    .dashboard-properties-form textarea {
         padding: 10px 12px;
         font-size: 13px;
     }
 
     .properties-list tr {
-        padding: 12px;
+        padding: 14px;
+        margin-bottom: 14px;
     }
 
     .properties-list td {
-        padding: 8px 0 8px 100px !important;
+        padding: 10px 0 10px 110px !important;
+        min-height: 40px;
     }
 
     .properties-list td:before {
-        width: 95px;
+        width: 105px;
         font-size: 10px;
+    }
+
+    .properties-list img {
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+    .btn-edit,
+    .btn-danger {
+        font-size: 11px;
+        padding: 8px 12px !important;
     }
 }

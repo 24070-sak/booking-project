@@ -28,7 +28,9 @@ class Hotel(db.Model):
             'image_url': self.image_url,
             'rating': self.rating,
             'rooms_count': self.rooms.count(),
-            'owner_id': self.user_id
+            'owner_id': self.user_id,
+            'owner_name': f"{self.owner.first_name} {self.owner.last_name}" if self.owner else None,
+            'owner_picture': self.owner.profile_picture if self.owner else None
         }
     
     def __repr__(self):

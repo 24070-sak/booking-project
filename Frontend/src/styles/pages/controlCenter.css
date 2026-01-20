@@ -1,0 +1,301 @@
+/* Control Center - Official Professional Style */
+
+.control-center-page {
+    background: #f7fafc;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.control-center-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Header Section */
+.control-center-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 3px solid #2c5282;
+}
+
+.control-center-title-section h1 {
+    font-size: 32px;
+    color: #1a202c;
+    margin: 0 0 8px 0;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.control-center-title-section p {
+    color: #718096;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.btn-back-dashboard {
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: 2px solid #2c5282;
+    background: white;
+    color: #2c5282;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-back-dashboard:hover {
+    background: #2c5282;
+    color: white;
+}
+
+/* Alert Message */
+.control-center-alert {
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    font-weight: 600;
+    font-size: 14px;
+    border: 2px solid;
+}
+
+.control-center-alert.success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.control-center-alert.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* Form Card */
+.control-center-card {
+    background: white;
+    padding: 36px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+}
+
+.control-center-card h2 {
+    font-size: 22px;
+    margin: 0 0 28px 0;
+    color: #1a202c;
+    font-weight: 700;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #edf2f7;
+}
+
+/* Form Styles */
+.control-center-form {
+    display: grid;
+    gap: 24px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #2c5282;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.form-field input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 6px;
+    border: 2px solid #e2e8f0;
+    font-size: 15px;
+    color: #2d3748;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-field input:focus {
+    outline: none;
+    border-color: #2c5282;
+}
+
+/* Checkbox Permission */
+.permission-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    padding: 16px;
+    background: #fffaf0;
+    border-radius: 6px;
+    border: 2px solid #fbd38d;
+}
+
+.permission-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #2c5282;
+}
+
+.permission-checkbox label {
+    font-size: 14px;
+    color: #744210;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Submit Button */
+.btn-submit-user {
+    margin-top: 12px;
+    padding: 14px 28px;
+    border-radius: 6px;
+    border: none;
+    background: #2c5282;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-submit-user:hover:not(:disabled) {
+    background: #2a4365;
+}
+
+.btn-submit-user:active:not(:disabled) {
+    background: #1a365d;
+}
+
+.btn-submit-user:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+}
+
+/* Loading State */
+.control-center-loading {
+    padding: 40px 20px;
+    text-align: center;
+    font-size: 16px;
+    color: #718096;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+    .control-center-page {
+        padding: 30px 16px;
+    }
+
+    .control-center-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: stretch;
+    }
+
+    .control-center-title-section h1 {
+        font-size: 28px;
+    }
+
+    .btn-back-dashboard {
+        width: 100%;
+        text-align: center;
+    }
+
+    .control-center-card {
+        padding: 28px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+    .control-center-page {
+        padding: 20px 12px;
+    }
+
+    .control-center-header {
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+    }
+
+    .control-center-title-section h1 {
+        font-size: 24px;
+    }
+
+    .control-center-title-section p {
+        font-size: 14px;
+    }
+
+    .control-center-card {
+        padding: 20px;
+        border-radius: 6px;
+    }
+
+    .control-center-card h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .control-center-form {
+        gap: 20px;
+    }
+
+    .form-field label {
+        font-size: 12px;
+    }
+
+    .form-field input {
+        padding: 11px 14px;
+        font-size: 14px;
+    }
+
+    .permission-checkbox {
+        padding: 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .permission-checkbox label {
+        font-size: 13px;
+    }
+
+    .btn-submit-user {
+        padding: 13px 24px;
+        font-size: 15px;
+    }
+}

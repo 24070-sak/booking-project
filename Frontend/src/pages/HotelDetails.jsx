@@ -90,6 +90,7 @@ function HotelDetails() {
         try {
             await sendMessage({
                 ...messageData,
+                subject: messageData.subject || "Question",
                 receiver_id: hotel.owner_id
             });
             alert("Message envoyé avec succès !");
@@ -102,11 +103,21 @@ function HotelDetails() {
 
     const handleCreateReview = async (e) => {
         e.preventDefault();
-        if (!reviewRoomId) return;
+
+        // Use reviewRoomId (verified booking) or fallback to first available room of the hotel
+        let effectiveRoomId = reviewRoomId;
+        if (!effectiveRoomId && rooms.length > 0) {
+            effectiveRoomId = rooms[0].id;
+        }
+
+        if (!effectiveRoomId) {
+            alert("Aucune chambre disponible pour cet hôtel.");
+            return;
+        }
 
         try {
             await createReview({
-                room_id: reviewRoomId,
+                room_id: effectiveRoomId,
                 rating: parseInt(reviewData.rating),
                 comment: reviewData.comment
             });
@@ -118,7 +129,7 @@ function HotelDetails() {
                 count: newReviewsData.total || 0
             });
 
-            // Close modal (no alert for smoother UX)
+            // Reset
             setShowReviewModal(false);
             setReviewData({ rating: 5, comment: '' });
         } catch (err) {
@@ -190,11 +201,15 @@ function HotelDetails() {
                         {/* Host Info */}
                         <div className="host-info-row">
                             <div className="host-text">
-                                <h2>Hébergé par Hôte {hotel.owner_id || ''}</h2>
+                                <h2>Hébergé par {hotel.owner_name || `Hôte ${hotel.owner_id || ''}`}</h2>
                                 <p>Superhôte · Réponse rapide</p>
                             </div>
                             <div className="host-avatar">
-                                {hotel.name.charAt(0)}
+                                {hotel.owner_picture ? (
+                                    <img src={hotel.owner_picture} alt={hotel.owner_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                                ) : (
+                                    hotel.owner_name ? hotel.owner_name.charAt(0) : hotel.name.charAt(0)
+                                )}
                             </div>
                         </div>
 
@@ -288,31 +303,88 @@ function HotelDetails() {
                     </div>
 
                     <div className="reviews-grid">
-                        {reviews.slice(0, 6).map(review => (
-                            <div key={review.id} className="review-card">
-                                <div className="review-user">
-                                    <div className="user-pic">
-                                        {review.user_picture ? (
-                                            <img src={review.user_picture} alt={review.user_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-                                        ) : (
-                                            review.user_name.charAt(0)
-                                        )}
+                        {/* Inline Review Form for Registered Users */}
+                        {user && (
+                            <div className="inline-review-form">
+                                <h3>Partagez votre expérience</h3>
+                                <form onSubmit={handleCreateReview}>
+                                    <div className="rating-select">
+                                        {[1, 2, 3, 4, 5].map(star => (
+                                            <button
+                                                type="button"
+                                                key={star}
+                                                className={`star-btn ${star <= reviewData.rating ? 'active' : ''}`}
+                                                onClick={() => setReviewData({ ...reviewData, rating: star })}
+                                            >
+                                                <i className={`fa-star ${star <= reviewData.rating ? 'fa-solid' : 'fa-regular'}`}></i>
+                                            </button>
+                                        ))}
                                     </div>
-                                    <div className="user-meta">
-                                        <h4>{review.user_name}</h4>
-                                        <span>{new Date(review.created_at).toLocaleDateString()}</span>
+                                    <div className="form-group">
+                                        <textarea
+                                            placeholder="Qu'avez-vous pensé de cet hôtel ?..." required
+                                            rows="3"
+                                            className="form-textarea"
+                                            value={reviewData.comment}
+                                            onChange={e => setReviewData({ ...reviewData, comment: e.target.value })}
+                                        ></textarea>
                                     </div>
-                                </div>
-                                <div className="review-content">
-                                    <p className="review-text">
-                                        {review.comment}
-                                    </p>
-                                    <div className="room-tag">
-                                        Séjour en {review.room_name || 'chambre'}
-                                    </div>
-                                </div>
+                                    <button type="submit" className="secondary-btn" style={{ background: '#222', color: '#fff' }}>
+                                        Publier mon avis
+                                    </button>
+                                </form>
                             </div>
-                        ))}
+                        )}
+
+                        {reviews.length > 0 ? (
+                            reviews.map(review => (
+                                <div key={review.id} className="review-card">
+                                    <div className="review-user">
+                                        <div className="user-pic">
+                                            {review.user_picture ? (
+                                                <img src={review.user_picture} alt={review.user_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                                            ) : (
+                                                review.user_name.charAt(0)
+                                            )}
+                                        </div>
+                                        <div className="user-meta">
+                                            <h4>{review.user_name}</h4>
+                                            <div className="review-meta-row">
+                                                <div className="review-stars-small">
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <i key={i} className={`fa-star ${i < review.rating ? 'fa-solid' : 'fa-regular'}`} style={{ color: '#ff385c', fontSize: '11px' }}></i>
+                                                    ))}
+                                                </div>
+                                                <span> · {new Date(review.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="review-content">
+                                        <p className="review-text">
+                                            {review.comment}
+                                        </p>
+
+                                        {review.reply && (
+                                            <div className="hotel-reply" style={{ marginTop: '16px', padding: '16px', background: '#f7f7f7', borderRadius: '12px', borderLeft: '4px solid #ff385c' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                                    <i className="fa-solid fa-comment-dots" style={{ color: '#ff385c' }}></i>
+                                                    <strong style={{ fontSize: '14px' }}>Réponse de l'établissement</strong>
+                                                </div>
+                                                <p style={{ margin: 0, fontSize: '14px', fontStyle: 'italic', color: '#484848' }}>
+                                                    "{review.reply}"
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        <div className="room-tag">
+                                            {review.room_name || 'Hébergement'}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p style={{ gridColumn: '1 / -1', color: '#717171' }}>Aucun commentaire pour le moment.</p>
+                        )}
                     </div>
                 </div>
 
@@ -325,15 +397,7 @@ function HotelDetails() {
                         <button className="close-modal" onClick={() => setShowContactModal(false)}>&times;</button>
                         <h2 className="modal-title">Contacter l'hôte</h2>
                         <form onSubmit={handleSendMessage}>
-                            <div className="form-group">
-                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Sujet</label>
-                                <input
-                                    type="text" required
-                                    className="form-input"
-                                    value={messageData.subject}
-                                    onChange={e => setMessageData({ ...messageData, subject: e.target.value })}
-                                />
-                            </div>
+
                             <div className="form-group">
                                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Message</label>
                                 <textarea

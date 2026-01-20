@@ -9,6 +9,7 @@ class Review(db.Model):
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.Text)
+    reply = db.Column(db.Text)
     is_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -25,6 +26,7 @@ class Review(db.Model):
             'hotel_name': self.room.hotel.name if self.room and self.room.hotel else "Hôtel inconnu",
             'rating': self.rating,
             'comment': self.comment,
+            'reply': self.reply,
             'is_verified': self.is_verified,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }

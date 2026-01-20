@@ -1,8 +1,8 @@
-import API_URL from "../api";
+import { apiFetch } from "./apiClient";
 
 export async function getAllRooms(filters = {}) {
     const queryParams = new URLSearchParams(filters).toString();
-    const response = await fetch(`${API_URL}/rooms?${queryParams}`);
+    const response = await apiFetch(`/rooms?${queryParams}`);
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer les chambres");
@@ -12,7 +12,7 @@ export async function getAllRooms(filters = {}) {
 }
 
 export async function getRoomById(id) {
-    const response = await fetch(`${API_URL}/rooms/${id}`);
+    const response = await apiFetch(`/rooms/${id}`);
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer les détails de la chambre");
@@ -22,7 +22,7 @@ export async function getRoomById(id) {
 }
 
 export async function getRoomReviews(id) {
-    const response = await fetch(`${API_URL}/rooms/${id}/reviews`);
+    const response = await apiFetch(`/rooms/${id}/reviews`);
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer les avis");
@@ -32,13 +32,8 @@ export async function getRoomReviews(id) {
 }
 
 export async function createRoom(roomData) {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/rooms`, {
+    const response = await apiFetch("/rooms", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify(roomData)
     });
 
@@ -50,13 +45,8 @@ export async function createRoom(roomData) {
 }
 
 export async function updateRoom(id, roomData) {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/rooms/${id}`, {
+    const response = await apiFetch(`/rooms/${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify(roomData)
     });
 
@@ -68,12 +58,8 @@ export async function updateRoom(id, roomData) {
 }
 
 export async function deleteRoom(id) {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/rooms/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
+    const response = await apiFetch(`/rooms/${id}`, {
+        method: "DELETE"
     });
 
     if (!response.ok) {
@@ -84,13 +70,13 @@ export async function deleteRoom(id) {
 }
 
 export async function getRoomTypes() {
-    const response = await fetch(`${API_URL}/rooms/types`);
+    const response = await apiFetch("/rooms/types");
     if (!response.ok) throw new Error("Impossible de récupérer les types de chambres");
     return response.json();
 }
 
 export async function getAmenities() {
-    const response = await fetch(`${API_URL}/rooms/amenities`);
+    const response = await apiFetch("/rooms/amenities");
     if (!response.ok) throw new Error("Impossible de récupérer les équipements");
     return response.json();
 }

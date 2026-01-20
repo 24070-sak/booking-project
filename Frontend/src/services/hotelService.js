@@ -1,7 +1,7 @@
-import API_URL from "../api";
+import { apiFetch } from "./apiClient";
 
 export async function getAllHotels() {
-    const response = await fetch(`${API_URL}/hotels`);
+    const response = await apiFetch("/hotels");
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer les hôtels");
@@ -11,12 +11,7 @@ export async function getAllHotels() {
 }
 
 export async function getMyHotels() {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/hotels/my`, {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    });
+    const response = await apiFetch("/hotels/my");
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer vos hôtels");
@@ -26,7 +21,7 @@ export async function getMyHotels() {
 }
 
 export async function getHotelById(id) {
-    const response = await fetch(`${API_URL}/hotels/${id}`);
+    const response = await apiFetch(`/hotels/${id}`);
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer les détails de l'hôtel");
@@ -36,13 +31,8 @@ export async function getHotelById(id) {
 }
 
 export async function createHotel(hotelData) {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/hotels`, {
+    const response = await apiFetch("/hotels", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify(hotelData)
     });
 
@@ -54,13 +44,8 @@ export async function createHotel(hotelData) {
 }
 
 export async function updateHotel(id, hotelData) {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/hotels/${id}`, {
+    const response = await apiFetch(`/hotels/${id}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify(hotelData)
     });
 
@@ -72,12 +57,8 @@ export async function updateHotel(id, hotelData) {
 }
 
 export async function deleteHotel(id) {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`${API_URL}/hotels/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
+    const response = await apiFetch(`/hotels/${id}`, {
+        method: "DELETE"
     });
 
     if (!response.ok) {
@@ -88,7 +69,7 @@ export async function deleteHotel(id) {
 }
 
 export async function getHotelRooms(id) {
-    const response = await fetch(`${API_URL}/hotels/${id}/rooms`);
+    const response = await apiFetch(`/hotels/${id}/rooms`);
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer les chambres de l'hôtel");
