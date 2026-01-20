@@ -1,24 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { getReviews } from '../services/dashboardService';
+import { replyToReview } from '../services/reviewService';
 import '../styles/components/dashboardReviews.css';
 
 const DashboardReviews = () => {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [replyingTo, setReplyingTo] = useState(null);
+    const [replyText, setReplyText] = useState("");
 
     useEffect(() => {
-        async function fetchReviews() {
-            try {
-                const data = await getReviews();
-                setReviews(data.reviews);
-            } catch (error) {
-                console.error("Error fetching reviews:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
         fetchReviews();
     }, []);
+
+    const fetchReviews = async () => {
+        try {
+            setLoading(true);
+            const data = await getReviews();
+            setReviews(data.reviews);
+        } catch (error) {
+            console.error("Error fetching reviews:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleReply = async (reviewId) => {
+        if (!replyText.trim()) return;
+        try {
+            await replyToReview(reviewId, replyText);
+            alert("Réponse envoyée !");
+            setReplyingTo(null);
+            setReplyText("");
+            fetchReviews();
+        } catch (error) {
+            alert("Erreur: " + error.message);
+        }
+    };
 
     const renderStars = (rating) => {
         const stars = [];
@@ -45,7 +63,11 @@ const DashboardReviews = () => {
                             <div className="review-header">
                                 <div className="review-user-info">
                                     <div className="user-avatar">
-                                        {review.user_name.charAt(0)}
+                                        {review.user_picture ? (
+                                            <img src={review.user_picture} alt={review.user_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                                        ) : (
+                                            review.user_name.charAt(0)
+                                        )}
                                     </div>
                                     <div className="user-details">
                                         <h4>{review.user_name}</h4>
@@ -63,17 +85,42 @@ const DashboardReviews = () => {
                             <p className="review-comment">"{review.comment}"</p>
 
                             <div className="review-actions">
-                                <button className="btn-reply">
-                                    <i className="fa-solid fa-reply"></i> Reply
-                                </button>
+
+                                {replyingTo === review.id ? (
+                                    <div className="reply-form">
+                                        <textarea
+                                            placeholder="Write your reply..."
+                                            value={replyText}
+                                            onChange={(e) => setReplyText(e.target.value)}
+                                            style={{ width: '100%', marginBottom: '10px', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                        />
+                                        <div style={{ display: 'flex', gap: '10px' }}>
+                                            <button className="btn-primary" style={{ padding: '8px 16px' }} onClick={() => handleReply(review.id)}>Send</button>
+                                            <button className="btn-secondary" style={{ padding: '8px 16px' }} onClick={() => setReplyingTo(null)}>Cancel</button>
+                                        </div>
+                                    </div>
+                                ) : review.reply ? (
+                                    <div className="current-reply">
+                                        <strong>Your Reply:</strong>
+                                        <p>{review.reply}</p>
+                                        <button className="btn-reply-small" onClick={() => { setReplyingTo(review.id); setReplyText(review.reply); }}>
+                                            Edit Reply
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button className="btn-reply" onClick={() => setReplyingTo(review.id)}>
+                                        <i className="fa-solid fa-reply"></i> Reply
+                                    </button>
+                                )}
                             </div>
                         </div>
+
                     ))
                 ) : (
                     <p>Aucun avis pour le moment.</p>
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 

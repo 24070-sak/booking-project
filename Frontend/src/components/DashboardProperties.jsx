@@ -230,9 +230,9 @@ const DashboardProperties = () => {
 
     if (editingPropertyId || isAddingProperty) {
         return (
-            <div className="dashboard-content">
-                <div className="header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h1>{isAddingProperty ? 'Add New Property' : 'Update Property'}</h1>
+            <div className="dashboard-content dashboard-properties-content">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+                    <h2>{isAddingProperty ? 'Add New Property' : 'Update Property'}</h2>
                     <button onClick={handleBackClick} className="btn-secondary">Retour</button>
                 </div>
                 <div className="dashboard-properties-form">
@@ -265,11 +265,11 @@ const DashboardProperties = () => {
     if (viewingRoomsHotelId) {
         const hotel = properties.find(p => p.id === viewingRoomsHotelId);
         return (
-            <div className="dashboard-content">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div className="dashboard-content dashboard-properties-content">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
                     <h2>Chambres de : {hotel?.name}</h2>
-                    <div>
-                        <button onClick={handleAddRoomClick} className="btn-primary" style={{ marginRight: '10px' }}>+ Ajouter une chambre</button>
+                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                        <button onClick={handleAddRoomClick} className="btn-primary">+ Ajouter une chambre</button>
                         <button onClick={handleBackClick} className="btn-secondary">Retour</button>
                     </div>
                 </div>
@@ -357,12 +357,12 @@ const DashboardProperties = () => {
                         <tbody>
                             {hotelRooms.map(room => (
                                 <tr key={room.id}>
-                                    <td>{room.room_number}</td>
-                                    <td>{room.name}</td>
-                                    <td>{roomTypes.find(t => t.id === room.room_type_id)?.name || room.room_type_id}</td>
-                                    <td>{room.size_sqm ? `${room.size_sqm} m²` : '-'}</td>
-                                    <td>{room.price_per_night} €</td>
-                                    <td>
+                                    <td data-label="Numéro">{room.room_number}</td>
+                                    <td data-label="Nom">{room.name}</td>
+                                    <td data-label="Type">{roomTypes.find(t => t.id === room.room_type_id)?.name || room.room_type_id}</td>
+                                    <td data-label="Taille">{room.size_sqm ? `${room.size_sqm} m²` : '-'}</td>
+                                    <td data-label="Prix">{room.price_per_night} €</td>
+                                    <td data-label="Équipements">
                                         {room.amenities && room.amenities.length > 0 ? (
                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                                                 {room.amenities.slice(0, 3).map(a => (
@@ -374,7 +374,7 @@ const DashboardProperties = () => {
                                             </div>
                                         ) : '-'}
                                     </td>
-                                    <td>
+                                    <td data-label="Actions">
                                         <button onClick={() => handleEditRoomClick(room)} className="btn-edit">Edit</button>
                                         <button onClick={() => handleDeleteRoomClick(room.id)} className="btn-danger">Delete</button>
                                     </td>
@@ -390,8 +390,8 @@ const DashboardProperties = () => {
     if (loading) return <div>Chargement...</div>;
 
     return (
-        <div className="dashboard-content">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div className="dashboard-content dashboard-properties-content">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
                 <h2>Gestion des Hôtels</h2>
                 <button onClick={handleAddClick} className="btn-primary">+ Ajouter un Hôtel</button>
             </div>
@@ -408,12 +408,12 @@ const DashboardProperties = () => {
                     <tbody>
                         {properties.map((property, index) => (
                             <tr key={property.id}>
-                                <td>
+                                <td data-label="Nom">
                                     <img src={property.image_url || hotelImages[index % hotelImages.length]} alt={property.name} />
                                     <span>{property.name}</span>
                                 </td>
-                                <td>{property.location}</td>
-                                <td>
+                                <td data-label="Localisation">{property.location}</td>
+                                <td data-label="Actions">
                                     <button onClick={() => handleViewRoomsClick(property.id)} className="btn-secondary">Chambres</button>
                                     <button onClick={() => handleEditClick(property.id)} className="btn-edit">Edit</button>
                                     <button onClick={() => handleDeleteClick(property.id)} className="btn-danger">Delete</button>

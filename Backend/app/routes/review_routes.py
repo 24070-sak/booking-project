@@ -174,3 +174,33 @@ def get_hotel_reviews(hotel_id):
         'average_rating': sum(r.rating for r in reviews) / len(reviews) if reviews else 0
     }), 200
 
+@review_bp.route('/<int:review_id>/reply', methods=['POST'])
+@jwt_required()
+def reply_to_review(review_id):
+    """Permet au propriétaire de l'hôtel de répondre à un avis"""
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    review = Review.query.get(review_id)
+    if not review:
+        return jsonify({'error': 'Avis non trouvé'}), 404
+        
+    # Vérifier que l'utilisateur est le propriétaire de l'hôtel
+    hotel = review.room.hotel
+    if str(hotel.user_id) != str(user_id) and user.role not in ['admin', 'manager']:
+        return jsonify({'error': 'Accès non autorisé. Vous n\'êtes pas le propriétaire.'}), 403
+        
+    data = request.get_json()
+    reply = data.get('reply')
+    
+    if not reply:
+        return jsonify({'error': 'La réponse est requise'}), 400
+        
+    review.reply = reply
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'Réponse ajoutée avec succès',
+        'review': review.to_dict()
+    }), 200
+

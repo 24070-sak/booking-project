@@ -32,16 +32,16 @@ function Header() {
                                 <Link to="/dashboard" id="login"> <i className="fa-solid fa-gauge"></i> Dashboard</Link>
                             )}
 
-                            <Link to="/profile" style={{ color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+                            <Link to="/profile" style={{ color: 'black', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
                                 {user.profile_picture ? (
-                                    <img src={user.profile_picture} alt="Profile" style={{ width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover', border: '2px solid white' }} />
+                                    <img src={user.profile_picture} alt="Profile" style={{ width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover', border: '2px solid black' }} />
                                 ) : (
                                     <>
-                                        <i className="fa-solid fa-user"></i> {user.first_name}
+                                        <i className="fa-solid fa-user"></i> {user.username || user.first_name}
                                     </>
                                 )}
                             </Link>
-                            <span onClick={handleLogout} style={{ cursor: 'pointer', color: 'white', marginLeft: '10px' }}> <i className="fa-solid fa-right-from-bracket"></i></span>
+                            <span onClick={handleLogout} style={{ cursor: 'pointer', color: 'black', marginLeft: '10px' }}> <i className="fa-solid fa-right-from-bracket"></i></span>
                         </>
                     ) : (
                         <Link to="/connexion" id="login"> <i className="fa-solid fa-user"></i> Se connecter</Link>

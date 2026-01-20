@@ -92,33 +92,22 @@ const DashboardSettings = () => {
                 {/* Profile Settings */}
                 <div className="settings-card">
                     <h3>Informations de Profil</h3>
-                    {message && <div style={{ marginBottom: '10px', color: message.includes('succès') ? 'green' : 'red', fontWeight: 'bold' }}>{message}</div>}
+                    {message && <div className={`settings-message ${message.includes('succès') ? 'success' : 'error'}`}>{message}</div>}
 
                     <form onSubmit={handleUpdateProfile}>
 
                         {/* Avatar Section */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
-                            <div style={{
-                                width: '100px',
-                                height: '100px',
-                                borderRadius: '50%',
-                                overflow: 'hidden',
-                                border: '3px solid #eee',
-                                backgroundColor: '#f0f0f0',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                marginBottom: '10px'
-                            }}>
+                        <div className="avatar-section">
+                            <div className="avatar-container">
                                 {preview ? (
-                                    <img src={preview} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img src={preview} alt="Avatar" />
                                 ) : (
-                                    <span style={{ fontSize: '2rem', color: '#ccc' }}>
+                                    <span className="avatar-placeholder">
                                         {profile.first_name.charAt(0)}
                                     </span>
                                 )}
                             </div>
-                            <label htmlFor="dashboard-file-upload" style={{ cursor: 'pointer', color: '#3182ce', textDecoration: 'underline', fontSize: '0.9rem' }}>
+                            <label htmlFor="dashboard-file-upload" className="avatar-upload-label">
                                 Changer la photo
                             </label>
                             <input
@@ -179,39 +168,6 @@ const DashboardSettings = () => {
                     </form>
                 </div>
 
-                {/* Notification Settings */}
-                <div className="settings-card">
-                    <h3>Notifications</h3>
-                    <div className="notification-item">
-                        <div className="notification-info">
-                            <div>Notifications Email</div>
-                            <div>Recevoir des emails pour les nouvelles réservations</div>
-                        </div>
-                        <label className="switch">
-                            <input
-                                type="checkbox"
-                                checked={notifications.email}
-                                onChange={() => handleToggle('email')}
-                            />
-                            <span className="slider"></span>
-                        </label>
-                    </div>
-
-                    <div className="notification-item">
-                        <div className="notification-info">
-                            <div>SMS de service</div>
-                            <div>Alertes SMS pour les urgences</div>
-                        </div>
-                        <label className="switch">
-                            <input
-                                type="checkbox"
-                                checked={notifications.sms}
-                                onChange={() => handleToggle('sms')}
-                            />
-                            <span className="slider"></span>
-                        </label>
-                    </div>
-                </div>
             </div>
         </div>
     );

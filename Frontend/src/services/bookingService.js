@@ -1,18 +1,8 @@
-import API_URL from "../api";
+import { apiFetch } from "./apiClient";
 
 export async function createBooking(bookingData) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        throw new Error("Vous devez être connecté pour réserver.");
-    }
-
-    const response = await fetch(`${API_URL}/bookings`, {
+    const response = await apiFetch("/bookings", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify(bookingData)
     });
 
@@ -26,17 +16,7 @@ export async function createBooking(bookingData) {
 }
 
 export async function getUserBookings() {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        throw new Error("Non connecté");
-    }
-
-    const response = await fetch(`${API_URL}/bookings`, {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    });
+    const response = await apiFetch("/bookings");
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer vos réservations");
@@ -46,17 +26,7 @@ export async function getUserBookings() {
 }
 
 export async function getOwnerBookings() {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        throw new Error("Non connecté");
-    }
-
-    const response = await fetch(`${API_URL}/bookings/owner/all`, {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    });
+    const response = await apiFetch("/bookings/owner/all");
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer les réservations des propriétés");
@@ -66,17 +36,7 @@ export async function getOwnerBookings() {
 }
 
 export async function getAllBookings() {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        throw new Error("Non connecté");
-    }
-
-    const response = await fetch(`${API_URL}/bookings/admin/all`, {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    });
+    const response = await apiFetch("/bookings/admin/all");
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer toutes les réservations");

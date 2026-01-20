@@ -107,18 +107,14 @@ function Dashboard() {
             <span>{isAdmin ? 'All Reservations' : 'Mes Réservations'}</span>
           </span>
 
-          {isAdmin && (
-            <>
-              <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
-                <AnalyticsIcon className="icon" />
-                <span>Analytics</span>
-              </span>
-              <span className={`label ${activeTab === 'payments' ? 'selected' : ''}`} id="payments" onClick={handleLabelClick}>
-                <PaymentsIcon className="icon" />
-                <span>Payments</span>
-              </span>
-            </>
-          )}
+          <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
+            <AnalyticsIcon className="icon" />
+            <span>Analytics</span>
+          </span>
+          <span className={`label ${activeTab === 'payments' ? 'selected' : ''}`} id="payments" onClick={handleLabelClick}>
+            <PaymentsIcon className="icon" />
+            <span>Payments</span>
+          </span>
 
           <span className={`label ${activeTab === 'messages' ? 'selected' : ''}`} id="messages" onClick={handleLabelClick}>
             <MessagesIcon className="icon" />
