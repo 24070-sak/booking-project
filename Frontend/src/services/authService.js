@@ -22,13 +22,20 @@ export async function register(userData) {
 
 export async function updateProfile(userData) {
   const token = localStorage.getItem("token");
+
+  const isFormData = userData instanceof FormData;
+  const headers = {
+    "Authorization": `Bearer ${token}`
+  };
+
+  if (!isFormData) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const response = await fetch(`${API_URL}/auth/profile`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify(userData)
+    headers: headers,
+    body: isFormData ? userData : JSON.stringify(userData)
   });
   if (!response.ok) throw new Error("Erreur lors de la mise à jour du profil");
   return response.json();

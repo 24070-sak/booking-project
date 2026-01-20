@@ -13,18 +13,24 @@ def import_data():
         # 0. Nettoyer les données existantes (pour éviter les doublons/conflits)
         print("🧹 Nettoyage des anciennes données...")
         
-        # Désactiver les vérifications de clé étrangère
-        db.session.execute(db.text('SET FOREIGN_KEY_CHECKS = 0'))
+        # Disable FK checks
+        if 'sqlite' in db.engine.name:
+            db.session.execute(db.text('PRAGMA foreign_keys = OFF'))
+        else:
+            db.session.execute(db.text('SET FOREIGN_KEY_CHECKS = 0'))
         
         Room.query.delete()
         Hotel.query.delete()
         User.query.delete() # Clean users too
         # Also clear association tables if needed, or rely on cascade
-        db.session.execute(db.text('TRUNCATE TABLE room_amenities'))
+        db.session.execute(db.text('DELETE FROM room_amenities'))
         Amenity.query.delete()
         RoomType.query.delete()
         
-        db.session.execute(db.text('SET FOREIGN_KEY_CHECKS = 1'))
+        if 'sqlite' in db.engine.name:
+            db.session.execute(db.text('PRAGMA foreign_keys = ON'))
+        else:
+            db.session.execute(db.text('SET FOREIGN_KEY_CHECKS = 1'))
         db.session.commit()
 
         # 1. Type de chambre par défaut

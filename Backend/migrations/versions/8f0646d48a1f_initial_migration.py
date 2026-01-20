@@ -1,8 +1,8 @@
-"""Reinit with amenities
+"""Initial migration
 
-Revision ID: 304905a0d0da
+Revision ID: 8f0646d48a1f
 Revises: 
-Create Date: 2026-01-16 21:59:13.572052
+Create Date: 2026-01-18 16:36:16.611070
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '304905a0d0da'
+revision = '8f0646d48a1f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -61,6 +61,18 @@ def upgrade():
     with op.batch_alter_table('users', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_users_email'), ['email'], unique=True)
 
+    op.create_table('messages',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('sender_id', sa.Integer(), nullable=False),
+    sa.Column('receiver_id', sa.Integer(), nullable=True),
+    sa.Column('subject', sa.String(length=200), nullable=False),
+    sa.Column('content', sa.Text(), nullable=False),
+    sa.Column('is_read', sa.Boolean(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['receiver_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['sender_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('rooms',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('room_number', sa.String(length=10), nullable=False),
@@ -144,6 +156,7 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['booking_id'], ['bookings.id'], ),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('booking_id'),
     sa.UniqueConstraint('transaction_id')
     )
     # ### end Alembic commands ###
@@ -160,6 +173,7 @@ def downgrade():
 
     op.drop_table('bookings')
     op.drop_table('rooms')
+    op.drop_table('messages')
     with op.batch_alter_table('users', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_users_email'))
 

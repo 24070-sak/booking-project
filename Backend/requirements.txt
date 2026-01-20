@@ -17,3 +17,5 @@ gunicorn
 # Utilitaires
 python-dotenv
 werkzeug
+Authlib
+requests

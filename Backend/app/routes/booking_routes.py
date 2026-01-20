@@ -42,7 +42,10 @@ def create_booking():
     if check_in >= check_out:
         return jsonify({'error': 'La date de départ doit être après la date d\'arrivée'}), 400
     
-    if check_in < datetime.now().date():
+    from datetime import timedelta
+    # Allow timezone differences (up to 24h)
+    yesterday = datetime.now().date() - timedelta(days=1)
+    if check_in < yesterday:
         return jsonify({'error': 'La date d\'arrivée ne peut pas être dans le passé'}), 400
     
     # Vérifier la disponibilité
@@ -256,6 +259,31 @@ def get_all_bookings():
     if status:
         query = query.filter_by(status=status)
     
+    bookings = query.order_by(Booking.created_at.desc()).all()
+    
+    return jsonify({
+        'bookings': [b.to_dict() for b in bookings],
+        'total': len(bookings)
+    }), 200
+@booking_bp.route('/owner/all', methods=['GET'])
+@jwt_required()
+def get_owner_bookings():
+    """Obtenir les réservations pour les hôtels de l'owner connecté"""
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    if not user.access_dashboard:
+        return jsonify({'error': 'Accès interdit'}), 403
+        
+    # Liste des IDs des hôtels possédés par l'utilisateur
+    owned_hotel_ids = [h.id for h in user.hotels]
+    
+    status = request.args.get('status')
+    query = Booking.query.join(Room).filter(Room.hotel_id.in_(owned_hotel_ids))
+    
+    if status:
+        query = query.filter(Booking.status == status)
+        
     bookings = query.order_by(Booking.created_at.desc()).all()
     
     return jsonify({

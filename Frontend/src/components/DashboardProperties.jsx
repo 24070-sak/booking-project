@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getAllHotels, createHotel, updateHotel, deleteHotel, getHotelRooms } from '../services/hotelService';
-import { createRoom, updateRoom, deleteRoom, getRoomTypes } from '../services/roomService';
+import { getMyHotels, createHotel, updateHotel, deleteHotel, getHotelRooms } from '../services/hotelService';
+import { createRoom, updateRoom, deleteRoom, getRoomTypes, getAmenities } from '../services/roomService';
 import '../styles/components/dashboardProperties.css';
 
 // Import hotel images
@@ -25,6 +25,7 @@ const DashboardProperties = () => {
     const [isAddingRoom, setIsAddingRoom] = useState(false);
     const [editingRoomId, setEditingRoomId] = useState(null);
     const [roomTypes, setRoomTypes] = useState([]);
+    const [amenities, setAmenities] = useState([]);
 
     // Hotel Form State
     const [propertyName, setPropertyName] = useState('');
@@ -40,7 +41,9 @@ const DashboardProperties = () => {
         room_type_id: '',
         price_per_night: '',
         max_guests: 2,
-        image_url: ''
+        size_sqm: '',
+        image_url: '',
+        amenities: []
     });
 
     const hotelImages = [hot1, hot2, hot3, hot4, hot5, hotel1, hotel2];
@@ -48,7 +51,7 @@ const DashboardProperties = () => {
     const fetchProperties = async () => {
         try {
             setLoading(true);
-            const data = await getAllHotels();
+            const data = await getMyHotels();
             if (data.hotels) {
                 setProperties(data.hotels);
             }
@@ -68,9 +71,19 @@ const DashboardProperties = () => {
         }
     };
 
+    const fetchAmenities = async () => {
+        try {
+            const data = await getAmenities();
+            setAmenities(data.amenities || []);
+        } catch (error) {
+            console.error("Error fetching amenities:", error);
+        }
+    };
+
     useEffect(() => {
         fetchProperties();
         fetchRoomTypes();
+        fetchAmenities();
     }, []);
 
     useEffect(() => {
@@ -166,7 +179,9 @@ const DashboardProperties = () => {
             room_type_id: roomTypes[0]?.id || '',
             price_per_night: '',
             max_guests: 2,
-            image_url: ''
+            size_sqm: '',
+            image_url: '',
+            amenities: []
         });
     };
 
@@ -180,7 +195,9 @@ const DashboardProperties = () => {
             room_type_id: room.room_type_id,
             price_per_night: room.price_per_night,
             max_guests: room.max_guests,
-            image_url: room.image_url || ''
+            size_sqm: room.size_sqm || '',
+            image_url: room.image_url || '',
+            amenities: room.amenities ? room.amenities.map(a => a.id) : []
         });
     };
 
@@ -288,8 +305,33 @@ const DashboardProperties = () => {
                                 <input type="number" value={roomForm.max_guests} onChange={e => setRoomForm({ ...roomForm, max_guests: e.target.value })} />
                             </div>
                             <div className="col">
-                                <label>Image URL</label>
-                                <input type="text" value={roomForm.image_url} onChange={e => setRoomForm({ ...roomForm, image_url: e.target.value })} />
+                                <label>Taille (m²)</label>
+                                <input type="number" step="0.1" value={roomForm.size_sqm} onChange={e => setRoomForm({ ...roomForm, size_sqm: e.target.value })} placeholder="Ex: 25.5" />
+                            </div>
+                        </div>
+                        <div className="form-section">
+                            <label>Image URL</label>
+                            <input type="text" value={roomForm.image_url} onChange={e => setRoomForm({ ...roomForm, image_url: e.target.value })} />
+                        </div>
+                        <div className="form-section">
+                            <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>Équipements</label>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px' }}>
+                                {amenities.map(amenity => (
+                                    <label key={amenity.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={roomForm.amenities.includes(amenity.id)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setRoomForm({ ...roomForm, amenities: [...roomForm.amenities, amenity.id] });
+                                                } else {
+                                                    setRoomForm({ ...roomForm, amenities: roomForm.amenities.filter(id => id !== amenity.id) });
+                                                }
+                                            }}
+                                        />
+                                        <span>{amenity.name}</span>
+                                    </label>
+                                ))}
                             </div>
                         </div>
                         <div style={{ marginTop: '15px' }}>
@@ -306,7 +348,9 @@ const DashboardProperties = () => {
                                 <th>Numéro</th>
                                 <th>Nom</th>
                                 <th>Type</th>
+                                <th>Taille</th>
                                 <th>Prix</th>
+                                <th>Équipements</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -316,7 +360,20 @@ const DashboardProperties = () => {
                                     <td>{room.room_number}</td>
                                     <td>{room.name}</td>
                                     <td>{roomTypes.find(t => t.id === room.room_type_id)?.name || room.room_type_id}</td>
+                                    <td>{room.size_sqm ? `${room.size_sqm} m²` : '-'}</td>
                                     <td>{room.price_per_night} €</td>
+                                    <td>
+                                        {room.amenities && room.amenities.length > 0 ? (
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                                {room.amenities.slice(0, 3).map(a => (
+                                                    <span key={a.id} style={{ fontSize: '0.85em', padding: '2px 6px', background: '#e3f2fd', borderRadius: '4px' }}>
+                                                        {a.name}
+                                                    </span>
+                                                ))}
+                                                {room.amenities.length > 3 && <span style={{ fontSize: '0.85em' }}>+{room.amenities.length - 3}</span>}
+                                            </div>
+                                        ) : '-'}
+                                    </td>
                                     <td>
                                         <button onClick={() => handleEditRoomClick(room)} className="btn-edit">Edit</button>
                                         <button onClick={() => handleDeleteRoomClick(room.id)} className="btn-danger">Delete</button>

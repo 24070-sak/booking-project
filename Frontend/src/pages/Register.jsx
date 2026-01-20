@@ -54,13 +54,24 @@ function Register() {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.access_token);
 
-      // Rediriger vers le dashboard
-      navigate("/dashboard");
+      // Rediriger vers le dashboard ou l'accueil selon permissions
+      if (data.user.access_dashboard) {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSocialLogin = (platform) => {
+    // Rediriger vers l'URL d'authentification du backend
+    // Note: Utiliser une variable d'environnement pour l'URL de base serait mieux
+    const backendUrl = "http://127.0.0.1:5000/api/auth";
+    window.location.href = `${backendUrl}/${platform.toLowerCase()}`;
   };
 
   return (
@@ -225,12 +236,12 @@ function Register() {
 
         {/* SOCIAL LOGIN */}
         <div className="social-login">
-          <div className="login-google">
+          <div className="login-google" onClick={() => handleSocialLogin('Google')}>
             <img src={google} alt="google icon" />
             <p>S'inscrire avec Google</p>
           </div>
 
-          <div className="login-facebook">
+          <div className="login-facebook" onClick={() => handleSocialLogin('Facebook')}>
             <img src={facebook} alt="facebook icon" />
             <p>S'inscrire avec Facebook</p>
           </div>

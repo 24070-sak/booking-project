@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getUserBookings, getAllBookings } from '../services/bookingService';
+import { getOwnerBookings, getAllBookings } from '../services/bookingService';
 import '../styles/components/dashboardReservations.css';
 
 const DashboardReservations = () => {
@@ -16,7 +16,7 @@ const DashboardReservations = () => {
                 const adminStatus = user?.role === 'admin';
                 setIsAdmin(adminStatus);
 
-                const data = adminStatus ? await getAllBookings() : await getUserBookings();
+                const data = await getOwnerBookings();
 
                 if (data.bookings) {
                     setBookings(data.bookings);
