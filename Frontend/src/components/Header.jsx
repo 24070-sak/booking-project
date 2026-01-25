@@ -25,28 +25,36 @@ function Header() {
             <div className="header-top">
                 <Link to="/"><img src={logo} alt="logo" className="home-logo" /></Link>
                 <div className="labels">
-                    <span id="language"><i className="fa-solid fa-earth"></i> FR</span>
                     {user ? (
                         <>
                             {user.access_dashboard && (
                                 <Link to="/dashboard" id="login"> <i className="fa-solid fa-gauge"></i> Dashboard</Link>
                             )}
 
-                            <Link to="/profile" style={{ color: 'black', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+                            {!user.access_dashboard && (
+                                <Link to="/messages" className="messages-btn" title="Messages">
+                                    <i className="fa-solid fa-comment-dots"></i>
+                                </Link>
+                            )}
+
+                            <Link to="/profile" className="user-profile-link">
                                 {user.profile_picture ? (
-                                    <img src={user.profile_picture} alt="Profile" style={{ width: '35px', height: '35px', borderRadius: '50%', objectFit: 'cover', border: '2px solid black' }} />
+                                    <img src={user.profile_picture} alt="Profile" className="header-profile-pic" />
                                 ) : (
-                                    <>
-                                        <i className="fa-solid fa-user"></i> {user.username || user.first_name}
-                                    </>
+                                    <div className="header-profile-placeholder">
+                                        {user.first_name ? user.first_name.charAt(0).toUpperCase() : 'U'}
+                                    </div>
                                 )}
+                                <span className="user-name">{user.first_name}</span>
                             </Link>
-                            <span onClick={handleLogout} style={{ cursor: 'pointer', color: 'black', marginLeft: '10px' }}> <i className="fa-solid fa-right-from-bracket"></i></span>
+
+                            <span onClick={handleLogout} className="logout-btn" title="Se déconnecter">
+                                <i className="fa-solid fa-right-from-bracket"></i>
+                            </span>
                         </>
                     ) : (
                         <Link to="/connexion" id="login"> <i className="fa-solid fa-user"></i> Se connecter</Link>
                     )}
-                    <span id="menu"> <i className="fa-solid fa-bars"></i> Menu</span>
                 </div>
             </div>
 

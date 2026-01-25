@@ -28,7 +28,7 @@ function Profile() {
             });
             setPreview(u.profile_picture);
         } else {
-            window.location.href = '/login';
+            window.location.href = '/connexion';
         }
     }, []);
 

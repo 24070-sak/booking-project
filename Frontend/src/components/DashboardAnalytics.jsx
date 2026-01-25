@@ -73,15 +73,15 @@ const DashboardAnalytics = () => {
                     <h3>Statistiques Visiteurs</h3>
                     <div className="stats-grid">
                         <div className="stat-item">
-                            <div className="stat-value">1,240</div>
+                            <div className="stat-value">{analytics?.visitorStats?.pageViews || 0}</div>
                             <div className="stat-label">Vues de page</div>
                         </div>
                         <div className="stat-item">
-                            <div className="stat-value">350</div>
+                            <div className="stat-value">{analytics?.visitorStats?.uniqueVisitors || 0}</div>
                             <div className="stat-label">Visiteurs uniques</div>
                         </div>
                         <div className="stat-item">
-                            <div className="stat-value">12%</div>
+                            <div className="stat-value">{analytics?.visitorStats?.bounceRate || 0}%</div>
                             <div className="stat-label">Taux de rebond</div>
                         </div>
                     </div>

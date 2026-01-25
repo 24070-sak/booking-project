@@ -36,7 +36,7 @@ export async function apiFetch(endpoint, options = {}) {
             console.warn("Session expired (401). Redirecting to login...");
             localStorage.removeItem("token");
             localStorage.removeItem("user");
-            window.location.href = "/login";
+            window.location.href = "/connexion";
             return Promise.reject(new Error("Session expired"));
         }
 

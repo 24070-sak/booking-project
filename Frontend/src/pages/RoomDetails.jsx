@@ -51,14 +51,15 @@ function RoomDetails() {
 
         setBookingStatus('loading');
         try {
-            await createBooking({
+            const data = await createBooking({
                 room_id: room.id,
                 check_in_date: checkIn,
                 check_out_date: checkOut,
                 num_guests: guests
             });
             setBookingStatus('success');
-            setTimeout(() => navigate('/dashboard'), 2000); // Redirect to dashboard after success
+            // Redirect to payment page
+            setTimeout(() => navigate(`/payment/${data.booking.id}`, { state: { booking: data.booking } }), 1000);
         } catch (err) {
             console.error(err);
             setBookingStatus('error');
