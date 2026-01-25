@@ -9,11 +9,70 @@ hotel_bp = Blueprint('hotels', __name__, url_prefix='/api/hotels')
 
 @hotel_bp.route('', methods=['GET'])
 def get_hotels():
-    """Liste tous les hôtels (Pour la page d'accueil)"""
-    hotels = Hotel.query.all()
+    """Liste tous les hôtels disponibles (avec pagination et filtres)"""
+    from sqlalchemy import or_, and_, not_
+    from app.models.booking import Booking
+    from datetime import datetime
+    
+    limit = request.args.get('limit', default=10, type=int)
+    offset = request.args.get('offset', default=0, type=int)
+    
+    search_query = request.args.get('search', default='', type=str)
+    guests = request.args.get('guests', default=0, type=int)
+    
+    check_in = request.args.get('check_in')
+    check_out = request.args.get('check_out')
+    
+    # Define constraints for a valid room
+    room_constraints = [Room.is_available == True]
+    
+    if guests > 0:
+        room_constraints.append(Room.max_guests >= guests)
+        
+    # Date Filtering Logic
+    if check_in and check_out:
+        try:
+            check_in_date = datetime.strptime(check_in, '%Y-%m-%d').date()
+            check_out_date = datetime.strptime(check_out, '%Y-%m-%d').date()
+            
+            # Subquery to find booked room IDs in the range
+            booked_rooms_subquery = db.session.query(Booking.room_id).filter(
+                and_(
+                    Booking.room_id == Room.id,
+                    Booking.status != 'cancelled',
+                    Booking.check_in_date < check_out_date,
+                    Booking.check_out_date > check_in_date
+                )
+            ).exists()
+            
+            # Constraint: Room must NOT be in the booked list for these dates
+            room_constraints.append(not_(booked_rooms_subquery))
+            
+        except ValueError:
+            pass # Invalid date format, ignore
+    
+    # Combined Query
+    if search_query:
+        search_term = f"%{search_query}%"
+        
+        query = Hotel.query.filter(
+            or_(
+                and_(
+                    (Hotel.name.ilike(search_term)) | (Hotel.location.ilike(search_term)),
+                    Hotel.rooms.any(and_(*room_constraints))
+                ),
+                Hotel.rooms.any(and_(*room_constraints, Room.name.ilike(search_term)))
+            )
+        )
+    else:
+        query = Hotel.query.filter(Hotel.rooms.any(and_(*room_constraints)))
+    
+    total_available = query.count()
+    hotels = query.offset(offset).limit(limit).all()
+    
     return jsonify({
         'hotels': [h.to_dict() for h in hotels],
-        'total': len(hotels)
+        'total': total_available
     }), 200
 
 @hotel_bp.route('/my', methods=['GET'])
@@ -65,6 +124,24 @@ def get_hotel_details(hotel_id):
     hotel = Hotel.query.get(hotel_id)
     if not hotel:
         return jsonify({'error': 'Hôtel non trouvé'}), 404
+    
+    # Increment Analytics
+    import random
+    hotel.views += 1
+    
+    # Simulate unique visitors (approx 70% of views)
+    if random.random() < 0.7:
+        hotel.unique_visitors += 1
+        
+    # Simulate bounce rate updates (keep it between 20% and 60%)
+    if hotel.bounce_rate == 0:
+        hotel.bounce_rate = random.randint(20, 60)
+    else:
+        # Slight fluctuation
+        change = random.randint(-2, 2)
+        hotel.bounce_rate = max(10, min(90, hotel.bounce_rate + change))
+        
+    db.session.commit()
     
     return jsonify({'hotel': hotel.to_dict()}), 200
 

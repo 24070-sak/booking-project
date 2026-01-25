@@ -8,6 +8,19 @@ from app.models.booking import Booking
 
 review_bp = Blueprint('reviews', __name__, url_prefix='/api/reviews')
 
+def _update_hotel_rating(hotel):
+    from sqlalchemy import func
+    avg_rating = db.session.query(func.avg(Review.rating))\
+        .join(Room, Review.room_id == Room.id)\
+        .filter(Room.hotel_id == hotel.id)\
+        .scalar()
+    
+    if avg_rating:
+        hotel.rating = round(float(avg_rating), 1)
+    else:
+        hotel.rating = 0.0
+    db.session.commit()
+
 @review_bp.route('', methods=['GET'])
 @jwt_required(optional=True)
 def get_reviews():
@@ -69,6 +82,9 @@ def create_review():
     db.session.add(review)
     db.session.commit()
     
+    # Update Hotel Rating
+    _update_hotel_rating(room.hotel)
+    
     return jsonify({
         'message': 'Avis créé avec succès',
         'review': review.to_dict()
@@ -115,6 +131,12 @@ def update_review(review_id):
     
     db.session.commit()
     
+    # Update Hotel Rating
+    # Need to get the hotel associated with this review
+    # Review -> Room -> Hotel
+    if review.room and review.room.hotel:
+        _update_hotel_rating(review.room.hotel)
+    
     return jsonify({
         'message': 'Avis mis à jour',
         'review': review.to_dict()
@@ -136,8 +158,17 @@ def delete_review(review_id):
     if review.user_id != user_id and user.role not in ['admin', 'manager']:
         return jsonify({'error': 'Accès non autorisé'}), 403
     
+    # Capture hotel before delete
+    hotel = None
+    if review.room and review.room.hotel:
+        hotel = review.room.hotel
+
     db.session.delete(review)
     db.session.commit()
+
+    # Update Hotel Rating
+    if hotel:
+        _update_hotel_rating(hotel)
     
     return jsonify({'message': 'Avis supprimé avec succès'}), 200
 

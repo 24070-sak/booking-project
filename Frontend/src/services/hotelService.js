@@ -1,7 +1,16 @@
 import { apiFetch } from "./apiClient";
 
-export async function getAllHotels() {
-    const response = await apiFetch("/hotels");
+export async function getAllHotels(limit = 100, offset = 0, search = '', guests = 0, check_in = '', check_out = '') {
+    const params = new URLSearchParams({
+        limit,
+        offset,
+        search,
+        guests
+    });
+    if (check_in) params.append('check_in', check_in);
+    if (check_out) params.append('check_out', check_out);
+
+    const response = await apiFetch(`/hotels?${params.toString()}`);
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer les hôtels");

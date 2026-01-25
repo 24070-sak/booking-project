@@ -17,7 +17,7 @@ dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/api/dashboard')
 @dashboard_bp.route('/stats', methods=['GET'])
 @jwt_required()
 def get_dashboard_stats():
-    """Récupère les statistiques pour le dashboard de l'owner"""
+    """Récupère les statistiques pour le dashboard"""
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
     
@@ -27,37 +27,58 @@ def get_dashboard_stats():
     if not user.access_dashboard:
         return jsonify({'error': 'Accès interdit'}), 403
 
-    # Liste des IDs des hôtels possédés par l'utilisateur
+    is_admin = user.role == 'admin'
     owned_hotel_ids = [h.id for h in user.hotels]
     
-    if not owned_hotel_ids:
+    if not is_admin and not owned_hotel_ids:
         return jsonify({
             'stats': {'totalBookings': 0, 'totalRevenue': 0, 'activeProperties': 0, 'occupancyRate': 0},
             'recentActivity': [],
             'analytics': {'revenueByDay': [], 'topProperties': []}
         }), 200
 
-    # 1. Total Bookings (Pour les hôtels possédés)
-    total_bookings = Booking.query.join(Room).filter(Room.hotel_id.in_(owned_hotel_ids)).count()
+    # Helper to apply ownership filter
+    def apply_filter(query, join_room=True):
+        if is_admin:
+            return query
+        if join_room:
+            # Assumes query already joined Room or can join it
+            # If query is on Booking, we need to join Room
+            # But the caller usually sets up the join
+            return query.filter(Room.hotel_id.in_(owned_hotel_ids))
+        return query
+
+    # 1. Total Bookings
+    total_bookings = Booking.query.join(Room)
+    if not is_admin:
+        total_bookings = total_bookings.filter(Room.hotel_id.in_(owned_hotel_ids))
+    total_bookings = total_bookings.count()
     
-    # 2. Total Revenue (Paiements complétés pour les hôtels possédés)
-    total_revenue_result = (
+    # 2. Total Revenue
+    revenue_query = (
         db.session.query(func.sum(Payment.amount))
         .join(Booking, Payment.booking_id == Booking.id)
         .join(Room, Booking.room_id == Room.id)
-        .filter(Room.hotel_id.in_(owned_hotel_ids))
-        .filter(Payment.status == 'completed')
-        .scalar()
     )
+    if not is_admin:
+        revenue_query = revenue_query.filter(Room.hotel_id.in_(owned_hotel_ids))
+    
+    total_revenue_result = revenue_query.filter(Payment.status == 'completed').scalar()
     total_revenue = float(total_revenue_result) if total_revenue_result else 0.0
 
     # 3. Active Properties
-    active_properties = len(owned_hotel_ids)
+    if is_admin:
+        active_properties = Hotel.query.count()
+    else:
+        active_properties = len(owned_hotel_ids)
     
     # 4. Recent Activity
+    recent_query = Booking.query.join(Room)
+    if not is_admin:
+        recent_query = recent_query.filter(Room.hotel_id.in_(owned_hotel_ids))
+        
     recent_bookings = (
-        Booking.query.join(Room).filter(Room.hotel_id.in_(owned_hotel_ids))
-        .order_by(Booking.created_at.desc())
+        recent_query.order_by(Booking.created_at.desc())
         .limit(5)
         .all()
     )
@@ -83,11 +104,17 @@ def get_dashboard_stats():
     
     for i in range(6, -1, -1):  # Last 7 days
         target_date = date.today() - timedelta(days=i)
-        day_revenue = (
+        
+        day_query = (
             db.session.query(func.sum(Payment.amount))
             .join(Booking, Payment.booking_id == Booking.id)
             .join(Room, Booking.room_id == Room.id)
-            .filter(Room.hotel_id.in_(owned_hotel_ids))
+        )
+        if not is_admin:
+            day_query = day_query.filter(Room.hotel_id.in_(owned_hotel_ids))
+            
+        day_revenue = (
+            day_query
             .filter(Payment.status == 'completed')
             .filter(func.date(Payment.paid_at) == target_date)
             .scalar()
@@ -101,20 +128,47 @@ def get_dashboard_stats():
     
     # Top Properties by Revenue
     top_properties = []
-    for h in user.hotels:
-        rev = db.session.query(func.sum(Payment.amount))\
+    
+    # Optimize query for admin to avoid fetching all hotels if many
+    hotels_to_check = Hotel.query.all() if is_admin else user.hotels
+    
+    for h in hotels_to_check:
+        # Note: This loop can be optimized with a single Group By query, but keeping logic consistent for now
+        rev_q = db.session.query(func.sum(Payment.amount))\
             .join(Booking, Payment.booking_id == Booking.id)\
             .join(Room, Booking.room_id == Room.id)\
             .filter(Room.hotel_id == h.id)\
-            .filter(Payment.status == 'completed')\
-            .scalar()
-        top_properties.append({
-            'name': h.name,
-            'revenue': float(rev) if rev else 0
-        })
+            .filter(Payment.status == 'completed')
+        
+        rev = rev_q.scalar()
+        
+        if rev or is_admin: # Include even if 0 for admin if wanted, or just > 0
+             if rev and float(rev) > 0:
+                top_properties.append({
+                    'name': h.name,
+                    'revenue': float(rev)
+                })
+             elif is_admin and len(top_properties) < 5: # Just fill up a bit
+                 # Handle cases with 0 revenue
+                 pass
     
     top_properties.sort(key=lambda x: x['revenue'], reverse=True)
-    top_properties = top_properties[:3]
+    top_properties = top_properties[:5] # Top 5
+
+    # 7. Visitor Stats
+    hotels_query = Hotel.query
+    if not is_admin:
+        hotels_query = hotels_query.filter(Hotel.id.in_(owned_hotel_ids))
+    
+    all_hotels = hotels_query.all()
+    
+    total_views = sum(h.views for h in all_hotels)
+    total_unique = sum(h.unique_visitors for h in all_hotels)
+    
+    if all_hotels and len(all_hotels) > 0:
+        avg_bounce = sum(h.bounce_rate for h in all_hotels) / len(all_hotels)
+    else:
+        avg_bounce = 0
 
     return jsonify({
         'stats': {
@@ -126,7 +180,12 @@ def get_dashboard_stats():
         'recentActivity': recent_activity,
         'analytics': {
             'revenueByDay': revenue_by_day,
-            'topProperties': top_properties
+            'topProperties': top_properties,
+            'visitorStats': {
+                'pageViews': total_views,
+                'uniqueVisitors': total_unique,
+                'bounceRate': int(avg_bounce)
+            }
         }
     }), 200
 
@@ -140,9 +199,10 @@ def get_detailed_analytics():
     if not user or not user.access_dashboard:
         return jsonify({'error': 'Accès interdit'}), 403
     
+    is_admin = user.role == 'admin'
     owned_hotel_ids = [h.id for h in user.hotels]
     
-    if not owned_hotel_ids:
+    if not is_admin and not owned_hotel_ids:
         return jsonify({
             'bookingsByStatus': {},
             'revenueByMonth': [],
@@ -153,21 +213,29 @@ def get_detailed_analytics():
     # Bookings by status
     bookings_by_status = {}
     for status in ['pending', 'confirmed', 'cancelled', 'completed']:
-        count = Booking.query.join(Room).filter(
-            Room.hotel_id.in_(owned_hotel_ids),
-            Booking.status == status
-        ).count()
+        query = Booking.query.join(Room)
+        if not is_admin:
+            query = query.filter(Room.hotel_id.in_(owned_hotel_ids))
+            
+        count = query.filter(Booking.status == status).count()
         bookings_by_status[status] = count
     
     # Revenue by month (last 6 months)
     revenue_by_month = []
     for i in range(5, -1, -1):
         target_month = date.today().replace(day=1) - timedelta(days=i*30)
-        month_revenue = (
+        
+        rev_query = (
             db.session.query(func.sum(Payment.amount))
             .join(Booking, Payment.booking_id == Booking.id)
             .join(Room, Booking.room_id == Room.id)
-            .filter(Room.hotel_id.in_(owned_hotel_ids))
+        )
+        
+        if not is_admin:
+            rev_query = rev_query.filter(Room.hotel_id.in_(owned_hotel_ids))
+            
+        month_revenue = (
+            rev_query
             .filter(Payment.status == 'completed')
             .filter(func.extract('month', Payment.paid_at) == target_month.month)
             .filter(func.extract('year', Payment.paid_at) == target_month.year)
@@ -180,20 +248,18 @@ def get_detailed_analytics():
         })
     
     # Average booking value
-    avg_booking = (
-        db.session.query(func.avg(Booking.total_price))
-        .join(Room)
-        .filter(Room.hotel_id.in_(owned_hotel_ids))
-        .scalar()
-    )
+    avg_query = db.session.query(func.avg(Booking.total_price)).join(Room)
+    if not is_admin:
+        avg_query = avg_query.filter(Room.hotel_id.in_(owned_hotel_ids))
+        
+    avg_booking = avg_query.scalar()
     
     # Total guests
-    total_guests = (
-        db.session.query(func.sum(Booking.num_guests))
-        .join(Room)
-        .filter(Room.hotel_id.in_(owned_hotel_ids))
-        .scalar()
-    )
+    guests_query = db.session.query(func.sum(Booking.num_guests)).join(Room)
+    if not is_admin:
+        guests_query = guests_query.filter(Room.hotel_id.in_(owned_hotel_ids))
+        
+    total_guests = guests_query.scalar()
     
     return jsonify({
         'bookingsByStatus': bookings_by_status,

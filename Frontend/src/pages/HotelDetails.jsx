@@ -268,7 +268,7 @@ function HotelDetails() {
                             <div style={{ marginTop: '16px', textAlign: 'center' }}>
                                 <button
                                     onClick={() => {
-                                        if (!user) { navigate('/login'); return; }
+                                        if (!user) { navigate('/connexion'); return; }
                                         setShowContactModal(true);
                                     }}
                                     className="secondary-btn"

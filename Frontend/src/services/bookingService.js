@@ -44,3 +44,19 @@ export async function getAllBookings() {
 
     return response.json();
 }
+
+export async function getBooking(bookingId) {
+    const response = await apiFetch(`/bookings/${bookingId}`);
+    if (!response.ok) throw new Error("Réservation introuvable");
+    return response.json();
+}
+
+export async function processPayment(bookingId, paymentData) {
+    const response = await apiFetch(`/bookings/${bookingId}/payment`, {
+        method: "POST",
+        body: JSON.stringify(paymentData)
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Échec du paiement");
+    return data;
+}
