@@ -63,7 +63,9 @@
     background-color: transparent;
     border: none;
     color: #1e293b;
-    width: 100%;
+    flex: 1;
+    width: auto;
+    min-width: 0;
     height: 100%;
     font-size: 15px;
     font-weight: 500;

@@ -95,8 +95,28 @@ def get_dashboard_stats():
             'date': created_at_str
         })
 
-    # 5. Occupancy Rate (Simplifié)
-    occupancy_rate = 65 if total_bookings > 0 else 0
+    # 5. Occupancy Rate (Calcul Réel)
+    total_rooms_query = Room.query
+    if not is_admin:
+        total_rooms_query = total_rooms_query.filter(Room.hotel_id.in_(owned_hotel_ids))
+    total_rooms = total_rooms_query.count()
+
+    occupied_rooms = 0
+    if total_rooms > 0:
+        today = date.today()
+        # Count rooms that have a booking active today
+        occupied_query = db.session.query(func.count(func.distinct(Booking.room_id)))\
+            .join(Room, Booking.room_id == Room.id)\
+            .filter(Booking.check_in_date <= today)\
+            .filter(Booking.check_out_date > today)\
+            .filter(Booking.status.in_(['confirmed', 'pending']))
+            
+        if not is_admin:
+            occupied_query = occupied_query.filter(Room.hotel_id.in_(owned_hotel_ids))
+            
+        occupied_rooms = occupied_query.scalar() or 0
+        
+    occupancy_rate = int((occupied_rooms / total_rooms) * 100) if total_rooms > 0 else 0
 
     # 6. Analytics - Real Revenue by Day (last 7 days)
     revenue_by_day = []
@@ -126,34 +146,39 @@ def get_dashboard_stats():
             'amount': float(day_revenue) if day_revenue else 0
         })
     
-    # Top Properties by Revenue
+    # Top 3 Properties by Reservations
     top_properties = []
     
-    # Optimize query for admin to avoid fetching all hotels if many
     hotels_to_check = Hotel.query.all() if is_admin else user.hotels
     
     for h in hotels_to_check:
-        # Note: This loop can be optimized with a single Group By query, but keeping logic consistent for now
-        rev_q = db.session.query(func.sum(Payment.amount))\
+        # Count bookings for this hotel
+        booking_count_query = db.session.query(func.count(Booking.id))\
+            .join(Room, Booking.room_id == Room.id)\
+            .filter(Room.hotel_id == h.id)\
+            .filter(Booking.status != 'cancelled')
+            
+        booking_count = booking_count_query.scalar() or 0
+        
+        # Calculate revenue for this hotel
+        revenue_query = db.session.query(func.sum(Payment.amount))\
             .join(Booking, Payment.booking_id == Booking.id)\
             .join(Room, Booking.room_id == Room.id)\
             .filter(Room.hotel_id == h.id)\
             .filter(Payment.status == 'completed')
-        
-        rev = rev_q.scalar()
-        
-        if rev or is_admin: # Include even if 0 for admin if wanted, or just > 0
-             if rev and float(rev) > 0:
-                top_properties.append({
-                    'name': h.name,
-                    'revenue': float(rev)
-                })
-             elif is_admin and len(top_properties) < 5: # Just fill up a bit
-                 # Handle cases with 0 revenue
-                 pass
-    
-    top_properties.sort(key=lambda x: x['revenue'], reverse=True)
-    top_properties = top_properties[:5] # Top 5
+            
+        revenue = revenue_query.scalar() or 0
+
+        if booking_count > 0:
+            top_properties.append({
+                'name': h.name,
+                'bookings': booking_count,
+                'revenue': float(revenue)
+            })
+            
+    # Sort by bookings count
+    top_properties.sort(key=lambda x: x['bookings'], reverse=True)
+    top_properties = top_properties[:3] # Top 3
 
     # 7. Visitor Stats
     hotels_query = Hotel.query

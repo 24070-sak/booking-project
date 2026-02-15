@@ -54,10 +54,7 @@
     margin: 0;
 }
 
-.card-location::before {
-    content: "📍";
-    font-size: 16px;
-}
+
 
 .card-price {
     font-size: 22px;
