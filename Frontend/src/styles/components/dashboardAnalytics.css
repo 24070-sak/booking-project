@@ -37,34 +37,14 @@
 
 /* Revenue Chart */
 .chart-container {
-    height: 200px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    padding: 0 10px 30px 10px;
+    height: 300px;
+    width: 100%;
+    /* Recharts handles padding internally mostly, removing flex layout */
+    display: block;
 }
 
-.chart-bar {
-    width: 30px;
-    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-    border-radius: 6px 6px 0 0;
-    position: relative;
-    transition: height 1s ease-out;
-}
-
-.chart-bar:hover {
-    filter: brightness(1.1);
-}
-
-.chart-label {
-    position: absolute;
-    bottom: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    color: #718096;
-    font-weight: 600;
-}
+/* Remove old custom chart CSS if no longer needed, or keep for fallback */
+/* .chart-bar { ... } */
 
 /* Occupancy Rate */
 .occupancy-container {
@@ -122,6 +102,7 @@
 .property-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 12px 0;
     border-bottom: 1px solid #e2e8f0;
     font-size: 14px;
@@ -132,9 +113,51 @@
     border-bottom: none;
 }
 
-.property-revenue {
+.property-name-rank {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.rank-badge {
+    background: #e2e8f0;
+    color: #4a5568;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.property-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.property-bookings {
+    font-size: 11px;
+    color: #718096;
+    margin-bottom: 2px;
+}
+
+.property-revenue-amount {
     font-weight: 600;
-    color: #28a745;
+    font-size: 13px;
+    color: #38a169;
+    /* Green for revenue */
+    background: #f0fff4;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid #c6f6d5;
+}
+
+.dummy {
+    color: #a0aec0;
+    font-style: italic;
+    justify-content: center;
 }
 
 /* Visitor Stats */
@@ -180,10 +203,6 @@
 
 /* Mobile (480px and below) */
 @media (max-width: 480px) {
-    .chart-bar {
-        width: 20px;
-    }
-
     .pie-chart {
         width: 140px;
         height: 140px;

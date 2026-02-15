@@ -13,8 +13,8 @@ const DashboardCalendar = () => {
         return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
     };
 
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+    const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
     ];
 
     const prevMonth = () => {
@@ -71,7 +71,7 @@ const DashboardCalendar = () => {
     return (
         <div className="dashboard-content dashboard-calendar-content">
             <div className="calendar-header-controls">
-                <h2>Calendar</h2>
+                <h2>Calendrier</h2>
                 <div className="calendar-nav">
                     <button onClick={prevMonth} className="btn-nav">&lt;</button>
                     <h3>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h3>
@@ -81,13 +81,13 @@ const DashboardCalendar = () => {
 
             <div className="calendar-container">
                 <div className="calendar-weekdays">
-                    <div className="weekday">Sun</div>
-                    <div className="weekday">Mon</div>
-                    <div className="weekday">Tue</div>
-                    <div className="weekday">Wed</div>
-                    <div className="weekday">Thu</div>
-                    <div className="weekday">Fri</div>
-                    <div className="weekday">Sat</div>
+                    <div className="weekday">Dim</div>
+                    <div className="weekday">Lun</div>
+                    <div className="weekday">Mar</div>
+                    <div className="weekday">Mer</div>
+                    <div className="weekday">Jeu</div>
+                    <div className="weekday">Ven</div>
+                    <div className="weekday">Sam</div>
                 </div>
                 <div className="calendar-grid">
                     {renderCalendarDays()}

@@ -99,21 +99,21 @@ function Dashboard() {
 
           <span className={`label ${activeTab === 'properties' ? 'selected' : ''}`} id="properties" onClick={handleLabelClick}>
             <PropertiesIcon className="icon" />
-            <span>Properties</span>
+            <span>Propriétés</span>
           </span>
 
           <span className={`label ${activeTab === 'reservations' ? 'selected' : ''}`} id="reservations" onClick={handleLabelClick}>
             <ReservationsIcon className="icon" />
-            <span>{isAdmin ? 'All Reservations' : 'Mes Réservations'}</span>
+            <span>{isAdmin ? 'Toutes les réservations' : 'Mes Réservations'}</span>
           </span>
 
           <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
             <AnalyticsIcon className="icon" />
-            <span>Analytics</span>
+            <span>Analytique</span>
           </span>
           <span className={`label ${activeTab === 'payments' ? 'selected' : ''}`} id="payments" onClick={handleLabelClick}>
             <PaymentsIcon className="icon" />
-            <span>Payments</span>
+            <span>Paiements</span>
           </span>
 
           <span className={`label ${activeTab === 'messages' ? 'selected' : ''}`} id="messages" onClick={handleLabelClick}>
@@ -123,18 +123,18 @@ function Dashboard() {
 
           <span className={`label ${activeTab === 'reviews' ? 'selected' : ''}`} id="reviews" onClick={handleLabelClick}>
             <ReviewsIcon className="icon" />
-            <span>Reviews</span>
+            <span>Avis</span>
           </span>
 
           <span className={`label ${activeTab === 'settings' ? 'selected' : ''}`} id="settings" onClick={handleLabelClick}>
             <SettingsIcon className="icon" />
-            <span>Settings</span>
+            <span>Paramètres</span>
           </span>
 
           {user?.access_control_center && (
             <Link to="/control-center" className="label" style={{ textDecoration: 'none', color: 'inherit' }}>
               <DashboardIcon className="icon" id="control-center-link" />
-              <span>Control Center</span>
+              <span>Centre de Contrôle</span>
             </Link>
           )}
         </div>
@@ -144,7 +144,7 @@ function Dashboard() {
             localStorage.removeItem('user');
           }}>
             <LogoutIcon className="icon" />
-            Logout
+            Déconnexion
           </Link>
         </div>
 

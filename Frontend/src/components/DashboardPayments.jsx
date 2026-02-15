@@ -31,6 +31,16 @@ const DashboardPayments = () => {
         }
     };
 
+    const translateStatus = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'completed': return 'Terminé';
+            case 'pending': return 'En attente';
+            case 'refunded': return 'Remboursé';
+            case 'failed': return 'Échoué';
+            default: return status;
+        }
+    };
+
     if (loading) return <div>Chargement...</div>;
 
     // Calculate totals dynamically
@@ -48,19 +58,19 @@ const DashboardPayments = () => {
 
     return (
         <div className="dashboard-content dashboard-payments-content">
-            <h2>Payments</h2>
+            <h2>Paiements</h2>
 
             <div className="payment-stats">
                 <div className="payment-stat-card">
-                    <h3>Total Revenue</h3>
+                    <h3>Revenu Total</h3>
                     <p className="text-revenue">{totalRevenue.toLocaleString()} MRU</p>
                 </div>
                 <div className="payment-stat-card">
-                    <h3>Pending</h3>
+                    <h3>En attente</h3>
                     <p className="text-pending">{pendingAmount.toLocaleString()} MRU</p>
                 </div>
                 <div className="payment-stat-card">
-                    <h3>Refunds</h3>
+                    <h3>Remboursements</h3>
                     <p className="text-refunds">{refundedAmount.toLocaleString()} MRU</p>
                 </div>
             </div>
@@ -70,12 +80,12 @@ const DashboardPayments = () => {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Guest</th>
-                            <th>Property</th>
+                            <th>Client</th>
+                            <th>Propriété</th>
                             <th>Date</th>
-                            <th>Method</th>
-                            <th>Amount (MRU)</th>
-                            <th>Status</th>
+                            <th>Méthode</th>
+                            <th>Montant (MRU)</th>
+                            <th>Statut</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -91,11 +101,11 @@ const DashboardPayments = () => {
                                     <td data-label="Amount (MRU)">{payment.amount}</td>
                                     <td data-label="Status">
                                         <span className={`status-badge ${getStatusClass(payment.status)}`}>
-                                            {payment.status}
+                                            {translateStatus(payment.status)}
                                         </span>
                                     </td>
                                     <td data-label="Actions">
-                                        <button className="btn-invoice">Invoice</button>
+                                        <button className="btn-invoice">Facture</button>
                                     </td>
                                 </tr>
                             ))

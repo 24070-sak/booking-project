@@ -45,6 +45,16 @@ const DashboardReservations = () => {
         }
     };
 
+    const translateStatus = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'confirmed': return 'Confirmé';
+            case 'pending': return 'En attente';
+            case 'cancelled': return 'Annulé';
+            case 'completed': return 'Terminé';
+            default: return status;
+        }
+    };
+
     if (loading) return <div>Chargement...</div>;
     if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
@@ -87,10 +97,10 @@ const DashboardReservations = () => {
                                     <td data-label="Chambre">
                                         {res.room ? (res.room.name + (res.room.hotel ? " - " + res.room.hotel.name : "")) : "Chambre inconnue"}
                                     </td>
-                                    <td data-label="Total">{res.total_price} €</td>
+                                    <td data-label="Total">{res.total_price} MRU</td>
                                     <td data-label="Status">
                                         <span className={`status-badge ${getStatusClass(res.status)}`}>
-                                            {res.status}
+                                            {translateStatus(res.status)}
                                         </span>
                                     </td>
                                 </tr>

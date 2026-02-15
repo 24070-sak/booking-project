@@ -250,7 +250,11 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.user-name {
+.user-profile-link .user-name {
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
     font-size: 14px;
     font-weight: 600;
     color: #1f2937;

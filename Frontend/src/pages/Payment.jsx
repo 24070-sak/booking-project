@@ -227,7 +227,7 @@ function Payment() {
                                 >
                                     {processing ? 'Traitement...' : (
                                         paymentMethod === 'credit_card'
-                                            ? `Payer ${booking.total_price}€`
+                                            ? `Payer ${booking.total_price} MRU`
                                             : `Payer avec PayPal`
                                     )}
                                 </button>
@@ -282,7 +282,7 @@ function Payment() {
 
                                 <div className="price-row">
                                     <span>Total à payer</span>
-                                    <span style={{ color: '#0b6ad6' }}>{booking.total_price}€</span>
+                                    <span style={{ color: '#0b6ad6' }}>{booking.total_price} MRU</span>
                                 </div>
                             </div>
                         </div>
