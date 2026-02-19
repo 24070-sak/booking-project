@@ -10,7 +10,7 @@ function HotelCard({ id, title, location, price, imageUrl, rating, dateAvailable
             <div className="card-content">
                 <h3 className="card-title">{title}</h3>
                 <p className="card-location">{location}</p>
-                <p className="card-price">{price}</p>
+                <p className="card-price">{price} MRU</p>
                 <p className="card-date">{dateAvailable}</p>
                 <div className="card-rating">
                     Av. Note {rating} ⭐

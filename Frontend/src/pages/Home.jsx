@@ -54,7 +54,7 @@ function Home() {
                                 id={hotel.id}
                                 title={hotel.name}
                                 location={hotel.location}
-                                price={`Dès 80€/nuit`} // Prix indicatif
+                                price={`Dès 1300 MRU/nuit`} // Prix indicatif
                                 imageUrl={hotel.image_url}
                                 rating={hotel.rating}
                                 dateAvailable={"Disponible"}

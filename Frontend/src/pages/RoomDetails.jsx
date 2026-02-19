@@ -84,7 +84,7 @@ function RoomDetails() {
                     <div style={{ padding: '40px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                             <h1 style={{ margin: 0 }}>{room.name}</h1>
-                            <span style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2ecc71' }}>{room.price_per_night}€</span>
+                            <span style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2ecc71' }}>{room.price_per_night}MRU</span>
                         </div>
 
                         <div style={{ display: 'flex', gap: '20px', color: '#666', marginBottom: '30px', fontSize: '1.1rem' }}>
