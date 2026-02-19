@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
-import { getBooking, processPayment } from "../services/bookingService";
+import { getBooking, processPayment, submitLocalPayment } from "../services/bookingService";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import '../styles/pages/payment.css';
@@ -18,11 +18,16 @@ function Payment() {
     const [error, setError] = useState(null);
 
     // Payment Form State
-    const [paymentMethod, setPaymentMethod] = useState('credit_card'); // 'credit_card' or 'paypal'
+    const [paymentMethod, setPaymentMethod] = useState('credit_card'); // 'credit_card' or 'local_app'
     const [cardName, setCardName] = useState("");
     const [cardNumber, setCardNumber] = useState("");
     const [expiry, setExpiry] = useState("");
     const [cvc, setCvc] = useState("");
+
+    // Local App State
+    const [bankApp, setBankApp] = useState("bankily");
+    const [phone, setPhone] = useState("");
+    const [screenshot, setScreenshot] = useState(null);
 
     useEffect(() => {
         if (!booking) {
@@ -46,18 +51,37 @@ function Payment() {
         e.preventDefault();
         setProcessing(true);
         try {
-            const paymentPayload = {
-                payment_method: paymentMethod
-            };
+            if (paymentMethod === 'local_app') {
+                if (!screenshot) {
+                    throw new Error("Veuillez sélectionner une capture d'écran du paiement.");
+                }
+                const formData = new FormData();
+                formData.append('booking_id', bookingId);
+                formData.append('bank_app', bankApp);
+                formData.append('transaction_phone', phone);
+                formData.append('screenshot', screenshot);
 
-            if (paymentMethod === 'credit_card') {
-                paymentPayload.card_last4 = cardNumber.slice(-4);
+                await submitLocalPayment(formData);
+                navigate('/dashboard', {
+                    state: {
+                        message: "Votre réservation est en cours de vérification par l'administrateur.",
+                        activeTab: 'reservations'
+                    }
+                });
+                return;
+            } else {
+                const paymentPayload = {
+                    payment_method: paymentMethod
+                };
+
+                if (paymentMethod === 'credit_card') {
+                    paymentPayload.card_last4 = cardNumber.slice(-4);
+                }
+
+                await processPayment(bookingId, paymentPayload);
+                alert(`Paiement réussi avec ${paymentMethod === 'paypal' ? 'PayPal' : 'Carte Bancaire'} !`);
             }
 
-            await processPayment(bookingId, paymentPayload);
-
-            // Success
-            alert(`Paiement réussi avec ${paymentMethod === 'paypal' ? 'PayPal' : 'Carte Bancaire'} !`);
             navigate('/dashboard');
         } catch (err) {
             setError(err.message);
@@ -77,30 +101,21 @@ function Payment() {
 
                     {/* Left Column: Payment Form */}
                     <div className="payment-main">
-                        <Link to="#" onClick={() => window.history.back()} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '20px', color: '#64748b', textDecoration: 'none', fontWeight: '500' }}>
-                            <i className="fa-solid fa-arrow-left"></i> Retour
+                        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '20px', color: '#64748b', textDecoration: 'none', fontWeight: '500' }}>
+                            <i className="fa-solid fa-arrow-left"></i> Retour à l'accueil
                         </Link>
 
-                        <div className="section-title">
-                            <i className="fa-solid fa-lock" style={{ color: '#0b6ad6' }}></i>
-                            Paiement Sécurisé
-                        </div>
-
-                        <div className="secure-badge">
-                            <i className="fa-solid fa-shield-halved"></i>
-                            Transaction chiffrée SSL 256-bit
-                        </div>
 
                         <div className="payment-card">
                             <h3 style={{ marginBottom: '25px', marginTop: 0 }}>Méthode de paiement</h3>
 
                             {/* Method Selector */}
-                            <div className="payment-methods" style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
+                            <div className="payment-methods" style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
                                 <div
                                     className={`method-option ${paymentMethod === 'credit_card' ? 'active' : ''}`}
                                     onClick={() => setPaymentMethod('credit_card')}
                                     style={{
-                                        flex: 1,
+                                        flex: '1 1 200px',
                                         padding: '15px',
                                         border: `2px solid ${paymentMethod === 'credit_card' ? '#0b6ad6' : '#e2e8f0'}`,
                                         borderRadius: '12px',
@@ -117,28 +132,70 @@ function Payment() {
                                 </div>
 
                                 <div
-                                    className={`method-option ${paymentMethod === 'paypal' ? 'active' : ''}`}
-                                    onClick={() => setPaymentMethod('paypal')}
+                                    className={`method-option ${paymentMethod === 'local_app' ? 'active' : ''}`}
+                                    onClick={() => setPaymentMethod('local_app')}
                                     style={{
-                                        flex: 1,
+                                        flex: '1 1 200px',
                                         padding: '15px',
-                                        border: `2px solid ${paymentMethod === 'paypal' ? '#0070ba' : '#e2e8f0'}`,
+                                        border: `2px solid ${paymentMethod === 'local_app' ? '#10b981' : '#e2e8f0'}`,
                                         borderRadius: '12px',
                                         cursor: 'pointer',
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: '10px',
-                                        backgroundColor: paymentMethod === 'paypal' ? '#f5faff' : 'white',
+                                        backgroundColor: paymentMethod === 'local_app' ? '#ecfdf5' : 'white',
                                         transition: 'all 0.2s'
                                     }}
                                 >
-                                    <i className="fa-brands fa-paypal" style={{ fontSize: '24px', color: '#0070ba' }}></i>
-                                    <span style={{ fontWeight: '600', color: paymentMethod === 'paypal' ? '#0070ba' : '#1e293b' }}>PayPal</span>
+                                    <i className="fa-solid fa-mobile-screen-button" style={{ fontSize: '24px', color: paymentMethod === 'local_app' ? '#10b981' : '#64748b' }}></i>
+                                    <span style={{ fontWeight: '600', color: paymentMethod === 'local_app' ? '#10b981' : '#1e293b' }}>App Bancaire (MR)</span>
                                 </div>
                             </div>
 
                             <form onSubmit={handlePayment}>
-                                {paymentMethod === 'credit_card' ? (
+                                {paymentMethod === 'local_app' ? (
+                                    <div className="local-app-fields">
+                                        <div className="form-group">
+                                            <label className="form-label">Application utiliser</label>
+                                            <select
+                                                className="form-input"
+                                                value={bankApp}
+                                                onChange={e => setBankApp(e.target.value)}
+                                            >
+                                                <option value="bankily">Bankily</option>
+                                                <option value="sedad">Sedad</option>
+                                                <option value="masrivi">Masrivi</option>
+                                                <option value="autre">Autre</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">Numéro de téléphone de la transaction</label>
+                                            <input
+                                                type="tel"
+                                                className="form-input"
+                                                placeholder="ex: 42100000"
+                                                value={phone}
+                                                onChange={e => setPhone(e.target.value)}
+                                                required={paymentMethod === 'local_app'}
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label className="form-label">Preuve de paiement (capture d'écran)</label>
+                                            <input
+                                                type="file"
+                                                className="form-input"
+                                                accept="image/*"
+                                                onChange={e => setScreenshot(e.target.files[0])}
+                                                required={paymentMethod === 'local_app'}
+                                            />
+                                            <p style={{ fontSize: '12px', color: '#64748b', marginTop: '5px' }}>
+                                                Veuillez joindre une capture d'écran claire de votre reçu de transaction.
+                                            </p>
+                                        </div>
+                                    </div>
+                                ) : paymentMethod === 'credit_card' ? (
                                     <>
                                         <div className="form-group">
                                             <label className="form-label">Titulaire de la carte</label>
@@ -207,28 +264,21 @@ function Payment() {
                                             </div>
                                         </div>
                                     </>
-                                ) : (
-                                    <div className="paypal-ui" style={{ textAlign: 'center', padding: '20px', backgroundColor: '#f9fafb', borderRadius: '12px', marginBottom: '20px' }}>
-                                        <i className="fa-brands fa-paypal" style={{ fontSize: '48px', color: '#0070ba', marginBottom: '15px' }}></i>
-                                        <p style={{ color: '#64748b', marginBottom: '20px' }}>
-                                            Vous allez être redirigé vers PayPal pour finaliser votre paiement de manière sécurisée.
-                                        </p>
-                                    </div>
-                                )}
+                                ) : null}
 
                                 <button
                                     type="submit"
                                     className="pay-btn"
                                     disabled={processing}
                                     style={{
-                                        backgroundColor: paymentMethod === 'paypal' ? '#ffc439' : '#0b6ad6',
-                                        color: paymentMethod === 'paypal' ? '#2c2e2f' : 'white'
+                                        backgroundColor: paymentMethod === 'local_app' ? '#10b981' : '#0b6ad6',
+                                        color: 'white'
                                     }}
                                 >
                                     {processing ? 'Traitement...' : (
-                                        paymentMethod === 'credit_card'
-                                            ? `Payer ${booking.total_price} MRU`
-                                            : `Payer avec PayPal`
+                                        paymentMethod === 'local_app'
+                                            ? `Soumettre la preuve (${booking.total_price} MRU)`
+                                            : `Payer ${booking.total_price} MRU`
                                     )}
                                 </button>
 

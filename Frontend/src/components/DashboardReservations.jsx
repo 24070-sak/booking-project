@@ -102,6 +102,11 @@ const DashboardReservations = () => {
                                         <span className={`status-badge ${getStatusClass(res.status)}`}>
                                             {translateStatus(res.status)}
                                         </span>
+                                        {res.status === 'confirmed' && (
+                                            <div style={{ fontSize: '11px', color: '#059669', marginTop: '4px', fontWeight: 'bold' }}>
+                                                L'administrateur a accepté votre réservation.
+                                            </div>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

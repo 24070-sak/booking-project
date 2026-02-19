@@ -116,8 +116,8 @@ function RoomDetails() {
                         }}>
                             <h3>Réserver votre séjour</h3>
                             {bookingStatus === 'success' ? (
-                                <div style={{ color: 'green', padding: '20px', textAlign: 'center', fontSize: '1.2rem' }}>
-                                    ✅ Réservation confirmée ! Redirection...
+                                <div style={{ color: '#2980b9', padding: '20px', textAlign: 'center', fontSize: '1.2rem' }}>
+                                    ✅ Réservation enregistrée ! Passage au paiement...
                                 </div>
                             ) : (
                                 <form onSubmit={handleBooking} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
