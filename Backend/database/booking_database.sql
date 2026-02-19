@@ -47,9 +47,9 @@ CREATE TABLE `bookings` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`),
   CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 LOCK TABLES `bookings` WRITE;
-INSERT INTO `bookings` VALUES (1,'BK20260116FDE453',10,15,'2026-01-17','2026-01-18',1,75,'pending',NULL,'2026-01-16 22:53:49','2026-01-16 22:53:49'),(2,'BK20260116D5663C',5,9,'2026-04-01','2026-04-05',1,480,'pending',NULL,'2026-01-16 22:55:45','2026-01-16 22:55:45'),(3,'BK202601177CA818',26,45,'2026-01-17','2026-01-18',1,115,'pending',NULL,'2026-01-17 21:11:40','2026-01-17 21:11:40'),(4,'BK20260117AD516A',26,46,'2026-01-17','2026-01-18',1,85,'pending',NULL,'2026-01-17 21:19:05','2026-01-17 21:19:05'),(5,'BK202601179419FC',26,44,'2026-01-17','2026-01-25',1,760,'pending',NULL,'2026-01-17 21:33:11','2026-01-17 21:33:11');
+INSERT INTO `bookings` VALUES (1,'BK20260116FDE453',10,15,'2026-01-17','2026-01-18',1,75,'pending',NULL,'2026-01-16 22:53:49','2026-01-16 22:53:49'),(2,'BK20260116D5663C',5,9,'2026-04-01','2026-04-05',1,480,'pending',NULL,'2026-01-16 22:55:45','2026-01-16 22:55:45'),(3,'BK202601177CA818',26,45,'2026-01-17','2026-01-18',1,115,'pending',NULL,'2026-01-17 21:11:40','2026-01-17 21:11:40'),(4,'BK20260117AD516A',26,46,'2026-01-17','2026-01-18',1,85,'pending',NULL,'2026-01-17 21:19:05','2026-01-17 21:19:05'),(5,'BK202601179419FC',26,44,'2026-01-17','2026-01-25',1,760,'pending',NULL,'2026-01-17 21:33:11','2026-01-17 21:33:11'),(6,'BK20260126679415',30,45,'2026-01-27','2026-01-28',1,115,'pending',NULL,'2026-01-26 22:37:29','2026-01-26 22:37:29');
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `hotels`;
 CREATE TABLE `hotels` (
@@ -60,10 +60,13 @@ CREATE TABLE `hotels` (
   `image_url` varchar(500) DEFAULT NULL,
   `rating` float DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_hotel_user` (`user_id`),
+  CONSTRAINT `fk_hotel_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 LOCK TABLES `hotels` WRITE;
-INSERT INTO `hotels` VALUES (22,'Hotel Azalai','Nouakchott','L\'hôtel Azalaï Nouakchott est situé en plein centre-ville...','https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',0,'2026-01-17 18:21:31'),(23,'Hotel Monotel','Nouakchott','Monotel Dar El Barka offre un cadre luxueux...','https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',4.2,'2026-01-17 18:21:31'),(24,'Hotel Tfeila','Nouadhibou','Hôtel historique avec vue sur la mer...','https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',4,'2026-01-17 18:21:31'),(25,'Hotel Sahara','Atar','Au cœur du désert, le confort moderne...','https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800',4.3,'2026-01-17 18:21:31');
+INSERT INTO `hotels` VALUES (22,'Hotel Azalai','Nouakchott','L\'hôtel Azalaï Nouakchott est situé en plein centre-ville...','https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',0,'2026-01-17 18:21:31',NULL),(23,'Hotel Monotel','Nouakchott','Monotel Dar El Barka offre un cadre luxueux...','https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',4.2,'2026-01-17 18:21:31',NULL),(24,'Hotel Tfeila','Nouadhibou','Hôtel historique avec vue sur la mer...','https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',4,'2026-01-17 18:21:31',NULL),(25,'Hotel Sahara','Atar','Au cœur du désert, le confort moderne...','https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800',4.3,'2026-01-17 18:21:31',NULL);
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `messages`;
 CREATE TABLE `messages` (
@@ -112,6 +115,7 @@ CREATE TABLE `reviews` (
   `is_verified` tinyint(1) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `reply` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `room_id` (`room_id`),
   KEY `user_id` (`user_id`),
@@ -119,7 +123,7 @@ CREATE TABLE `reviews` (
   CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 LOCK TABLES `reviews` WRITE;
-INSERT INTO `reviews` VALUES (1,5,9,5,'Excellent séjour, chambre magnifique !',1,'2026-01-17 00:37:08','2026-01-17 00:37:08'),(2,6,10,4,'Très bien, mais un peu bruyant.',1,'2026-01-16 00:37:08','2026-01-17 00:37:08'),(3,7,11,3,'Moyen, le service pourrait être amélioré.',0,'2026-01-15 00:37:08','2026-01-17 00:37:08');
+INSERT INTO `reviews` VALUES (1,5,9,5,'Excellent séjour, chambre magnifique !',1,'2026-01-17 00:37:08','2026-01-17 00:37:08',NULL),(2,6,10,4,'Très bien, mais un peu bruyant.',1,'2026-01-16 00:37:08','2026-01-17 00:37:08',NULL),(3,7,11,3,'Moyen, le service pourrait être amélioré.',0,'2026-01-15 00:37:08','2026-01-17 00:37:08',NULL);
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `room_amenities`;
 CREATE TABLE `room_amenities` (
@@ -199,11 +203,17 @@ CREATE TABLE `users` (
   `is_active` tinyint(1) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `google_id` varchar(256) DEFAULT NULL,
+  `facebook_id` varchar(256) DEFAULT NULL,
+  `username` varchar(100) NOT NULL,
+  `access_dashboard` tinyint(1) DEFAULT NULL,
+  `access_control_center` tinyint(1) DEFAULT NULL,
+  `profile_picture` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_users_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 LOCK TABLES `users` WRITE;
-INSERT INTO `users` VALUES (25,'admin@hotel.com','scrypt:32768:8:1$QyvP5k3QrMZAhufU$2ac0d4c282f81aaf804182c5aee8b4653c776d46fb80a1ee5d23c85ca278b150aa5db6f637d714091f7cc39d83fe0f90a9b2a7489720a8c1b78888e36f0b847f','Admin','System','+222 12 34 56 78','admin',1,'2026-01-17 18:21:31','2026-01-17 18:21:31'),(26,'24102@supnum.mr','scrypt:32768:8:1$wLgkKBqlHlyfWJdF$044736ccccce2a52867ae8fd86083c6580d82c3ea6aebdca9bab6ef8286f8343482d74dfeee0c774851774313a3c89e958d4bbdbe1fc839047d722c1a2cec0f4','Abdurrahmane','User','+222 20103014','client',1,'2026-01-17 18:21:31','2026-01-17 21:32:39'),(27,'manager@hotel.com','scrypt:32768:8:1$Ekm7tZXzX9VAxypl$37057549659509d52e77051d174c9b5ebc5d357ceb44c7fbfa698ad1872d83b7eacbd662861804ccc1fbf1054c9fb3ac59d1b11b5b25159b64f35cb004096eed','Manager','Hotel','+222 22 33 44 55','manager',1,'2026-01-17 18:21:31','2026-01-17 18:21:31'),(28,'client@test.com','scrypt:32768:8:1$VGmpERsTzhvkANaa$4ed138f6ae3bc73ffd21591543d8923f803d3deed4ec28dacf8315c7c22b4ef4c3ff4258a5c23f061989bfea414e8752d84867e7848aaa5d22829785735c3f93','Jean','Dupont','+222 33 44 55 66','client',1,'2026-01-17 18:21:31','2026-01-17 18:21:31'),(29,'24070@supnum.mr','scrypt:32768:8:1$xy05hm1mKdqFgpie$82b50de1feda91dd85fe8c1aca56b5bd970d8c25a858b1cc25db4ebad58be75b41b2b500b120b760dcc11370ffe803b47666ddce0af0db08d2733df69b9dbe12','med mahmoud','sak','20103014','client',1,'2026-01-17 20:20:00','2026-01-17 20:21:30');
+INSERT INTO `users` VALUES (25,'admin@hotel.com','scrypt:32768:8:1$QyvP5k3QrMZAhufU$2ac0d4c282f81aaf804182c5aee8b4653c776d46fb80a1ee5d23c85ca278b150aa5db6f637d714091f7cc39d83fe0f90a9b2a7489720a8c1b78888e36f0b847f','Admin','System','+222 12 34 56 78','admin',1,'2026-01-17 18:21:31','2026-01-17 18:21:31',NULL,NULL,'',NULL,NULL,NULL),(26,'24102@supnum.mr','scrypt:32768:8:1$wLgkKBqlHlyfWJdF$044736ccccce2a52867ae8fd86083c6580d82c3ea6aebdca9bab6ef8286f8343482d74dfeee0c774851774313a3c89e958d4bbdbe1fc839047d722c1a2cec0f4','Abdurrahmane','User','+222 20103014','client',1,'2026-01-17 18:21:31','2026-01-17 21:32:39',NULL,NULL,'',NULL,NULL,NULL),(27,'manager@hotel.com','scrypt:32768:8:1$Ekm7tZXzX9VAxypl$37057549659509d52e77051d174c9b5ebc5d357ceb44c7fbfa698ad1872d83b7eacbd662861804ccc1fbf1054c9fb3ac59d1b11b5b25159b64f35cb004096eed','Manager','Hotel','+222 22 33 44 55','manager',1,'2026-01-17 18:21:31','2026-01-17 18:21:31',NULL,NULL,'',NULL,NULL,NULL),(28,'client@test.com','scrypt:32768:8:1$VGmpERsTzhvkANaa$4ed138f6ae3bc73ffd21591543d8923f803d3deed4ec28dacf8315c7c22b4ef4c3ff4258a5c23f061989bfea414e8752d84867e7848aaa5d22829785735c3f93','Jean','Dupont','+222 33 44 55 66','client',1,'2026-01-17 18:21:31','2026-01-17 18:21:31',NULL,NULL,'',NULL,NULL,NULL),(29,'24070@supnum.mr','scrypt:32768:8:1$xy05hm1mKdqFgpie$82b50de1feda91dd85fe8c1aca56b5bd970d8c25a858b1cc25db4ebad58be75b41b2b500b120b760dcc11370ffe803b47666ddce0af0db08d2733df69b9dbe12','med mahmoud','sak','20103014','client',1,'2026-01-17 20:20:00','2026-01-17 20:21:30',NULL,NULL,'',NULL,NULL,NULL),(30,'ab@agmail.com','scrypt:32768:8:1$hIo9dOh9O2J5UArj$9cdb59b7cdcf0df5c5e4de7d0620394544f279b1a2cef42e0e145a503870db756c5e8b14186b805d741d6d6455b4ef0954240842702620908840976eb72783d0','a','b','20103014','client',1,'2026-01-26 22:36:57','2026-01-26 22:36:57',NULL,NULL,'a',0,0,NULL);
 UNLOCK TABLES;
 
 SET FOREIGN_KEY_CHECKS = 1;
