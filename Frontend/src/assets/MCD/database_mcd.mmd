@@ -1,0 +1,142 @@
+erDiagram
+    User {
+        int id PK
+        string email
+        string password_hash
+        string google_id
+        string facebook_id
+        string first_name
+        string last_name
+        string phone
+        string username
+        boolean access_dashboard
+        boolean access_control_center
+        string role
+        boolean is_active
+        string profile_picture
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Hotel {
+        int id PK
+        string name
+        string location
+        text description
+        string image_url
+        float rating
+        int user_id FK "Owner"
+        int views
+        int unique_visitors
+        int bounce_rate
+        datetime created_at
+    }
+    
+    RoomType {
+        int id PK
+        string name
+        text description
+        float base_price
+        int max_occupancy
+    }
+    
+    Room {
+        int id PK
+        string room_number
+        string name
+        text description
+        int room_type_id FK
+        int hotel_id FK
+        float price_per_night
+        int floor
+        float size_sqm
+        string bed_type
+        int max_guests
+        boolean is_available
+        string image_url
+        datetime created_at
+        datetime updated_at
+    }
+    
+    RoomImage {
+        int id PK
+        int room_id FK
+        string image_url
+        string caption
+        boolean is_primary
+        int display_order
+    }
+    
+    Amenity {
+        int id PK
+        string name
+        string icon
+        string description
+    }
+    
+    Booking {
+        int id PK
+        string booking_reference
+        int user_id FK
+        int room_id FK
+        date check_in_date
+        date check_out_date
+        int num_guests
+        float total_price
+        string status
+        text special_requests
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Payment {
+        int id PK
+        int booking_id FK
+        float amount
+        string currency
+        string payment_method
+        string transaction_id
+        string status
+        datetime paid_at
+        datetime created_at
+    }
+    
+    Review {
+        int id PK
+        int user_id FK
+        int room_id FK
+        int rating
+        text comment
+        text reply
+        boolean is_verified
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Message {
+        int id PK
+        int sender_id FK
+        int receiver_id FK
+        string subject
+        text content
+        boolean is_read
+        datetime created_at
+    }
+
+    %% Relationships
+    User ||--o{ Hotel : "owns"
+    User ||--o{ Booking : "makes"
+    User ||--o{ Review : "writes"
+    User ||--o{ Message : "sends"
+    User ||--o{ Message : "receives"
+    
+    Hotel ||--o{ Room : "contains"
+    
+    RoomType ||--o{ Room : "categorizes"
+    
+    Room ||--o{ Booking : "is_reserved_in"
+    Room ||--o{ Review : "is_reviewed_in"
+    Room ||--o{ RoomImage : "has"
+    Room }|--|{ Amenity : "has"
+    
+    Booking ||--|| Payment : "is_paid_via"

@@ -229,7 +229,7 @@ function HotelDetails() {
                                             <h3 className="room-name">{room.name}</h3>
                                             <p className="room-desc">{room.description}</p>
                                             <div className="room-footer">
-                                                <span style={{ fontWeight: '600' }}>{room.price_per_night}MRU <span style={{ fontWeight: '400' }}>nuit</span></span>
+                                                <span style={{ fontWeight: '600' }}>{room.price_per_night} MRU <span style={{ fontWeight: '400' }}>nuit</span></span>
                                                 <Link to={`/room/${room.id}`}>
                                                     <button className="secondary-btn" style={{ padding: '6px 12px', fontSize: '14px' }}>
                                                         Voir
@@ -249,7 +249,7 @@ function HotelDetails() {
                         <div className="booking-card">
                             <div className="card-header">
                                 <span className="price-tag">
-                                    À partir de {Math.min(...rooms.map(r => r.price_per_night), 0) || 100}MRU <span className="price-unit">par nuit</span>
+                                    À partir de {Math.min(...rooms.map(r => r.price_per_night), 0) || 100} MRU <span className="price-unit">par nuit</span>
                                 </span>
                                 <div className="card-rating">
                                     <i className="fa-solid fa-star" style={{ color: '#ff385c' }}></i>
@@ -268,7 +268,7 @@ function HotelDetails() {
                             <div style={{ marginTop: '16px', textAlign: 'center' }}>
                                 <button
                                     onClick={() => {
-                                        if (!user) { navigate('/login'); return; }
+                                        if (!user) { navigate('/connexion'); return; }
                                         setShowContactModal(true);
                                     }}
                                     className="secondary-btn"
