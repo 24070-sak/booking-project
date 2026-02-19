@@ -35,12 +35,8 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.access_token);
 
-      // Rediriger vers le dashboard ou l'accueil selon permissions
-      if (data.user.access_dashboard) {
-        navigate("/dashboard");
-      } else {
-        navigate("/");
-      }
+      // Rediriger vers l'accueil (ou l'utilisateur pourra aller au dashboard s'il le souhaite)
+      navigate("/");
     } catch (err) {
       setError(err.message);
     } finally {

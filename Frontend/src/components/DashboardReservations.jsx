@@ -16,7 +16,12 @@ const DashboardReservations = () => {
                 const adminStatus = user?.role === 'admin';
                 setIsAdmin(adminStatus);
 
-                const data = await getOwnerBookings();
+                let data;
+                if (adminStatus) {
+                    data = await getAllBookings();
+                } else {
+                    data = await getOwnerBookings();
+                }
 
                 if (data.bookings) {
                     setBookings(data.bookings);
@@ -40,13 +45,23 @@ const DashboardReservations = () => {
         }
     };
 
+    const translateStatus = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'confirmed': return 'Confirmé';
+            case 'pending': return 'En attente';
+            case 'cancelled': return 'Annulé';
+            case 'completed': return 'Terminé';
+            default: return status;
+        }
+    };
+
     if (loading) return <div>Chargement...</div>;
     if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
     return (
         <div className="dashboard-content dashboard-reservations-content">
             <div style={{ marginBottom: '20px' }}>
-                <h2>Mes Réservations</h2>
+                <h2>{isAdmin ? 'Toutes les réservations' : 'Mes Réservations'}</h2>
             </div>
 
             <div className="reservations-list">
@@ -55,7 +70,7 @@ const DashboardReservations = () => {
                         <thead>
                             <tr>
                                 <th>Référence</th>
-                                {isAdmin && <th>Client</th>}
+                                {isAdmin && <th>Client réservant</th>}
                                 <th>Dates</th>
                                 <th>Hôtel/Chambre</th>
                                 <th>Total</th>
@@ -66,18 +81,32 @@ const DashboardReservations = () => {
                             {bookings.map(res => (
                                 <tr key={res.id}>
                                     <td data-label="ID">#{res.booking_reference}</td>
-                                    {isAdmin && <td data-label="Client">{res.user?.email || "Inconnu"}</td>}
+                                    {isAdmin && (
+                                        <td data-label="Client" className="client-info">
+                                            <div style={{ fontWeight: 'bold' }}>
+                                                {res.user?.first_name} {res.user?.last_name}
+                                            </div>
+                                            <div style={{ fontSize: '0.85em', color: '#666' }}>
+                                                {res.user?.email || "Inconnu"}
+                                            </div>
+                                        </td>
+                                    )}
                                     <td data-label="Dates">
                                         {new Date(res.check_in_date).toLocaleDateString()} - {new Date(res.check_out_date).toLocaleDateString()}
                                     </td>
                                     <td data-label="Chambre">
                                         {res.room ? (res.room.name + (res.room.hotel ? " - " + res.room.hotel.name : "")) : "Chambre inconnue"}
                                     </td>
-                                    <td data-label="Total">{res.total_price} €</td>
+                                    <td data-label="Total">{res.total_price} MRU</td>
                                     <td data-label="Status">
                                         <span className={`status-badge ${getStatusClass(res.status)}`}>
-                                            {res.status}
+                                            {translateStatus(res.status)}
                                         </span>
+                                        {res.status === 'confirmed' && (
+                                            <div style={{ fontSize: '11px', color: '#059669', marginTop: '4px', fontWeight: 'bold' }}>
+                                                L'administrateur a accepté votre réservation.
+                                            </div>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

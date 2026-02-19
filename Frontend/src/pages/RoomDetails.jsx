@@ -51,14 +51,15 @@ function RoomDetails() {
 
         setBookingStatus('loading');
         try {
-            await createBooking({
+            const data = await createBooking({
                 room_id: room.id,
                 check_in_date: checkIn,
                 check_out_date: checkOut,
                 num_guests: guests
             });
             setBookingStatus('success');
-            setTimeout(() => navigate('/dashboard'), 2000); // Redirect to dashboard after success
+            // Redirect to payment page
+            setTimeout(() => navigate(`/payment/${data.booking.id}`, { state: { booking: data.booking } }), 1000);
         } catch (err) {
             console.error(err);
             setBookingStatus('error');
@@ -84,7 +85,8 @@ function RoomDetails() {
                     <div style={{ padding: '40px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                             <h1 style={{ margin: 0 }}>{room.name}</h1>
-                            <span style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2ecc71' }}>{room.price_per_night}MRU</span>
+
+                            <span style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2ecc71' }}>{room.price_per_night} MRU</span>
                         </div>
 
                         <div style={{ display: 'flex', gap: '20px', color: '#666', marginBottom: '30px', fontSize: '1.1rem' }}>
@@ -115,8 +117,8 @@ function RoomDetails() {
                         }}>
                             <h3>Réserver votre séjour</h3>
                             {bookingStatus === 'success' ? (
-                                <div style={{ color: 'green', padding: '20px', textAlign: 'center', fontSize: '1.2rem' }}>
-                                    ✅ Réservation confirmée ! Redirection...
+                                <div style={{ color: '#2980b9', padding: '20px', textAlign: 'center', fontSize: '1.2rem' }}>
+                                    ✅ Réservation enregistrée ! Passage au paiement...
                                 </div>
                             ) : (
                                 <form onSubmit={handleBooking} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>

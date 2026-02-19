@@ -141,7 +141,7 @@ const DashboardProperties = () => {
                 await deleteHotel(id);
                 fetchProperties();
             } catch (error) {
-                alert("Failed to delete property: " + error.message);
+                alert("Échec de la suppression : " + error.message);
             }
         }
     };
@@ -164,7 +164,7 @@ const DashboardProperties = () => {
             fetchProperties();
             handleBackClick();
         } catch (error) {
-            alert("Operation failed: " + error.message);
+            alert("Opération échouée : " + error.message);
         }
     };
 
@@ -232,13 +232,13 @@ const DashboardProperties = () => {
         return (
             <div className="dashboard-content dashboard-properties-content">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-                    <h2>{isAddingProperty ? 'Add New Property' : 'Update Property'}</h2>
+                    <h2>{isAddingProperty ? 'Ajouter une propriété' : 'Modifier la propriété'}</h2>
                     <button onClick={handleBackClick} className="btn-secondary">Retour</button>
                 </div>
                 <div className="dashboard-properties-form">
                     <div className="row">
                         <div className="col">
-                            <label>Property Name</label>
+                            <label>Nom de la propriété</label>
                             <input type="text" value={propertyName} onChange={(e) => setPropertyName(e.target.value)} />
                         </div>
                         <div className="col">
@@ -247,7 +247,7 @@ const DashboardProperties = () => {
                         </div>
                     </div>
                     <div className="form-section">
-                        <label>Image URL</label>
+                        <label>URL de l'image</label>
                         <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
                     </div>
                     <div className="form-section">
@@ -361,7 +361,7 @@ const DashboardProperties = () => {
                                     <td data-label="Nom">{room.name}</td>
                                     <td data-label="Type">{roomTypes.find(t => t.id === room.room_type_id)?.name || room.room_type_id}</td>
                                     <td data-label="Taille">{room.size_sqm ? `${room.size_sqm} m²` : '-'}</td>
-                                    <td data-label="Prix">{room.price_per_night} €</td>
+                                    <td data-label="Prix">{room.price_per_night} MRU</td>
                                     <td data-label="Équipements">
                                         {room.amenities && room.amenities.length > 0 ? (
                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
@@ -375,8 +375,8 @@ const DashboardProperties = () => {
                                         ) : '-'}
                                     </td>
                                     <td data-label="Actions">
-                                        <button onClick={() => handleEditRoomClick(room)} className="btn-edit">Edit</button>
-                                        <button onClick={() => handleDeleteRoomClick(room.id)} className="btn-danger">Delete</button>
+                                        <button onClick={() => handleEditRoomClick(room)} className="btn-edit">Modifier</button>
+                                        <button onClick={() => handleDeleteRoomClick(room.id)} className="btn-danger">Supprimer</button>
                                     </td>
                                 </tr>
                             ))}
@@ -415,8 +415,8 @@ const DashboardProperties = () => {
                                 <td data-label="Localisation">{property.location}</td>
                                 <td data-label="Actions">
                                     <button onClick={() => handleViewRoomsClick(property.id)} className="btn-secondary">Chambres</button>
-                                    <button onClick={() => handleEditClick(property.id)} className="btn-edit">Edit</button>
-                                    <button onClick={() => handleDeleteClick(property.id)} className="btn-danger">Delete</button>
+                                    <button onClick={() => handleEditClick(property.id)} className="btn-edit">Modifier</button>
+                                    <button onClick={() => handleDeleteClick(property.id)} className="btn-danger">Supprimer</button>
                                 </td>
                             </tr>
                         ))}

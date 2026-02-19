@@ -30,24 +30,24 @@ const DashboardOverview = () => {
 
     return (
         <div className="dashboard-content dashboard-overview-content">
-            <h2>Dashboard Overview</h2>
+            <h2>Aperçu du Tableau de Bord</h2>
             <div className="stats-container">
                 <div className="stat-card">
-                    <h3>Total Bookings</h3>
+                    <h3>Total Réservations</h3>
                     <p>{stats.totalBookings}</p>
                 </div>
                 <div className="stat-card">
-                    <h3>Total Revenue</h3>
-                    <p>{stats.totalRevenue.toLocaleString()} €</p>
+                    <h3>Revenu Total</h3>
+                    <p>{stats.totalRevenue.toLocaleString()} MRU</p>
                 </div>
                 <div className="stat-card">
-                    <h3>Active Properties</h3>
+                    <h3>Propriétés Actives</h3>
                     <p>{stats.activeProperties}</p>
                 </div>
             </div>
 
             <div className="recent-activity">
-                <h3>Recent Activity</h3>
+                <h3>Activité Récente</h3>
                 <ul className="activity-list">
                     {recentActivity.length > 0 ? (
                         recentActivity.map((activity, index) => (

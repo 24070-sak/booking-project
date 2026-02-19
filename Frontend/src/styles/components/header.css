@@ -203,3 +203,103 @@
         padding: 0 20px;
     }
 }
+
+/* User Profile Styles in Header */
+.user-profile-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 16px 6px 6px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.user-profile-link:hover {
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
+.header-profile-pic {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-profile-placeholder {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0b6ad6 0%, #0952a5 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.user-profile-link .user-name {
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Logout Button */
+.logout-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.logout-btn:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fecaca;
+    transform: rotate(5deg);
+}
+
+.messages-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+}
+
+.messages-btn:hover {
+    background: #e0f2fe;
+    color: #0b6ad6;
+    border-color: #bae6fd;
+    transform: translateY(-2px);
+}

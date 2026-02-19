@@ -54,7 +54,7 @@ const DashboardReviews = () => {
 
     return (
         <div className="dashboard-content dashboard-reviews-content">
-            <h2>Guest Reviews</h2>
+            <h2>Avis des Clients</h2>
 
             <div className="reviews-list">
                 {reviews.length > 0 ? (
@@ -71,7 +71,7 @@ const DashboardReviews = () => {
                                     </div>
                                     <div className="user-details">
                                         <h4>{review.user_name}</h4>
-                                        <span>Stayed at <strong>{review.hotel_name}</strong></span>
+                                        <span>Séjourné à <strong>{review.hotel_name}</strong></span>
                                     </div>
                                 </div>
                                 <span className="review-date">{new Date(review.created_at).toLocaleDateString()}</span>
@@ -89,27 +89,27 @@ const DashboardReviews = () => {
                                 {replyingTo === review.id ? (
                                     <div className="reply-form">
                                         <textarea
-                                            placeholder="Write your reply..."
+                                            placeholder="Écrire votre réponse..."
                                             value={replyText}
                                             onChange={(e) => setReplyText(e.target.value)}
                                             style={{ width: '100%', marginBottom: '10px', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}
                                         />
                                         <div style={{ display: 'flex', gap: '10px' }}>
-                                            <button className="btn-primary" style={{ padding: '8px 16px' }} onClick={() => handleReply(review.id)}>Send</button>
-                                            <button className="btn-secondary" style={{ padding: '8px 16px' }} onClick={() => setReplyingTo(null)}>Cancel</button>
+                                            <button className="btn-primary" style={{ padding: '8px 16px' }} onClick={() => handleReply(review.id)}>Envoyer</button>
+                                            <button className="btn-secondary" style={{ padding: '8px 16px' }} onClick={() => setReplyingTo(null)}>Annuler</button>
                                         </div>
                                     </div>
                                 ) : review.reply ? (
                                     <div className="current-reply">
-                                        <strong>Your Reply:</strong>
+                                        <strong>Votre réponse :</strong>
                                         <p>{review.reply}</p>
                                         <button className="btn-reply-small" onClick={() => { setReplyingTo(review.id); setReplyText(review.reply); }}>
-                                            Edit Reply
+                                            Modifier la réponse
                                         </button>
                                     </div>
                                 ) : (
                                     <button className="btn-reply" onClick={() => setReplyingTo(review.id)}>
-                                        <i className="fa-solid fa-reply"></i> Reply
+                                        <i className="fa-solid fa-reply"></i> Répondre
                                     </button>
                                 )}
                             </div>

@@ -11,6 +11,8 @@ import RoomDetails from "./pages/RoomDetails";
 import SocialCallback from "./pages/SocialCallback";
 import ControlCenter from "./pages/ControlCenter";
 import Profile from "./pages/Profile";
+import Messages from "./pages/Messages";
+import Payment from "./pages/Payment";
 
 function App() {
   return (
@@ -33,11 +35,18 @@ function App() {
         <Route path="/control-center" element={<ControlCenter />} />
         {/* Settings page */}
         <Route path="/parametre" element={<Settings />} />
+        {/* Settings page */}
+        <Route path="/parametre" element={<Settings />} />
         {/* Profile page */}
         <Route path="/profile" element={<Profile />} />
+        {/* Messages page */}
+        <Route path="/messages" element={<Messages />} />
 
         {/* Hotel Details page */}
         <Route path="/hotel/:id" element={<HotelDetails />} />
+
+        {/* Payment page */}
+        <Route path="/payment/:bookingId" element={<Payment />} />
 
         {/* Room Details page */}
         <Route path="/room/:id" element={<RoomDetails />} />

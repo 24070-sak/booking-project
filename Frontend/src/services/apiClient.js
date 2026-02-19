@@ -1,4 +1,4 @@
-import API_URL from "../api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 /**
  * Enhanced fetch wrapper that handles auth headers and 401 redirects
@@ -36,7 +36,7 @@ export async function apiFetch(endpoint, options = {}) {
             console.warn("Session expired (401). Redirecting to login...");
             localStorage.removeItem("token");
             localStorage.removeItem("user");
-            window.location.href = "/login";
+            window.location.href = "/connexion";
             return Promise.reject(new Error("Session expired"));
         }
 
