@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 const API = import.meta.env.VITE_API_URL || "";
 import { useState, useEffect } from "react";
 import logo from '../assets/logos/logo.svg'
@@ -28,8 +28,18 @@ import {
 } from '../components/DashboardIcons';
 
 function Dashboard() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'dashboard');
   const [user, setUser] = useState(null);
+  const [notification, setNotification] = useState(location.state?.message || null);
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setNotification(location.state.message);
+      // Clear state to avoid showing it again on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -150,6 +160,22 @@ function Dashboard() {
 
       </div>
       <div className="dashboard-body">
+        {notification && (
+          <div className="dashboard-notification" style={{
+            padding: '15px 20px',
+            backgroundColor: '#d1fae5',
+            color: '#065f46',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            border: '1px solid #10b981'
+          }}>
+            <span><i className="fa-solid fa-circle-check" style={{ marginRight: '10px' }}></i> {notification}</span>
+            <button onClick={() => setNotification(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#065f46', fontSize: '18px' }}>&times;</button>
+          </div>
+        )}
         {renderContent()}
       </div>
     </div>
