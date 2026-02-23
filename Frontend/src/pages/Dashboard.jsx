@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 const API = import.meta.env.VITE_API_URL || "";
 import { useState, useEffect } from "react";
-import logo from '../assets/logos/logo.png'
+import logo from '../assets/logos/logo.svg'
 import '../styles/pages/dashboard.css'
 import DashboardOverview from "../components/DashboardOverview";
 import DashboardProperties from "../components/DashboardProperties";

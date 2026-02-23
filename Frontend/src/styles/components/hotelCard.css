@@ -15,8 +15,8 @@
 
 .Card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(11, 106, 214, 0.15);
-    border-color: rgba(11, 106, 214, 0.2);
+    box-shadow: 0 12px 40px rgba(0, 98, 51, 0.15);
+    border-color: rgba(0, 98, 51, 0.2);
 }
 
 .card-image {
@@ -59,7 +59,7 @@
 .card-price {
     font-size: 22px;
     font-weight: 700;
-    color: #0b6ad6;
+    color: var(--primary-green);
     margin: 8px 0 0 0;
 }
 
@@ -68,7 +68,7 @@
     color: #9ca3af;
     margin: 0;
     padding: 8px 12px;
-    background: rgba(11, 106, 214, 0.08);
+    background: rgba(0, 98, 51, 0.08);
     border-radius: 8px;
     display: inline-block;
     width: fit-content;
@@ -92,7 +92,7 @@
 .card-button {
     margin-top: 12px;
     padding: 14px 24px;
-    background: linear-gradient(135deg, #0b6ad6 0%, #0952a5 100%);
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
     color: white;
     border: none;
     border-radius: 10px;
@@ -104,13 +104,13 @@
     justify-content: center;
     gap: 10px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(11, 106, 214, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 98, 51, 0.2);
 }
 
 .card-button:hover {
-    background: linear-gradient(135deg, #0952a5 0%, #073d7a 100%);
+    background: linear-gradient(135deg, var(--light-green) 0%, #073d7a 100%);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(11, 106, 214, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 98, 51, 0.3);
 }
 
 .card-button:active {

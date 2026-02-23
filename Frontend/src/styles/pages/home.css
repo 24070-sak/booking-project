@@ -48,7 +48,7 @@
 }
 
 .paragraphe p {
-    color: #0b6ad6;
+    color: var(--primary-green);
     font-weight: 600;
     font-size: 15px;
     margin: 0;
@@ -59,16 +59,16 @@
     transition: all 0.3s ease;
     padding: 10px 20px;
     border-radius: 100px;
-    background: rgba(11, 106, 214, 0.05);
-    border: 1px solid rgba(11, 106, 214, 0.1);
+    background: rgba(0, 98, 51, 0.05);
+    border: 1px solid rgba(0, 132, 61, 0.1);
 }
 
 .paragraphe p:hover {
     color: #fff;
-    background: #0b6ad6;
+    background: var(--primary-green);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(11, 106, 214, 0.2);
-    border-color: #0b6ad6;
+    box-shadow: 0 4px 12px rgba(0, 98, 51, 0.2);
+    border-color: var(--primary-green);
 }
 
 .paragraphe p i {
@@ -171,8 +171,8 @@
             transform: translateY(-10px);
             background: #fff;
             box-shadow:
-                0 20px 40px rgba(11, 106, 214, 0.1),
-                0 0 0 1px rgba(11, 106, 214, 0.1);
+                0 20px 40px rgba(0, 98, 51, 0.1),
+                0 0 0 1px rgba(0, 132, 61, 0.1);
         }
 
         img {

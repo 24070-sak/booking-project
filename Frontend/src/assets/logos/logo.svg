@@ -1,0 +1,21 @@
+<svg width="160" height="50" viewBox="0 0 160 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Crescent Moon Icon -->
+  <g transform="translate(5, 8)">
+    <!-- Outer circle -->
+    <circle cx="17" cy="17" r="15" fill="#006233"/>
+    <!-- Inner circle to create crescent -->
+    <circle cx="22" cy="14" r="12" fill="white"/>
+    <!-- Gold star -->
+    <path d="M17 5 L19 11 L25 11 L20 15 L22 21 L17 17 L12 21 L14 15 L9 11 L15 11 Z" fill="#FFD700"/>
+  </g>
+  
+  <!-- Text "Hotely" -->
+  <text x="48" y="32" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700" fill="#006233">
+    Hotely
+  </text>
+  
+  <!-- Tagline -->
+  <text x="48" y="42" font-family="Inter, Arial, sans-serif" font-size="8" font-weight="400" fill="#FFD700" letter-spacing="1">
+    MAURITANIE
+  </text>
+</svg>

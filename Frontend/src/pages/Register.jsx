@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../services/authService";
 import "../styles/pages/register.css";
-import logo from "../assets/logos/logo.png";
+import logo from "../assets/logos/logo.svg";
 import google from "../assets/logos/google.png";
 import facebook from "../assets/logos/facebook.png";
+import { useLanguage } from "../context/LanguageContext";
 
 function Register() {
+  const { t } = useLanguage();
   const [showPsswd, setShowPsswd] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -80,7 +82,7 @@ function Register() {
         {/* HEADER */}
         <div className="register-header">
           <img className="register-logo" src={logo} alt="logo" />
-          <h2 className="register-title">Inscription</h2>
+          <h2 className="register-title">{t('register_title')}</h2>
         </div>
 
         {error && <div style={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{error}</div>}
@@ -92,7 +94,7 @@ function Register() {
             {/* PRENOM */}
             <div className="form-group" style={{ flex: 1 }}>
               <label className="form-label" htmlFor="firstName">
-                Prénom
+                {t('firstname')}
               </label>
               <div className="input-container">
                 <i className="fa-solid fa-user"></i>
@@ -100,7 +102,7 @@ function Register() {
                   id="firstName"
                   type="text"
                   className="form-input"
-                  placeholder="Prénom"
+                  placeholder={t('firstname')}
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
@@ -112,7 +114,7 @@ function Register() {
             {/* NOM */}
             <div className="form-group" style={{ flex: 1 }}>
               <label className="form-label" htmlFor="lastName">
-                Nom
+                {t('lastname')}
               </label>
               <div className="input-container">
                 <i className="fa-solid fa-user"></i>
@@ -120,7 +122,7 @@ function Register() {
                   id="lastName"
                   type="text"
                   className="form-input"
-                  placeholder="Nom"
+                  placeholder={t('lastname')}
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
@@ -133,7 +135,7 @@ function Register() {
           {/* EMAIL */}
           <div className="form-group">
             <label className="form-label" htmlFor="email">
-              Email
+              {t('email')}
             </label>
             <div className="input-container">
               <i className="fa-solid fa-envelope"></i>
@@ -141,7 +143,7 @@ function Register() {
                 id="email"
                 type="email"
                 className="form-input"
-                placeholder="Email"
+                placeholder={t('email')}
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -153,7 +155,7 @@ function Register() {
           {/* TELEPHONE */}
           <div className="form-group">
             <label className="form-label" htmlFor="phone">
-              Numéro de téléphone
+              {t('phone')}
             </label>
             <div className="input-container">
               <i className="fa-solid fa-phone"></i>
@@ -161,7 +163,7 @@ function Register() {
                 id="phone"
                 type="tel"
                 className="form-input"
-                placeholder="Numéro de téléphone"
+                placeholder={t('phone')}
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
@@ -173,7 +175,7 @@ function Register() {
           {/* MOT DE PASSE */}
           <div className="form-group">
             <label className="form-label" htmlFor="password">
-              Mot de passe
+              {t('password')}
             </label>
             <div className="input-container">
               <i className="fa-solid fa-lock"></i>
@@ -181,7 +183,7 @@ function Register() {
                 id="password"
                 type={showPsswd ? "text" : "password"}
                 className="form-input"
-                placeholder="Mot de passe"
+                placeholder={t('password')}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -199,7 +201,7 @@ function Register() {
           {/* CONFIRMATION MOT DE PASSE */}
           <div className="form-group">
             <label className="form-label" htmlFor="confirmPassword">
-              Confirmer Mot de passe
+              {t('confirm_password')}
             </label>
             <div className="input-container">
               <i className="fa-solid fa-lock"></i>
@@ -207,7 +209,7 @@ function Register() {
                 id="confirmPassword"
                 type={showPsswd ? "text" : "password"}
                 className="form-input"
-                placeholder="Confirmer mot de passe"
+                placeholder={t('confirm_password')}
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -224,13 +226,13 @@ function Register() {
 
           {/* SUBMIT */}
           <button type="submit" className="register-button" disabled={loading}>
-            {loading ? "Inscription..." : "S'inscrire"}
+            {loading ? t('registering') : t('register_button')}
           </button>
         </form>
 
         <div className="line">
           <hr />
-          <span>ou</span>
+          <span>{t('or')}</span>
           <hr />
         </div>
 
@@ -238,15 +240,15 @@ function Register() {
         <div className="social-login">
           <div className="login-google" onClick={() => handleSocialLogin('Google')}>
             <img src={google} alt="google icon" />
-            <p>S'inscrire avec Google</p>
+            <p>{t('register_google')}</p>
           </div>
 
           <div className="login-facebook" onClick={() => handleSocialLogin('Facebook')}>
             <img src={facebook} alt="facebook icon" />
-            <p>S'inscrire avec Facebook</p>
+            <p>{t('register_facebook')}</p>
           </div>
         </div>
-        <p id="note">Tu as déjà un compte ? <span id="createAccount"><Link to="/connexion">Se connecter</Link></span></p>
+        <p id="note">{t('already_have_account')} <span id="createAccount"><Link to="/connexion">{t('login')}</Link></span></p>
       </div>
     </div>
   );

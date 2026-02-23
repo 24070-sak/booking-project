@@ -23,11 +23,21 @@ def get_hotels():
     check_in = request.args.get('check_in')
     check_out = request.args.get('check_out')
     
+    min_price = request.args.get('min_price', type=float)
+    max_price = request.args.get('max_price', type=float)
+    location = request.args.get('location', type=str)
+    min_rating = request.args.get('min_rating', type=float)
+    
     # Define constraints for a valid room
     room_constraints = [Room.is_available == True]
     
     if guests > 0:
         room_constraints.append(Room.max_guests >= guests)
+        
+    if min_price is not None:
+        room_constraints.append(Room.price_per_night >= min_price)
+    if max_price is not None:
+        room_constraints.append(Room.price_per_night <= max_price)
         
     # Date Filtering Logic
     if check_in and check_out:
@@ -50,12 +60,18 @@ def get_hotels():
             
         except ValueError:
             pass # Invalid date format, ignore
+            
+    base_query = Hotel.query
+    if location:
+        base_query = base_query.filter(Hotel.location.ilike(f"%{location}%"))
+    if min_rating is not None:
+        base_query = base_query.filter(Hotel.rating >= min_rating)
     
     # Combined Query
     if search_query:
         search_term = f"%{search_query}%"
         
-        query = Hotel.query.filter(
+        query = base_query.filter(
             or_(
                 and_(
                     (Hotel.name.ilike(search_term)) | (Hotel.location.ilike(search_term)),
@@ -65,7 +81,7 @@ def get_hotels():
             )
         )
     else:
-        query = Hotel.query.filter(Hotel.rooms.any(and_(*room_constraints)))
+        query = base_query.filter(Hotel.rooms.any(and_(*room_constraints)))
     
     total_available = query.count()
     hotels = query.offset(offset).limit(limit).all()

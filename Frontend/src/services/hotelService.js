@@ -1,6 +1,6 @@
 import { apiFetch } from "./apiClient";
 
-export async function getAllHotels(limit = 100, offset = 0, search = '', guests = 0, check_in = '', check_out = '') {
+export async function getAllHotels(limit = 100, offset = 0, search = '', guests = 0, check_in = '', check_out = '', min_price = null, max_price = null, location = '', min_rating = null) {
     const params = new URLSearchParams({
         limit,
         offset,
@@ -9,6 +9,10 @@ export async function getAllHotels(limit = 100, offset = 0, search = '', guests 
     });
     if (check_in) params.append('check_in', check_in);
     if (check_out) params.append('check_out', check_out);
+    if (min_price !== null && min_price !== '') params.append('min_price', min_price);
+    if (max_price !== null && max_price !== '') params.append('max_price', max_price);
+    if (location) params.append('location', location);
+    if (min_rating !== null && min_rating !== '') params.append('min_rating', min_rating);
 
     const response = await apiFetch(`/hotels?${params.toString()}`);
 
