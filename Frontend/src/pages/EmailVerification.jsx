@@ -1,5 +1,5 @@
 import '../styles/pages/verification.css'
-import logo from '../assets/logos/logo.png'
+import logo from '../assets/logos/logo.svg'
 
 function VerificationPage() {
     return (

@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../services/authService";
 import '../styles/pages/login.css'
-import logo from '../assets/logos/logo.png'
+import logo from '../assets/logos/logo.svg'
 import google from '../assets/logos/google.png'
 import facebook from '../assets/logos/facebook.png'
+import { useLanguage } from "../context/LanguageContext";
 
 function Login() {
+  const { t } = useLanguage();
   const [showPsswd, setShowPsswd] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -54,7 +56,7 @@ function Login() {
 
         <div className="login-header">
           <img className="logo" src={logo} alt="logo" />
-          <h2 className="login-subtitle">Connexion</h2>
+          <h2 className="login-subtitle">{t('login_title')}</h2>
         </div>
 
         {error && <div style={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{error}</div>}
@@ -63,7 +65,7 @@ function Login() {
 
           <div>
             <label className="form-label" htmlFor="email">
-              Email
+              {t('email')}
             </label>
             <div className="input-container">
               <i className="fa-solid fa-envelope"></i>
@@ -71,7 +73,7 @@ function Login() {
                 id="email"
                 type="email"
                 className="form-input"
-                placeholder="Email"
+                placeholder={t('email')}
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -82,9 +84,9 @@ function Login() {
 
           <div>
             <label className="form-label" htmlFor="password">
-              Mot de passe
+              {t('password')}
               <span className="forgot-password">
-                <Link to="#"><span>Mot de passe oublié ?</span></Link>
+                <Link to="#"><span>{t('forgot_password')}</span></Link>
               </span>
             </label>
             <div className="input-container">
@@ -93,7 +95,7 @@ function Login() {
                 id="password"
                 type="text"
                 className="form-input"
-                placeholder="Mot de passe"
+                placeholder={t('password')}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -108,28 +110,28 @@ function Login() {
           </div>
 
           <button type="submit" className="login-button" name="login" disabled={loading}>
-            {loading ? "Connexion..." : "Se connecter"}
+            {loading ? t('logging_in') : t('login_button')}
           </button>
         </form>
 
         <div className="line">
           <hr />
-          <span>ou</span>
+          <span>{t('or')}</span>
           <hr />
         </div>
 
         <div className="social-login">
           <div className="login-google" onClick={() => handleSocialLogin('Google')} style={{ cursor: 'pointer' }}>
             <img src={google} alt="google icon" />
-            <p>Se connecter avec google</p>
+            <p>{t('login_google')}</p>
           </div>
 
           <div className="login-facebook" onClick={() => handleSocialLogin('Facebook')} style={{ cursor: 'pointer' }}>
             <img src={facebook} alt="facebook icon" />
-            <p>Se connecter avec facebook</p>
+            <p>{t('login_facebook')}</p>
           </div>
         </div>
-        <p id="note">Tu n'as pas de compte ? <span id="createAccount"><Link to="/inscription">Créer un compte</Link></span></p>
+        <p id="note">{t('no_account')} <span id="createAccount"><Link to="/inscription">{t('create_account')}</Link></span></p>
       </div>
     </div>
   );

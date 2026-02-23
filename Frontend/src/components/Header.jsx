@@ -1,11 +1,16 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import logo from '../assets/logos/logo.png'
+import logo from '../assets/logos/logo.svg'
 import '../styles/components/header.css'
 import SearchBar from "./SearchBar";
 
+import LanguageSelector from "./LanguageSelector";
+
+import { useLanguage } from "../context/LanguageContext";
+
 function Header() {
     const [user, setUser] = useState(null);
+    const { t } = useLanguage();
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -25,14 +30,15 @@ function Header() {
             <div className="header-top">
                 <Link to="/"><img src={logo} alt="logo" className="home-logo" /></Link>
                 <div className="labels">
+                    <LanguageSelector />
                     {user ? (
                         <>
                             {user.access_dashboard && (
-                                <Link to="/dashboard" id="login"> <i className="fa-solid fa-gauge"></i> Dashboard</Link>
+                                <Link to="/dashboard" id="login"> <i className="fa-solid fa-gauge"></i> {t('dashboard')}</Link>
                             )}
 
                             {!user.access_dashboard && (
-                                <Link to="/messages" className="messages-btn" title="Messages">
+                                <Link to="/messages" className="messages-btn" title={t('messages')}>
                                     <i className="fa-solid fa-comment-dots"></i>
                                 </Link>
                             )}
@@ -48,12 +54,12 @@ function Header() {
                                 <span className="user-name">{user.first_name}</span>
                             </Link>
 
-                            <span onClick={handleLogout} className="logout-btn" title="Se déconnecter">
+                            <span onClick={handleLogout} className="logout-btn" title={t('logout')}>
                                 <i className="fa-solid fa-right-from-bracket"></i>
                             </span>
                         </>
                     ) : (
-                        <Link to="/connexion" id="login"> <i className="fa-solid fa-user"></i> Se connecter</Link>
+                        <Link to="/connexion" id="login"> <i className="fa-solid fa-user"></i> {t('login')}</Link>
                     )}
                 </div>
             </div>
@@ -61,10 +67,10 @@ function Header() {
             <div className="header-hero">
                 <div className="messages">
                     <h1 className="home-title">
-                        Explorez les hotels de Mauritanie
+                        {t('explore')}
                     </h1>
                     <p className="home-sub-title">
-                        Nous comparons les prix des plusieurs hotels
+                        {t('compare')}
                     </p>
                 </div>
                 <div className="search-container-header">

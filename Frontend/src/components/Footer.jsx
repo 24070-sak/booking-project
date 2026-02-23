@@ -1,8 +1,11 @@
 import React from 'react';
 import '../styles/components/footer.css';
-import logo from '../assets/logos/logo.png';
+import logo from '../assets/logos/logo.svg';
+import { useLanguage } from '../context/LanguageContext';
 
 const Footer = () => {
+    const { t } = useLanguage();
+
     return (
         <footer className="footer">
             <div className="footer-content">
@@ -13,8 +16,7 @@ const Footer = () => {
                             <span>Hotely</span>
                         </div>
                         <p className="footer-description">
-                            Découvrez les meilleurs hôtels de Mauritanie.
-                            Réservation simple, rapide et sécurisée.
+                            {t('footer_desc')}
                         </p>
                         <div className="social-links">
                             <a href="#" className="social-link"><i className="fa-brands fa-facebook-f"></i></a>
@@ -26,27 +28,27 @@ const Footer = () => {
 
                     <div className="footer-links-group">
                         <div className="footer-column">
-                            <h3>Navigation</h3>
+                            <h3>{t('navigation')}</h3>
                             <ul>
-                                <li><a href="#">Accueil</a></li>
-                                <li><a href="#">Hôtels</a></li>
-                                <li><a href="#">Offres</a></li>
-                                <li><a href="#">Contact</a></li>
+                                <li><a href="#">{t('home')}</a></li>
+                                <li><a href="#">{t('hotels')}</a></li>
+                                <li><a href="#">{t('offers')}</a></li>
+                                <li><a href="#">{t('contact')}</a></li>
                             </ul>
                         </div>
 
                         <div className="footer-column">
-                            <h3>Support</h3>
+                            <h3>{t('support')}</h3>
                             <ul>
-                                <li><a href="#">Aide & FAQ</a></li>
-                                <li><a href="#">Conditions générales</a></li>
-                                <li><a href="#">Confidentialité</a></li>
-                                <li><a href="#">Politique de cookies</a></li>
+                                <li><a href="#">{t('help_faq')}</a></li>
+                                <li><a href="#">{t('terms_conditions')}</a></li>
+                                <li><a href="#">{t('privacy')}</a></li>
+                                <li><a href="#">{t('cookie_policy')}</a></li>
                             </ul>
                         </div>
 
                         <div className="footer-column">
-                            <h3>Contact</h3>
+                            <h3>{t('contact')}</h3>
                             <ul className="contact-info">
                                 <li><i className="fa-solid fa-phone"></i> +222 32 16 01 26</li>
                                 <li><i className="fa-solid fa-envelope"></i> contact@hotely.mr</li>
@@ -57,7 +59,7 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-bottom">
-                    <p>&copy; 2025 Hotely. Tous droits réservés.</p>
+                    <p>&copy; 2025 Hotely. {t('all_rights_reserved')}</p>
                     <div className="footer-bottom-links">
                         <a href="#">Confidentialité</a>
                         <a href="#">Conditions</a>

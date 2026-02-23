@@ -1,91 +1,112 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import '../styles/components/searchBar.css'
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import '../styles/components/searchBar.css';
+import { useLanguage } from "../context/LanguageContext";
 
 function SearchBar() {
-    const [destination, setDestination] = useState("");
-    const [guests, setGuests] = useState("");
-    const [checkIn, setCheckIn] = useState("");
-    const [checkOut, setCheckOut] = useState("");
+    const { t } = useLanguage();
+    const [isOpen, setIsOpen] = useState(false);
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
-    const handleSearch = () => {
-        // Build query string
-        const params = new URLSearchParams();
-        if (destination) params.append('search', destination);
-        if (guests) params.append('guests', guests);
-        if (checkIn) params.append('check_in', checkIn);
-        if (checkOut) params.append('check_out', checkOut);
+    const [location, setLocation] = useState(searchParams.get('location') || "");
+    const [minPrice, setMinPrice] = useState(searchParams.get('min_price') || "");
+    const [maxPrice, setMaxPrice] = useState(searchParams.get('max_price') || "");
+    const [minRating, setMinRating] = useState(searchParams.get('min_rating') || "");
 
+    useEffect(() => {
+        setLocation(searchParams.get('location') || "");
+        setMinPrice(searchParams.get('min_price') || "");
+        setMaxPrice(searchParams.get('max_price') || "");
+        setMinRating(searchParams.get('min_rating') || "");
+    }, [searchParams]);
+
+    const handleApplyFilters = () => {
+        const params = new URLSearchParams(searchParams);
+        if (location) params.set('location', location); else params.delete('location');
+        if (minPrice) params.set('min_price', minPrice); else params.delete('min_price');
+        if (maxPrice) params.set('max_price', maxPrice); else params.delete('max_price');
+        if (minRating) params.set('min_rating', minRating); else params.delete('min_rating');
+
+        setIsOpen(false);
         navigate(`/?${params.toString()}`);
     };
 
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            handleSearch();
-        }
+    const handleClearFilters = () => {
+        setLocation('');
+        setMinPrice('');
+        setMaxPrice('');
+        setMinRating('');
     };
 
     return (
-        <div className="search-bar">
-            <div className="search-input-group">
-                <i className="fa-solid fa-bed search-icon"></i>
-                <input
-                    type="text"
-                    placeholder="Destination, hôtel ou chambre"
-                    className="search-input"
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                />
-            </div>
-
-            <div className="search-divider"></div>
-
-            <div className="search-input-group" style={{ gap: '5px' }}>
-                <i className="fa-solid fa-calendar-days search-icon"></i>
-                <input
-                    type="text"
-                    onFocus={(e) => e.target.type = 'date'}
-                    onBlur={(e) => e.target.type = 'text'}
-                    placeholder="Arrivée"
-                    className="search-input"
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                    style={{ minWidth: 'auto' }}
-                />
-                <span style={{ color: '#ccc' }}>-</span>
-                <input
-                    type="text"
-                    onFocus={(e) => e.target.type = 'date'}
-                    onBlur={(e) => e.target.type = 'text'}
-                    placeholder="Départ"
-                    className="search-input"
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                    style={{ minWidth: 'auto' }}
-                />
-            </div>
-
-            <div className="search-divider"></div>
-
-            <div className="search-input-group">
-                <i className="fa-solid fa-user-group search-icon"></i>
-                <input
-                    type="number"
-                    min="1"
-                    placeholder="Voyageurs"
-                    className="search-input"
-                    value={guests}
-                    onChange={(e) => setGuests(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                />
-            </div>
-
-            <button className="search-button" onClick={handleSearch}>
-                <i className="fa-solid fa-magnifying-glass"></i> Rechercher
+        <div className="filter-container">
+            <button className="beautiful-filter-btn" onClick={() => setIsOpen(!isOpen)}>
+                <i className="fa-solid fa-sliders"></i> {t ? t('filter', { defaultValue: 'Filtrer' }) : 'Filtrer'}
             </button>
+
+            {isOpen && (
+                <div className="filter-modal-overlay" onClick={() => setIsOpen(false)}>
+                    <div className="filter-modal" onClick={e => e.stopPropagation()}>
+                        <div className="filter-header">
+                            <h3><i className="fa-solid fa-filter"></i> Filtres</h3>
+                            <button className="close-filter" onClick={() => setIsOpen(false)}>&times;</button>
+                        </div>
+
+                        <div className="filter-body">
+                            <div className="filter-group">
+                                <label><i className="fa-solid fa-location-dot"></i> Emplacement</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ville, hôtel..."
+                                    value={location}
+                                    onChange={(e) => setLocation(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="filter-group">
+                                <label><i className="fa-solid fa-money-bill-wave"></i> Prix (MRU)</label>
+                                <div className="price-inputs">
+                                    <input
+                                        type="number"
+                                        placeholder="Min"
+                                        value={minPrice}
+                                        onChange={(e) => setMinPrice(e.target.value)}
+                                        min="0"
+                                    />
+                                    <span>-</span>
+                                    <input
+                                        type="number"
+                                        placeholder="Max"
+                                        value={maxPrice}
+                                        onChange={(e) => setMaxPrice(e.target.value)}
+                                        min="0"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="filter-group">
+                                <label><i className="fa-solid fa-star"></i> Note minimale</label>
+                                <select value={minRating} onChange={e => setMinRating(e.target.value)}>
+                                    <option value="">Toutes les notes</option>
+                                    <option value="1">1+ Étoile</option>
+                                    <option value="2">2+ Étoiles</option>
+                                    <option value="3">3+ Étoiles</option>
+                                    <option value="4">4+ Étoiles</option>
+                                    <option value="5">5 Étoiles</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="filter-footer">
+                            <button className="btn-clear" onClick={handleClearFilters}>Effacer</button>
+                            <button className="btn-apply" onClick={handleApplyFilters}>Appliquer</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
-    )
+    );
 }
+
 export default SearchBar;

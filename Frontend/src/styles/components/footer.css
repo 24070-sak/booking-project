@@ -20,7 +20,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(11, 106, 214, 0.5), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 98, 51, 0.5), transparent);
 }
 
 .footer-content {
@@ -90,10 +90,10 @@
 }
 
 .social-link:hover {
-    background: #0b6ad6;
+    background: var(--primary-green);
     transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(11, 106, 214, 0.3);
-    border-color: #0b6ad6;
+    box-shadow: 0 4px 12px rgba(0, 98, 51, 0.3);
+    border-color: var(--primary-green);
 }
 
 .footer-links-group {
@@ -118,7 +118,7 @@
     left: 0;
     width: 30px;
     height: 2px;
-    background: #0b6ad6;
+    background: var(--primary-green);
     border-radius: 2px;
 }
 
@@ -143,7 +143,7 @@
 }
 
 .footer-column ul li a:hover {
-    color: #0b6ad6;
+    color: var(--primary-green);
     transform: translateX(4px);
 }
 
@@ -156,7 +156,7 @@
 }
 
 .contact-info li i {
-    color: #0b6ad6;
+    color: var(--primary-green);
     font-size: 16px;
 }
 
@@ -188,7 +188,7 @@
 }
 
 .footer-bottom-links a:hover {
-    color: #0b6ad6;
+    color: var(--primary-green);
 }
 
 @media (max-width: 768px) {
