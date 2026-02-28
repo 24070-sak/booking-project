@@ -86,3 +86,30 @@ export async function verifyPayment(paymentId, action) {
     if (!response.ok) throw new Error(data.error || "Échec de la vérification");
     return data;
 }
+
+export async function confirmBooking(bookingId) {
+    const response = await apiFetch(`/bookings/${bookingId}/confirm`, {
+        method: "POST"
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Impossible d'accepter");
+    return data;
+}
+
+export async function rejectBooking(bookingId) {
+    const response = await apiFetch(`/bookings/${bookingId}/reject`, {
+        method: "POST"
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Impossible de refuser");
+    return data;
+}
+
+export async function cancelBooking(bookingId) {
+    const response = await apiFetch(`/bookings/${bookingId}/cancel`, {
+        method: "POST"
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Impossible d'annuler");
+    return data;
+}

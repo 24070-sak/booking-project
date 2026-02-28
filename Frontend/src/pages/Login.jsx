@@ -81,19 +81,15 @@ function Login() {
               />
             </div>
           </div>
-
           <div>
             <label className="form-label" htmlFor="password">
               {t('password')}
-              <span className="forgot-password">
-                <Link to="#"><span>{t('forgot_password')}</span></Link>
-              </span>
             </label>
             <div className="input-container">
               <i className="fa-solid fa-lock"></i>
               <input
                 id="password"
-                type="text"
+                type={showPsswd ? "text" : "password"}
                 className="form-input"
                 placeholder={t('password')}
                 name="password"
@@ -101,12 +97,15 @@ function Login() {
                 onChange={handleChange}
                 required
               />
-              <i className={`fa-solid ${showPsswd ? "fa-eye-slash" : "fa-eye"}`}
-                id="togglePassword"
+              <i
+                className={`fa-solid ${showPsswd ? "fa-eye-slash" : "fa-eye"}`}
                 onClick={() => setShowPsswd(!showPsswd)}
-                style={{ cursor: "pointer" }}
+                id="togglePassword"
               ></i>
             </div>
+            <span className="forgot-password">
+              <Link to="#"><span>{t('forgot_password')}</span></Link>
+            </span>
           </div>
 
           <button type="submit" className="login-button" name="login" disabled={loading}>

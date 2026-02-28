@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getPayments } from '../services/dashboardService';
 import { verifyPayment } from '../services/bookingService';
+import { showError, showSuccess, showConfirm } from '../utils/alerts';
 import '../styles/components/dashboardPayments.css';
 
 const DashboardPayments = () => {
@@ -26,15 +27,16 @@ const DashboardPayments = () => {
     }, []);
 
     const handleVerify = async (paymentId, action) => {
-        if (!window.confirm(`Êtes-vous sûr de vouloir ${action === 'approve' ? 'approuver' : 'refuser'} ce paiement ?`)) return;
+        const isConfirmed = await showConfirm(`Êtes-vous sûr de vouloir ${action === 'approve' ? 'approuver' : 'refuser'} ce paiement ?`);
+        if (!isConfirmed) return;
 
         try {
             await verifyPayment(paymentId, action);
-            alert(`Paiement ${action === 'approve' ? 'approuvé' : 'refusé'} avec succès.`);
+            showSuccess(`Paiement ${action === 'approve' ? 'approuvé' : 'refusé'} avec succès.`);
             setSelectedPayment(null);
             fetchPayments();
         } catch (error) {
-            alert(error.message);
+            showError(error.message);
         }
     };
 
@@ -81,15 +83,15 @@ const DashboardPayments = () => {
             <div className="payment-stats">
                 <div className="payment-stat-card">
                     <h3>Revenu Total</h3>
-                    <p className="text-revenue">{totalRevenue.toLocaleString()} MRU</p>
+                    <p className="text-revenue">{totalRevenue.toLocaleString()} €</p>
                 </div>
                 <div className="payment-stat-card">
                     <h3>En attente</h3>
-                    <p className="text-pending">{pendingAmount.toLocaleString()} MRU</p>
+                    <p className="text-pending">{pendingAmount.toLocaleString()} €</p>
                 </div>
                 <div className="payment-stat-card">
                     <h3>Remboursements</h3>
-                    <p className="text-refunds">{refundedAmount.toLocaleString()} MRU</p>
+                    <p className="text-refunds">{refundedAmount.toLocaleString()} €</p>
                 </div>
             </div>
 
@@ -102,7 +104,7 @@ const DashboardPayments = () => {
                             <th>Propriété</th>
                             <th>Date</th>
                             <th>Méthode</th>
-                            <th>Montant (MRU)</th>
+                            <th>Montant (€)</th>
                             <th>Statut</th>
                             <th>Actions</th>
                         </tr>
@@ -115,8 +117,10 @@ const DashboardPayments = () => {
                                     <td data-label="Guest" style={{ fontWeight: 'bold' }}>{payment.guest_name}</td>
                                     <td data-label="Property">{payment.hotel_name}</td>
                                     <td data-label="Date">{payment.paid_at ? new Date(payment.paid_at).toLocaleDateString() : 'N/A'}</td>
-                                    <td data-label="Method">{payment.payment_method}</td>
-                                    <td data-label="Amount (MRU)">{payment.amount}</td>
+                                    <td data-label="Method">
+                                        {payment.payment_method === 'credit_card' ? "Assurance (Payé à l'hôtel)" : payment.payment_method === 'local_app' ? "App Bancaire" : payment.payment_method}
+                                    </td>
+                                    <td data-label="Amount (€)">{payment.amount}</td>
                                     <td data-label="Status">
                                         <span className={`status-badge ${getStatusClass(payment.status)}`}>
                                             {translateStatus(payment.status)}
@@ -156,8 +160,8 @@ const DashboardPayments = () => {
                             <div className="modal-info-grid">
                                 <div><strong>Client:</strong> {selectedPayment.guest_name}</div>
                                 <div><strong>Référence:</strong> {selectedPayment.booking_reference}</div>
-                                <div><strong>Montant:</strong> {selectedPayment.amount} MRU</div>
-                                <div><strong>Méthode:</strong> {selectedPayment.payment_method}</div>
+                                <div><strong>Montant:</strong> {selectedPayment.amount} €</div>
+                                <div><strong>Méthode:</strong> {selectedPayment.payment_method === 'credit_card' ? "Assurance (Payé à l'hôtel)" : selectedPayment.payment_method === 'local_app' ? "App Bancaire" : selectedPayment.payment_method}</div>
                                 {selectedPayment.bank_app && <div><strong>App:</strong> {selectedPayment.bank_app}</div>}
                                 {selectedPayment.transaction_phone && <div><strong>Tél Transaction:</strong> {selectedPayment.transaction_phone}</div>}
                             </div>

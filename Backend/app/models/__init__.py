@@ -5,6 +5,7 @@ from app.models.booking import Booking
 from app.models.payment import Payment
 from app.models.review import Review
 from app.models.message import Message
+from app.models.notification import Notification
 
 
 __all__ = [
@@ -17,5 +18,6 @@ __all__ = [
     'Booking',
     'Payment',
     'Review',
-    'Message'
+    'Message',
+    'Notification'
 ]

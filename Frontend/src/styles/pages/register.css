@@ -3,17 +3,18 @@
 /* Main Card */
 .register-container {
     width: 480px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.93);
     backdrop-filter: blur(8px);
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 98, 51, 0.12);
     display: flex;
     flex-direction: column;
     gap: 30px;
     animation: fadeIn 0.5s ease;
     margin: auto;
     padding-top: 0px;
+    border-top: 4px solid #006233;
 }
 
 /* Header */
@@ -29,7 +30,7 @@
 
 .register-title {
     text-align: center;
-    color: #0c2b66;
+    color: #003d20;
     font-size: 26px;
     font-weight: 700;
 }
@@ -46,7 +47,7 @@
     display: block;
     text-align: left;
     font-weight: 600;
-    color: #0c2b66;
+    color: #003d20;
     margin-bottom: 6px;
 }
 
@@ -55,8 +56,8 @@
     width: 100% !important;
     height: 50px !important;
     border-radius: 12px !important;
-    border: 2px solid rgba(12, 43, 102, 0.1) !important;
-    background: #f8fafc !important;
+    border: 2px solid rgba(0, 98, 51, 0.12) !important;
+    background: #f8fdf9 !important;
     font-size: 16px !important;
     padding-left: 45px !important;
     padding-right: 15px !important;
@@ -67,9 +68,9 @@
 }
 
 .form-input:focus {
-    border-color: #0c5bff;
-    background: #fff;
-    box-shadow: 0 0 0 4px rgba(12, 91, 255, 0.1);
+    border-color: #006233 !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 4px rgba(0, 98, 51, 0.12) !important;
 }
 
 /* Input Icon */
@@ -85,7 +86,7 @@
     left: 15px !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
-    color: #64748b !important;
+    color: #006233 !important;
     font-size: 18px !important;
     transition: 0.3s !important;
     pointer-events: none !important;
@@ -102,7 +103,7 @@
 /* Register Button */
 .register-button {
     height: 55px;
-    background: linear-gradient(135deg, #0c5bff, #0a44c7);
+    background: linear-gradient(135deg, #006233, #00843d);
     border: none;
     border-radius: 12px;
     color: white;
@@ -110,21 +111,23 @@
     cursor: pointer;
     transition: 0.3s;
     margin-top: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 i:hover {
-    color: #0a44c7;
+    color: #006233;
 }
 
 .input-container input:focus+i,
 .input-container:focus-within i {
-    color: #4A90E2;
-    /* color you want */
+    color: #006233;
 }
 
 .register-button:hover {
     filter: brightness(1.1);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 98, 51, 0.35);
 }
 
 /* Separator */
@@ -151,10 +154,12 @@ i:hover {
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: 0.2s;
+    border: 1px solid rgba(0, 98, 51, 0.1);
 }
 
 .social-login div:hover {
     transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 98, 51, 0.15);
 }
 
 .social-login img {
@@ -167,11 +172,32 @@ i:hover {
     gap: 10px;
 }
 
-
 .line hr {
     flex: 1;
     border: none;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid rgba(0, 98, 51, 0.2);
+}
+
+#note {
+    text-align: center;
+    color: #4a5568;
+}
+
+/* "Se connecter" link — same style as forgot-password */
+#createAccount,
+#createAccount a {
+    color: #006233;
+    font-weight: 600;
+    font-size: 13.5px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+#createAccount:hover,
+#createAccount a:hover {
+    color: #00843d;
+    text-decoration: underline;
+    font-weight: 600;
 }
 
 /* Responsive */

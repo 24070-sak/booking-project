@@ -59,7 +59,7 @@ def submit_local_payment():
         return jsonify({'error': 'Tous les champs sont requis'}), 400
         
     booking = Booking.query.get(booking_id)
-    if not booking or booking.user_id != user_id:
+    if not booking or booking.user_id != int(user_id):
         return jsonify({'error': 'Réservation non trouvée'}), 404
         
     if file and allowed_file(file.filename):

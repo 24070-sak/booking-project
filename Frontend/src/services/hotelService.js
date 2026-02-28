@@ -33,8 +33,9 @@ export async function getMyHotels() {
     return response.json();
 }
 
-export async function getHotelById(id) {
-    const response = await apiFetch(`/hotels/${id}`);
+export async function getHotelById(id, isUnique = false) {
+    const url = `/hotels/${id}${isUnique ? '?unique=true' : ''}`;
+    const response = await apiFetch(url);
 
     if (!response.ok) {
         throw new Error("Impossible de récupérer les détails de l'hôtel");

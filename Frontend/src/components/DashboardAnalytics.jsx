@@ -20,7 +20,15 @@ const DashboardAnalytics = () => {
                 setLoading(false);
             }
         };
+
+        // Chargement initial
         fetchAnalytics();
+
+        // Rafraîchissement automatique et dynamique toutes les 5 secondes
+        const intervalId = setInterval(fetchAnalytics, 5000);
+
+        // Nettoyage lors du démontage du composant
+        return () => clearInterval(intervalId);
     }, []);
 
     if (loading) return <div>Chargement des analyses...</div>;
@@ -74,7 +82,7 @@ const DashboardAnalytics = () => {
                                 </span>
                                 <div className="property-stats">
                                     <span className="property-bookings">{prop.bookings} réservations</span>
-                                    <span className="property-revenue-amount">{prop.revenue.toLocaleString()} MRU</span>
+                                    <span className="property-revenue-amount">{prop.revenue.toLocaleString()} €</span>
                                 </div>
                             </li>
                         ))}

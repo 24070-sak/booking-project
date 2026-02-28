@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getMyHotels, createHotel, updateHotel, deleteHotel, getHotelRooms } from '../services/hotelService';
 import { createRoom, updateRoom, deleteRoom, getRoomTypes, getAmenities } from '../services/roomService';
+import { showError, showSuccess, showConfirm } from '../utils/alerts';
 import '../styles/components/dashboardProperties.css';
 
 // Import hotel images
@@ -123,7 +124,7 @@ const DashboardProperties = () => {
             const data = await getHotelRooms(hotelId);
             setHotelRooms(data.rooms || []);
         } catch (error) {
-            alert("Erreur lors de la récupération des chambres");
+            showError("Erreur lors de la récupération des chambres");
         }
     };
 
@@ -136,12 +137,14 @@ const DashboardProperties = () => {
     };
 
     const handleDeleteClick = async (id) => {
-        if (window.confirm("Are you sure you want to delete this property?")) {
+        const isConfirmed = await showConfirm("Are you sure you want to delete this property?");
+        if (isConfirmed) {
             try {
                 await deleteHotel(id);
                 fetchProperties();
+                showSuccess("Propriété supprimée");
             } catch (error) {
-                alert("Échec de la suppression : " + error.message);
+                showError("Échec de la suppression : " + error.message);
             }
         }
     };
@@ -161,10 +164,11 @@ const DashboardProperties = () => {
             } else if (editingPropertyId) {
                 await updateHotel(editingPropertyId, hotelData);
             }
+            showSuccess("Opération réussie");
             fetchProperties();
             handleBackClick();
         } catch (error) {
-            alert("Opération échouée : " + error.message);
+            showError("Opération échouée : " + error.message);
         }
     };
 
@@ -202,12 +206,14 @@ const DashboardProperties = () => {
     };
 
     const handleDeleteRoomClick = async (roomId) => {
-        if (window.confirm("Supprimer cette chambre ?")) {
+        const isConfirmed = await showConfirm("Supprimer cette chambre ?");
+        if (isConfirmed) {
             try {
                 await deleteRoom(roomId);
+                showSuccess("Chambre supprimée");
                 handleViewRoomsClick(viewingRoomsHotelId);
             } catch (error) {
-                alert("Erreur: " + error.message);
+                showError("Erreur: " + error.message);
             }
         }
     };
@@ -222,9 +228,10 @@ const DashboardProperties = () => {
             }
             setIsAddingRoom(false);
             setEditingRoomId(null);
+            showSuccess("Chambre enregistrée");
             handleViewRoomsClick(viewingRoomsHotelId);
         } catch (error) {
-            alert("Erreur: " + error.message);
+            showError("Erreur: " + error.message);
         }
     };
 
@@ -334,20 +341,19 @@ const DashboardProperties = () => {
                                 ))}
                             </div>
                         </div>
-                        <div style={{ marginTop: '15px' }}>
+                        <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
                             <button className="btn-primary" onClick={handleRoomSubmit}>Enregistrer Chambre</button>
-                            <button className="btn-secondary" onClick={() => { setIsAddingRoom(false); setEditingRoomId(null); }} style={{ marginLeft: '10px' }}>Annuler</button>
+                            <button className="btn-secondary" onClick={() => { setIsAddingRoom(false); setEditingRoomId(null); }}>Annuler</button>
                         </div>
                     </div>
                 )}
 
-                <div className="properties-list">
-                    <table>
+                <div className="properties-list table-responsive">
+                    <table className="rooms-table">
                         <thead>
                             <tr>
-                                <th>Numéro</th>
-                                <th>Nom</th>
-                                <th>Type</th>
+                                <th className="col-numero">Numéro</th>
+                                <th className="col-name">Nom</th>
                                 <th>Taille</th>
                                 <th>Prix</th>
                                 <th>Équipements</th>
@@ -357,11 +363,10 @@ const DashboardProperties = () => {
                         <tbody>
                             {hotelRooms.map(room => (
                                 <tr key={room.id}>
-                                    <td data-label="Numéro">{room.room_number}</td>
-                                    <td data-label="Nom">{room.name}</td>
-                                    <td data-label="Type">{roomTypes.find(t => t.id === room.room_type_id)?.name || room.room_type_id}</td>
+                                    <td className="col-numero" data-label="Numéro">{room.room_number}</td>
+                                    <td className="col-name" data-label="Nom">{room.name}</td>
                                     <td data-label="Taille">{room.size_sqm ? `${room.size_sqm} m²` : '-'}</td>
-                                    <td data-label="Prix">{room.price_per_night} MRU</td>
+                                    <td data-label="Prix">{room.price_per_night} €</td>
                                     <td data-label="Équipements">
                                         {room.amenities && room.amenities.length > 0 ? (
                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
@@ -396,8 +401,8 @@ const DashboardProperties = () => {
                 <button onClick={handleAddClick} className="btn-primary">+ Ajouter un Hôtel</button>
             </div>
 
-            <div className="properties-list">
-                <table>
+            <div className="properties-list table-responsive">
+                <table className="hotels-table">
                     <thead>
                         <tr>
                             <th>Nom</th>

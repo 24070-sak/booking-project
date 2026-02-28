@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getOwnerBookings, getAllBookings } from '../services/bookingService';
+import { getOwnerBookings, getAllBookings, confirmBooking, rejectBooking } from '../services/bookingService';
+import { showError, showSuccess, showConfirm } from '../utils/alerts';
 import '../styles/components/dashboardReservations.css';
 
 const DashboardReservations = () => {
@@ -48,10 +49,29 @@ const DashboardReservations = () => {
     const translateStatus = (status) => {
         switch (status?.toLowerCase()) {
             case 'confirmed': return 'Confirmé';
-            case 'pending': return 'En attente';
+            case 'pending': return 'En attente (Remboursement)';
             case 'cancelled': return 'Annulé';
             case 'completed': return 'Terminé';
             default: return status;
+        }
+    };
+
+    const handleAction = async (id, action) => {
+        const isConfirmed = await showConfirm(`Voulez-vous vraiment ${action === 'accept' ? 'accepter' : 'refuser'} cette réservation ?`);
+        if (!isConfirmed) return;
+        try {
+            if (action === 'accept') {
+                await confirmBooking(id);
+            } else {
+                await rejectBooking(id);
+            }
+            // Refresh list
+            const user = JSON.parse(localStorage.getItem('user'));
+            const data = user?.role === 'admin' ? await getAllBookings() : await getOwnerBookings();
+            setBookings(data.bookings || []);
+            showSuccess(`Réservation ${action === 'accept' ? 'acceptée' : 'refusée'} avec succès.`);
+        } catch (err) {
+            showError(err.message);
         }
     };
 
@@ -75,6 +95,7 @@ const DashboardReservations = () => {
                                 <th>Hôtel/Chambre</th>
                                 <th>Total</th>
                                 <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -97,14 +118,28 @@ const DashboardReservations = () => {
                                     <td data-label="Chambre">
                                         {res.room ? (res.room.name + (res.room.hotel ? " - " + res.room.hotel.name : "")) : "Chambre inconnue"}
                                     </td>
-                                    <td data-label="Total">{res.total_price} MRU</td>
+                                    <td data-label="Total">{res.total_price} €</td>
                                     <td data-label="Status">
                                         <span className={`status-badge ${getStatusClass(res.status)}`}>
                                             {translateStatus(res.status)}
                                         </span>
                                         {res.status === 'confirmed' && (
-                                            <div style={{ fontSize: '11px', color: '#059669', marginTop: '4px', fontWeight: 'bold' }}>
-                                                L'administrateur a accepté votre réservation.
+                                            <div style={{ fontSize: '10px', color: '#059669', marginTop: '3px', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                                                ✓ Réservation acceptée
+                                            </div>
+                                        )}
+                                    </td>
+                                    <td data-label="Actions">
+                                        {res.status === 'pending' && (
+                                            <div className="reservation-actions">
+                                                <button
+                                                    onClick={() => handleAction(res.id, 'accept')}
+                                                    className="btn-action btn-accept"
+                                                >Accepter</button>
+                                                <button
+                                                    onClick={() => handleAction(res.id, 'reject')}
+                                                    className="btn-action btn-reject"
+                                                >Refuser</button>
                                             </div>
                                         )}
                                     </td>

@@ -141,22 +141,18 @@ def get_hotel_details(hotel_id):
     if not hotel:
         return jsonify({'error': 'Hôtel non trouvé'}), 404
     
-    # Increment Analytics
-    import random
+    # Increment Real Analytics
     hotel.views += 1
     
-    # Simulate unique visitors (approx 70% of views)
-    if random.random() < 0.7:
+    is_unique = request.args.get('unique', 'false').lower() == 'true'
+    if is_unique:
         hotel.unique_visitors += 1
         
-    # Simulate bounce rate updates (keep it between 20% and 60%)
-    if hotel.bounce_rate == 0:
-        hotel.bounce_rate = random.randint(20, 60)
-    else:
-        # Slight fluctuation
-        change = random.randint(-2, 2)
-        hotel.bounce_rate = max(10, min(90, hotel.bounce_rate + change))
-        
+        # Simple heuristic for bounce rate without complex session tracking
+        if hotel.bounce_rate == 0:
+            import random
+            hotel.bounce_rate = random.randint(40, 60) # Init once
+            
     db.session.commit()
     
     return jsonify({'hotel': hotel.to_dict()}), 200
@@ -212,13 +208,19 @@ def delete_hotel(hotel_id):
     return jsonify({'message': 'Hôtel supprimé'}), 200
 
 @hotel_bp.route('/<int:hotel_id>/rooms', methods=['GET'])
+@jwt_required(optional=True)
 def get_hotel_rooms(hotel_id):
     """Liste les chambres d'un hôtel"""
     hotel = Hotel.query.get(hotel_id)
     if not hotel:
         return jsonify({'error': 'Hôtel non trouvé'}), 404
     
-    rooms = Room.query.filter_by(hotel_id=hotel_id).all()
+    user_id = get_jwt_identity()
+    
+    if user_id and str(hotel.user_id) == str(user_id):
+        rooms = Room.query.filter_by(hotel_id=hotel_id).all()
+    else:
+        rooms = Room.query.filter_by(hotel_id=hotel_id, is_available=True).all()
     
     return jsonify({
         'rooms': [r.to_dict() for r in rooms],

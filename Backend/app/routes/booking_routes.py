@@ -75,7 +75,23 @@ def create_booking():
         special_requests=data.get('special_requests')
     )
     
+    # Rendre la chambre indisponible après réservation
+    room.is_available = False
+    
     db.session.add(booking)
+    
+    from app.models.notification import Notification
+    hotel = room.hotel
+    notif = Notification(
+        user_id=user_id,
+        title='Réservation en attente',
+        message=f'Vous avez réservé la chambre {room.name} à {hotel.name} pour le {check_in.strftime("%d/%m/%Y")}. La réservation est en attente.',
+        type='booking_created',
+        room_id=room.id,
+        hotel_id=hotel.id
+    )
+    db.session.add(notif)
+    
     db.session.commit()
     
     # Synchroniser le fichier SQL
@@ -120,7 +136,7 @@ def get_booking(booking_id):
         return jsonify({'error': 'Réservation non trouvée'}), 404
     
     # Vérifier les droits d'accès
-    if booking.user_id != user_id and user.role not in ['admin', 'manager']:
+    if booking.user_id != int(user_id) and user.role not in ['admin', 'manager']:
         return jsonify({'error': 'Accès non autorisé'}), 403
     
     return jsonify({'booking': booking.to_dict()}), 200
@@ -137,7 +153,7 @@ def cancel_booking(booking_id):
     if not booking:
         return jsonify({'error': 'Réservation non trouvée'}), 404
     
-    if booking.user_id != user_id:
+    if booking.user_id != int(user_id):
         return jsonify({'error': 'Accès non autorisé'}), 403
     
     if booking.status == 'completed':
@@ -152,6 +168,11 @@ def cancel_booking(booking_id):
     if booking.payment and booking.payment.status == 'completed':
         booking.payment.status = 'refunded'
     
+    # Rendre la chambre de nouveau disponible
+    room = Room.query.get(booking.room_id)
+    if room:
+        room.is_available = True
+        
     db.session.commit()
     
     # Synchroniser le fichier SQL
@@ -182,12 +203,71 @@ def confirm_booking(booking_id):
         return jsonify({'error': 'Seules les réservations en attente peuvent être confirmées'}), 400
     
     booking.status = 'confirmed'
+    
+    from app.models.notification import Notification
+    room = booking.room
+    hotel = room.hotel
+    notif = Notification(
+        user_id=booking.user_id,
+        title='Réservation acceptée',
+        message=f'Votre réservation pour {room.name} à {hotel.name} a été acceptée par l\'établissement.',
+        type='booking_accepted',
+        room_id=room.id,
+        hotel_id=hotel.id
+    )
+    db.session.add(notif)
+    
     db.session.commit()
     
     return jsonify({
         'message': 'Réservation confirmée',
         'booking': booking.to_dict()
     }), 200
+
+
+@booking_bp.route('/<int:booking_id>/reject', methods=['POST'])
+@jwt_required()
+def reject_booking(booking_id):
+    """Refuser une réservation (admin/manager/owner)"""
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    if user.role not in ['admin', 'manager'] and not user.access_dashboard:
+        return jsonify({'error': 'Accès non autorisé'}), 403
+        
+    booking = Booking.query.get(booking_id)
+    if not booking:
+        return jsonify({'error': 'Réservation non trouvée'}), 404
+        
+    if booking.status != 'pending':
+        return jsonify({'error': 'Seules les réservations en attente peuvent être refusées'}), 400
+        
+    booking.status = 'cancelled'
+    
+    room = Room.query.get(booking.room_id)
+    if room:
+        room.is_available = True
+        
+    from app.models.notification import Notification
+    hotel = room.hotel if room else None
+    hotel_name = hotel.name if hotel else 'l\'hôtel'
+    hotel_id = hotel.id if hotel else None
+    room_name = room.name if room else 'la chambre'
+    
+    notif = Notification(
+        user_id=booking.user_id,
+        title='Réservation refusée',
+        message=f'Désolé, votre réservation pour {room_name} à {hotel_name} a été refusée.',
+        type='booking_rejected',
+        room_id=booking.room_id,
+        hotel_id=hotel_id
+    )
+    db.session.add(notif)
+    db.session.commit()
+    
+    update_db_dump()
+    
+    return jsonify({'message': 'Réservation refusée', 'booking': booking.to_dict()}), 200
 
 
 @booking_bp.route('/<int:booking_id>/payment', methods=['POST'])
@@ -201,7 +281,7 @@ def process_payment(booking_id):
     if not booking:
         return jsonify({'error': 'Réservation non trouvée'}), 404
     
-    if booking.user_id != user_id:
+    if booking.user_id != int(user_id):
         return jsonify({'error': 'Accès non autorisé'}), 403
     
     if booking.payment and booking.payment.status == 'completed':
@@ -229,6 +309,19 @@ def process_payment(booking_id):
     
     # Confirmer la réservation
     booking.status = 'confirmed'
+    
+    from app.models.notification import Notification
+    room = booking.room
+    hotel = room.hotel
+    notif = Notification(
+        user_id=booking.user_id,
+        title='Paiement & Réservation confirmée',
+        message=f'Votre paiement a été reçu. Votre réservation pour {room.name} à {hotel.name} est confirmée automatiquement.',
+        type='booking_accepted',
+        room_id=room.id,
+        hotel_id=hotel.id
+    )
+    db.session.add(notif)
     
     db.session.commit()
     

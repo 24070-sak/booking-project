@@ -35,8 +35,17 @@ function HotelDetails() {
 
         async function fetchData() {
             try {
+                // Check if this is a unique visit for the user
+                const visitedKey = `visited_hotel_${id}`;
+                const hasVisited = localStorage.getItem(visitedKey);
+                let isUnique = false;
+                if (!hasVisited) {
+                    localStorage.setItem(visitedKey, 'true');
+                    isUnique = true;
+                }
+
                 // 1. Get Hotel Details
-                const hotelData = await getHotelById(id);
+                const hotelData = await getHotelById(id, isUnique);
                 setHotel(hotelData.hotel);
 
                 // 2. Get Rooms
@@ -148,7 +157,7 @@ function HotelDetails() {
     if (error) return (
         <>
             <Header />
-            <div style={{ padding: '100px 0', textAlign: 'center', color: '#ff385c' }}>
+            <div style={{ padding: '100px 0', textAlign: 'center', color: '#C1272D' }}>
                 {error}
                 <br /><Link to="/" className="nav-back">Retour à l'accueil</Link>
             </div>
@@ -174,7 +183,7 @@ function HotelDetails() {
                     <div className="hotel-meta">
                         <div className="meta-left">
                             <span className="rating-pill">
-                                <i className="fa-solid fa-star" style={{ color: '#ff385c' }}></i>
+                                <i className="fa-solid fa-star" style={{ color: '#FFD700' }}></i>
                                 {hotel.rating} · <span style={{ textDecoration: 'underline' }}>{stats.count} avis</span>
                             </span>
                             <span className="location-link">
@@ -229,7 +238,7 @@ function HotelDetails() {
                                             <h3 className="room-name">{room.name}</h3>
                                             <p className="room-desc">{room.description}</p>
                                             <div className="room-footer">
-                                                <span style={{ fontWeight: '600' }}>{room.price_per_night} MRU <span style={{ fontWeight: '400' }}>nuit</span></span>
+                                                <span style={{ fontWeight: '600' }}>{room.price_per_night} € <span style={{ fontWeight: '400' }}>nuit</span></span>
                                                 <Link to={`/room/${room.id}`}>
                                                     <button className="secondary-btn" style={{ padding: '6px 12px', fontSize: '14px' }}>
                                                         Voir
@@ -249,10 +258,10 @@ function HotelDetails() {
                         <div className="booking-card">
                             <div className="card-header">
                                 <span className="price-tag">
-                                    À partir de {Math.min(...rooms.map(r => r.price_per_night), 0) || 100} MRU <span className="price-unit">par nuit</span>
+                                    À partir de {Math.min(...rooms.map(r => r.price_per_night), 0) || 100} € <span className="price-unit">par nuit</span>
                                 </span>
                                 <div className="card-rating">
-                                    <i className="fa-solid fa-star" style={{ color: '#ff385c' }}></i>
+                                    <i className="fa-solid fa-star" style={{ color: '#FFD700' }}></i>
                                     {hotel.rating}
                                 </div>
                             </div>
@@ -272,7 +281,7 @@ function HotelDetails() {
                                         setShowContactModal(true);
                                     }}
                                     className="secondary-btn"
-                                    style={{ width: '100%', border: 'none', textDecoration: 'underline' }}
+                                    style={{ width: '100%', border: 'none', textDecoration: 'underline', color: '#006233' }}
                                 >
                                     Contacter l'hôte
                                 </button>
@@ -296,7 +305,7 @@ function HotelDetails() {
                 {/* Reviews Section */}
                 <div className="reviews-section">
                     <div className="reviews-header">
-                        <i className="fa-solid fa-star star-big" style={{ color: '#ff385c' }}></i>
+                        <i className="fa-solid fa-star star-big" style={{ color: '#FFD700' }}></i>
                         <h2 className="section-title" style={{ margin: 0 }}>
                             {stats.average.toFixed(2)} · {stats.count} commentaires
                         </h2>
@@ -329,7 +338,7 @@ function HotelDetails() {
                                             onChange={e => setReviewData({ ...reviewData, comment: e.target.value })}
                                         ></textarea>
                                     </div>
-                                    <button type="submit" className="secondary-btn" style={{ background: '#222', color: '#fff' }}>
+                                    <button type="submit" className="secondary-btn" style={{ background: '#006233', color: '#fff', border: 'none' }}>
                                         Publier mon avis
                                     </button>
                                 </form>
@@ -352,7 +361,7 @@ function HotelDetails() {
                                             <div className="review-meta-row">
                                                 <div className="review-stars-small">
                                                     {[...Array(5)].map((_, i) => (
-                                                        <i key={i} className={`fa-star ${i < review.rating ? 'fa-solid' : 'fa-regular'}`} style={{ color: '#ff385c', fontSize: '11px' }}></i>
+                                                        <i key={i} className={`fa-star ${i < review.rating ? 'fa-solid' : 'fa-regular'}`} style={{ color: '#FFD700', fontSize: '11px' }}></i>
                                                     ))}
                                                 </div>
                                                 <span> · {new Date(review.created_at).toLocaleDateString()}</span>
@@ -365,9 +374,9 @@ function HotelDetails() {
                                         </p>
 
                                         {review.reply && (
-                                            <div className="hotel-reply" style={{ marginTop: '16px', padding: '16px', background: '#f7f7f7', borderRadius: '12px', borderLeft: '4px solid #ff385c' }}>
+                                            <div className="hotel-reply" style={{ marginTop: '16px', padding: '16px', background: '#f0f7f2', borderRadius: '12px', borderLeft: '4px solid #006233' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                                    <i className="fa-solid fa-comment-dots" style={{ color: '#ff385c' }}></i>
+                                                    <i className="fa-solid fa-comment-dots" style={{ color: '#006233' }}></i>
                                                     <strong style={{ fontSize: '14px' }}>Réponse de l'établissement</strong>
                                                 </div>
                                                 <p style={{ margin: 0, fontSize: '14px', fontStyle: 'italic', color: '#484848' }}>

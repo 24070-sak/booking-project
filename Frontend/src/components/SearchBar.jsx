@@ -65,7 +65,7 @@ function SearchBar() {
                             </div>
 
                             <div className="filter-group">
-                                <label><i className="fa-solid fa-money-bill-wave"></i> Prix (MRU)</label>
+                                <label><i className="fa-solid fa-money-bill-wave"></i> Prix (€)</label>
                                 <div className="price-inputs">
                                     <input
                                         type="number"

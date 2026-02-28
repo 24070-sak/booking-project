@@ -52,6 +52,7 @@ def create_app(config_name='development'):
     from app.routes.payment_routes import payment_bp
     from app.routes.review_routes import review_bp
     from app.routes.message_routes import message_bp
+    from app.routes.notification_routes import notification_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(booking_bp)
@@ -61,6 +62,7 @@ def create_app(config_name='development'):
     app.register_blueprint(payment_bp)
     app.register_blueprint(review_bp)
     app.register_blueprint(message_bp)
+    app.register_blueprint(notification_bp)
     
     # Route de santé
     @app.route('/api/health')
