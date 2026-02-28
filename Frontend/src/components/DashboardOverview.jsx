@@ -38,7 +38,7 @@ const DashboardOverview = () => {
                 </div>
                 <div className="stat-card">
                     <h3>Revenu Total</h3>
-                    <p>{stats.totalRevenue.toLocaleString()} MRU</p>
+                    <p>{stats.totalRevenue.toLocaleString()} €</p>
                 </div>
                 <div className="stat-card">
                     <h3>Propriétés Actives</h3>

@@ -13,6 +13,7 @@ import ControlCenter from "./pages/ControlCenter";
 import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import Payment from "./pages/Payment";
+import Notifications from "./pages/Notifications";
 
 function App() {
   return (
@@ -50,6 +51,9 @@ function App() {
 
         {/* Room Details page */}
         <Route path="/room/:id" element={<RoomDetails />} />
+
+        {/* Notifications page */}
+        <Route path="/notifications" element={<Notifications />} />
       </Routes>
     </>
   );

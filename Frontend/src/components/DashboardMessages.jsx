@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getMessages, sendMessage, markAsRead } from '../services/messageService';
+import { showError, showSuccess } from '../utils/alerts';
 import '../styles/components/dashboardMessages.css';
 
 const DashboardMessages = () => {
@@ -82,7 +83,7 @@ const DashboardMessages = () => {
             // Avoid "Re: Re:" pileup
             let subject = selectedChat.subject;
             if (!subject.startsWith('Re:')) {
-                subject = `Re: ${subject}`;
+                subject = `Re: ${subject} `;
             }
 
             const res = await sendMessage({
@@ -91,17 +92,17 @@ const DashboardMessages = () => {
                 receiver_id: receiverId
             });
             // Don't alert on every message in a chat flow
-            // alert("Message envoyé !"); 
+            // showSuccess("Message envoyé !"); 
             setNewMessage("");
             fetchMessages();
         } catch (error) {
-            alert("Erreur: " + error.message);
+            showError("Erreur: " + error.message);
         }
     };
 
     const handleComposeMessage = async () => {
         if (!composeData.content) {
-            alert("Contenu requis");
+            showError("Contenu requis");
             return;
         }
         try {
@@ -110,12 +111,12 @@ const DashboardMessages = () => {
                 content: composeData.content,
                 receiver_id: null
             });
-            alert("Message envoyé à l'administration !");
+            showSuccess("Message envoyé à l'administration !");
             setIsComposing(false);
             setComposeData({ subject: '', content: '' });
             fetchMessages();
         } catch (error) {
-            alert("Erreur: " + error.message);
+            showError("Erreur: " + error.message);
         }
     };
 
@@ -300,7 +301,7 @@ const DashboardMessages = () => {
                     </div>
                 )
             }
-        </div >
+        </div>
     );
 };
 

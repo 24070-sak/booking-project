@@ -7,6 +7,7 @@ import SearchBar from "./SearchBar";
 import LanguageSelector from "./LanguageSelector";
 
 import { useLanguage } from "../context/LanguageContext";
+import NotificationDropdown from "./NotificationDropdown";
 
 function Header() {
     const [user, setUser] = useState(null);
@@ -42,6 +43,8 @@ function Header() {
                                     <i className="fa-solid fa-comment-dots"></i>
                                 </Link>
                             )}
+
+                            <NotificationDropdown />
 
                             <Link to="/profile" className="user-profile-link">
                                 {user.profile_picture ? (

@@ -4,7 +4,7 @@ const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState('fr'); // Default to French
-    const currency = 'MRU'; // Mauritanian Ouguiya
+    const currency = '€'; // Euro
 
     const toggleLanguage = () => {
         setLanguage((prevLang) => {

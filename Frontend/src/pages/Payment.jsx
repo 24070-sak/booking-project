@@ -56,18 +56,14 @@ function Payment() {
                     throw new Error("Veuillez sélectionner une capture d'écran du paiement.");
                 }
                 const formData = new FormData();
-                formData.append('booking_id', bookingId);
+                // Use the fetched booking object's ID to ensure correct reference
+                formData.append('booking_id', booking.id);
                 formData.append('bank_app', bankApp);
                 formData.append('transaction_phone', phone);
                 formData.append('screenshot', screenshot);
 
                 await submitLocalPayment(formData);
-                navigate('/dashboard', {
-                    state: {
-                        message: "Votre réservation est en cours de vérification par l'administrateur.",
-                        activeTab: 'reservations'
-                    }
-                });
+                navigate(`/room/${booking.room.id}`, { state: { paymentSuccess: true } });
                 return;
             } else {
                 const paymentPayload = {
@@ -79,10 +75,9 @@ function Payment() {
                 }
 
                 await processPayment(bookingId, paymentPayload);
-                alert(`Paiement réussi avec ${paymentMethod === 'paypal' ? 'PayPal' : 'Carte Bancaire'} !`);
             }
 
-            navigate('/dashboard');
+            navigate(`/room/${booking.room.id}`, { state: { paymentSuccess: true } });
         } catch (err) {
             setError(err.message);
             setProcessing(false);
@@ -127,8 +122,8 @@ function Payment() {
                                         transition: 'all 0.2s'
                                     }}
                                 >
-                                    <i className="fa-regular fa-credit-card" style={{ fontSize: '24px', color: paymentMethod === 'credit_card' ? '#0b6ad6' : '#64748b' }}></i>
-                                    <span style={{ fontWeight: '600', color: paymentMethod === 'credit_card' ? '#0b6ad6' : '#1e293b' }}>Carte Bancaire</span>
+                                    <i className="fa-solid fa-address-card" style={{ fontSize: '24px', color: paymentMethod === 'credit_card' ? '#0b6ad6' : '#64748b' }}></i>
+                                    <span style={{ fontWeight: '600', color: paymentMethod === 'credit_card' ? '#0b6ad6' : '#1e293b' }}>Assurance / Carte Bancaire</span>
                                 </div>
 
                                 <div
@@ -198,7 +193,7 @@ function Payment() {
                                 ) : paymentMethod === 'credit_card' ? (
                                     <>
                                         <div className="form-group">
-                                            <label className="form-label">Titulaire de la carte</label>
+                                            <label className="form-label">Titulaire de la carte / Nom de l'assuré</label>
                                             <input
                                                 type="text"
                                                 className="form-input"
@@ -210,7 +205,7 @@ function Payment() {
                                         </div>
 
                                         <div className="form-group">
-                                            <label className="form-label">Numéro de carte</label>
+                                            <label className="form-label">Numéro de carte / Référence d'assurance</label>
                                             <div className="card-input-wrapper">
                                                 <input
                                                     type="text"
@@ -277,8 +272,8 @@ function Payment() {
                                 >
                                     {processing ? 'Traitement...' : (
                                         paymentMethod === 'local_app'
-                                            ? `Soumettre la preuve (${booking.total_price} MRU)`
-                                            : `Payer ${booking.total_price} MRU`
+                                            ? `Soumettre la preuve (${booking.total_price} €)`
+                                            : `Payer ${booking.total_price} €`
                                     )}
                                 </button>
 
@@ -313,12 +308,8 @@ function Payment() {
 
                                 <div className="summary-details">
                                     <div className="detail-row">
-                                        <span>Arrivée</span>
+                                        <span>Arrivée prévue</span>
                                         <strong>{new Date(booking.check_in_date).toLocaleDateString()}</strong>
-                                    </div>
-                                    <div className="detail-row">
-                                        <span>Départ</span>
-                                        <strong>{new Date(booking.check_out_date).toLocaleDateString()}</strong>
                                     </div>
                                     <div className="detail-row">
                                         <span>Durée</span>
@@ -332,7 +323,7 @@ function Payment() {
 
                                 <div className="price-row">
                                     <span>Total à payer</span>
-                                    <span style={{ color: '#0b6ad6' }}>{booking.total_price} MRU</span>
+                                    <span style={{ color: '#0b6ad6' }}>{booking.total_price} €</span>
                                 </div>
                             </div>
                         </div>

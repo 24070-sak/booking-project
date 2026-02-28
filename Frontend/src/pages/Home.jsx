@@ -101,7 +101,7 @@ function Home() {
                                 id={hotel.id}
                                 title={hotel.name}
                                 location={hotel.location}
-                                price={hotel.lowest_price ? `${t('from')} ${hotel.lowest_price} MRU` : t('price_unavailable')}
+                                price={hotel.lowest_price ? `${t('from')} ${hotel.lowest_price} €` : t('price_unavailable')}
                                 imageUrl={hotel.image_url}
                                 rating={hotel.rating}
                                 dateAvailable={hotel.has_availability ? t('available') : t('full')}
