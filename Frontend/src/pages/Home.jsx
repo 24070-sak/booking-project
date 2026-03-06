@@ -77,24 +77,12 @@ function Home() {
                 <div className="card-container">
                     <div className="paragraphe">
                         <h2>{t('home_offers_title')}</h2>
-                        <div style={{ display: 'flex', gap: '15px' }}>
-                            {offset > 0 && !loading && (
-                                <p onClick={handlePrev} style={{ cursor: 'pointer', color: '#0b6ad6', fontWeight: 'bold' }}>
-                                    <i className="fa-solid fa-arrow-left"></i> {t('previous')}
-                                </p>
-                            )}
-                            {(offset + limit) < total && !loading && (
-                                <p onClick={handleNext} style={{ cursor: 'pointer', color: '#0b6ad6', fontWeight: 'bold' }}>
-                                    {t('more')} <i className="fa-solid fa-arrow-right"></i>
-                                </p>
-                            )}
-                        </div>
                     </div>
 
                     {loading && <p style={{ textAlign: 'center' }}>{t('loading_offers')}</p>}
                     {error && <p style={{ textAlign: 'center', color: 'red' }}>{error}</p>}
 
-                    <div className="hotels-grid">
+                    <div className="hotels-grid" key={offset}>
                         {hotels.map((hotel) => (
                             <HotelCard
                                 key={hotel.id}
@@ -108,6 +96,25 @@ function Home() {
                             />
                         ))}
                     </div>
+
+                    {!loading && (hotels.length > 0 || offset > 0) && (
+                        <div className="pagination-container">
+                            <button
+                                className="pagination-btn"
+                                onClick={handlePrev}
+                                disabled={offset === 0}
+                            >
+                                <i className="fa-solid fa-arrow-left"></i> {t('previous')}
+                            </button>
+                            <button
+                                className="pagination-btn"
+                                onClick={handleNext}
+                                disabled={(offset + limit) >= total}
+                            >
+                                {t('more')} <i className="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    )}
                 </div>
                 <div className="our-logos">
                     <div className="logo-item">
