@@ -34,6 +34,8 @@ function Header() {
                     <LanguageSelector />
                     {user ? (
                         <>
+                            <NotificationDropdown />
+
                             {user.access_dashboard && (
                                 <Link to="/dashboard" id="login"> <i className="fa-solid fa-gauge"></i> {t('dashboard')}</Link>
                             )}
@@ -43,8 +45,6 @@ function Header() {
                                     <i className="fa-solid fa-comment-dots"></i>
                                 </Link>
                             )}
-
-                            <NotificationDropdown />
 
                             <Link to="/profile" className="user-profile-link">
                                 {user.profile_picture ? (
