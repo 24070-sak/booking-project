@@ -5,6 +5,7 @@ flask-migrate
 flask-bcrypt
 flask-jwt-extended
 flask-cors
+flask-mail
 
 # Base de données
 sqlalchemy

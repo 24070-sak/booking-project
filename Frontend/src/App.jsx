@@ -1,6 +1,6 @@
-import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import VerificationPage from "./pages/EmailVerification";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -15,6 +15,8 @@ import Messages from "./pages/Messages";
 import Payment from "./pages/Payment";
 import Notifications from "./pages/Notifications";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
   return (
     <>
@@ -24,18 +26,29 @@ function App() {
 
         {/* Login page */}
         <Route path="/connexion" element={<Login />} />
+        {/* Forgot password */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* Verification page */}
         <Route path="/verification" element={<VerificationPage />} />
         {/* Register page */}
         <Route path="/inscription" element={<Register />} />
         {/* Social Callback page */}
         <Route path="/social-callback" element={<SocialCallback />} />
-        {/* Dashboard page */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        {/* Control Center page */}
-        <Route path="/control-center" element={<ControlCenter />} />
-        {/* Settings page */}
-        <Route path="/parametre" element={<Settings />} />
+        
+        {/* Protected Dashboard page (Admin) */}
+        <Route path="/dashboard" element={
+            <ProtectedRoute requireDashboard={true}>
+                <Dashboard />
+            </ProtectedRoute>
+        } />
+        
+        {/* Protected Control Center page (Super Admin) */}
+        <Route path="/control-center" element={
+            <ProtectedRoute requireControlCenter={true}>
+                <ControlCenter />
+            </ProtectedRoute>
+        } />
+        
         {/* Settings page */}
         <Route path="/parametre" element={<Settings />} />
         {/* Profile page */}

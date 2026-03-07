@@ -33,14 +33,23 @@ function Login() {
 
     try {
       const data = await login(formData.email, formData.password);
+
+      if (data.email_verification_required) {
+        navigate("/verification", { state: { email: formData.email } });
+        return;
+      }
+
       // Stocker le token
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.access_token);
 
-      // Rediriger vers l'accueil (ou l'utilisateur pourra aller au dashboard s'il le souhaite)
       navigate("/");
     } catch (err) {
-      setError(err.message);
+      if (err.message.includes("Vérifiez")) {
+        navigate("/verification", { state: { email: formData.email } });
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -104,7 +113,7 @@ function Login() {
               ></i>
             </div>
             <span className="forgot-password">
-              <Link to="#"><span>{t('forgot_password')}</span></Link>
+              <Link to="/forgot-password"><span>{t('forgot_password')}</span></Link>
             </span>
           </div>
 

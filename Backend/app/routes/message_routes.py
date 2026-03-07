@@ -59,13 +59,23 @@ def add_message():
     user_id = get_jwt_identity()
     data = request.get_json()
     
-    if not data.get('subject') or not data.get('content'):
-        return jsonify({'error': 'Sujet et contenu requis'}), 400
+    if not data.get('content'):
+        return jsonify({'error': 'Le contenu est requis'}), 400
         
+    receiver_id = data.get('receiver_id')
+    receiver_email = data.get('receiver_email')
+    
+    if not receiver_id and receiver_email:
+        receiver_user = User.query.filter_by(email=receiver_email).first()
+        if receiver_user:
+            receiver_id = receiver_user.id
+        else:
+            return jsonify({'error': f'Aucuns utilisateur trouvé avec l\'email {receiver_email}'}), 404
+
     new_message = Message(
         sender_id=user_id,
-        receiver_id=data.get('receiver_id'), # Peut être None pour l'admin
-        subject=data['subject'],
+        receiver_id=receiver_id, # Peut être None pour l'admin
+        subject=data.get('subject', 'Message'),
         content=data['content']
     )
     
