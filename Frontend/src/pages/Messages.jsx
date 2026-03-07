@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 import DashboardMessages from "../components/DashboardMessages";
 import '../styles/pages/messages.css';
 import '../styles/components/dashboardMessages.css';

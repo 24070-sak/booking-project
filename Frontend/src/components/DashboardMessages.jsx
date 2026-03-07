@@ -160,7 +160,7 @@ const DashboardMessages = () => {
         }
         try {
             await sendMessage({
-                subject: composeData.subject || "Message",
+                subject: "Message",
                 content: composeData.content,
                 receiver_id: composeData.receiver_id // null for admin, or specific user id
             });
@@ -545,6 +545,9 @@ const DashboardMessages = () => {
                                         Envoyer <i className="fa-solid fa-paper-plane"></i>
                                     </button>
                                 </div>
+                                <button className="btn-send-premium" onClick={handleComposeMessage}>
+                                    Envoyer <i className="fa-solid fa-paper-plane" style={{ marginLeft: '8px' }}></i>
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -30,9 +30,9 @@
     box-shadow: 0 2px 10px rgba(0, 98, 51, 0.07);
     flex: 1;
     min-width: 200px;
-    border: 1px solid rgba(0, 98, 51, 0.1);
-    border-left: 4px solid var(--primary-green, #006233);
-    transition: box-shadow 0.2s ease;
+    border: 1px solid rgba(0, 98, 51, 0.15);
+    background: linear-gradient(to bottom right, #ffffff, rgba(0, 98, 51, 0.02));
+    transition: all 0.3s ease;
 }
 
 .payment-stat-card:hover {

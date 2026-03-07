@@ -34,18 +34,31 @@ function Login() {
 
     try {
       const data = await login(formData.email, formData.password);
-      // Stocker le token
+
+      if (data.email_verification_required) {
+        navigate("/verification", { state: { email: formData.email } });
+        return;
+      }
+
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.access_token);
 
-      // Rediriger vers l'accueil (ou l'utilisateur pourra aller au dashboard s'il le souhaite)
-      navigate("/");
+      if (data.user?.access_dashboard) {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
-      setError(err.message);
+      if (err.message.includes("Vérifiez")) {
+        navigate("/verification", { state: { email: formData.email } });
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
   };
+
   const handleSocialLogin = async (platform) => {
     try {
       setLoading(true);
@@ -105,6 +118,7 @@ function Login() {
               />
             </div>
           </div>
+
           <div>
             <label className="form-label" htmlFor="password">
               {t('password')}
@@ -128,6 +142,7 @@ function Login() {
               ></i>
             </div>
             <span className="forgot-password">
+              {/* Support both routes */}
               <Link to="/mot-de-passe-oublie"><span>{t('forgot_password')}</span></Link>
             </span>
           </div>
@@ -154,6 +169,7 @@ function Login() {
             <p>{t('login_facebook')}</p>
           </div>
         </div>
+
         <p id="note">{t('no_account')} <span id="createAccount"><Link to="/inscription">{t('create_account')}</Link></span></p>
       </div>
     </div>

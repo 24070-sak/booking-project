@@ -1,49 +1,60 @@
 import { apiFetch } from "./apiClient";
 import { auth } from "./firebase";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
-  confirmPasswordReset
-} from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Login — Firebase Auth + Backend JWT
+// ─────────────────────────────────────────────────────────────────────────────
 export async function login(email, password) {
   try {
+    // 1. Authenticate with Firebase
     const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
-    const user = userCredential.user;
+    const firebaseUser = userCredential.user;
 
-    // Call backend to get JWT and user Profile
+    // 2. Sync with backend to get JWT token
     const response = await apiFetch("/auth/firebase-login", {
       method: "POST",
-      body: JSON.stringify({ email: user.email, firebase_uid: user.uid })
+      body: JSON.stringify({ email: firebaseUser.email, firebase_uid: firebaseUser.uid }),
+      skipRedirect: true
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Identifiants incorrects sur le serveur");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Identifiants incorrects");
     }
 
     return await response.json();
   } catch (error) {
-    if (error.code) { // Firebase errors
-      console.error("Erreur de connexion Firebase :", error);
-      throw new Error("Identifiants incorrects");
+    if (error.code) {
+      // Firebase-specific errors
+      const firebaseErrors = {
+        'auth/user-not-found': "Email inconnu",
+        'auth/wrong-password': "Mot de passe incorrect",
+        'auth/invalid-credential': "Identifiants incorrects",
+        'auth/too-many-requests': "Trop de tentatives. Réessayez plus tard.",
+        'auth/user-disabled': "Compte désactivé"
+      };
+      throw new Error(firebaseErrors[error.code] || "Erreur de connexion");
     }
-    console.error("Erreur de connexion :", error);
     throw error;
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Register — Firebase Auth + Backend Save
+// ─────────────────────────────────────────────────────────────────────────────
 export async function register(userData) {
   try {
+    // 1. Create account in Firebase
     const userCredential = await createUserWithEmailAndPassword(auth, userData.email.trim(), userData.password);
-    const user = userCredential.user;
+    const firebaseUser = userCredential.user;
 
+    // 2. Save to backend database
     const response = await apiFetch("/auth/firebase-register", {
       method: "POST",
       body: JSON.stringify({
-        email: user.email,
-        firebase_uid: user.uid,
+        email: firebaseUser.email,
+        firebase_uid: firebaseUser.uid,
         first_name: userData.firstName || userData.first_name,
         last_name: userData.lastName || userData.last_name,
         phone: userData.phone
@@ -51,34 +62,47 @@ export async function register(userData) {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Erreur lors de l'inscription sur le serveur");
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Erreur lors de l'inscription");
     }
 
     return await response.json();
   } catch (error) {
     if (error.code) {
-      console.error("Erreur d'inscription Firebase :", error);
-      throw new Error("Erreur lors de l'inscription sur Firebase");
+      const firebaseErrors = {
+        'auth/email-already-in-use': "Cet email est déjà utilisé",
+        'auth/invalid-email': "Email invalide",
+        'auth/weak-password': "Mot de passe trop faible (min. 6 caractères)"
+      };
+      throw new Error(firebaseErrors[error.code] || "Erreur lors de l'inscription");
     }
-    console.error("Erreur d'inscription :", error);
     throw error;
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Social Login (Google / Facebook) — Firebase + Backend Sync
+// ─────────────────────────────────────────────────────────────────────────────
 export async function socialLoginSync(firebaseUser) {
   try {
+    // Parse display name
+    const nameParts = (firebaseUser.displayName || "").split(" ");
+    const first_name = nameParts[0] || firebaseUser.email.split("@")[0];
+    const last_name = nameParts.slice(1).join(" ") || "";
+
     const response = await apiFetch("/auth/firebase-login", {
       method: "POST",
       body: JSON.stringify({
         email: firebaseUser.email,
         firebase_uid: firebaseUser.uid,
-        name: firebaseUser.displayName
+        first_name,
+        last_name,
+        profile_picture: firebaseUser.photoURL || null
       })
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({}));
       throw new Error(errorData.error || "Erreur de synchronisation backend");
     }
 
@@ -89,43 +113,73 @@ export async function socialLoginSync(firebaseUser) {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Profile Update
+// ─────────────────────────────────────────────────────────────────────────────
 export async function updateProfile(userData) {
   const isFormData = userData instanceof FormData;
-
   const response = await apiFetch("/auth/profile", {
     method: "PUT",
     body: isFormData ? userData : JSON.stringify(userData)
   });
-
   if (!response.ok) throw new Error("Erreur lors de la mise à jour du profil");
   return response.json();
 }
 
-export async function resetPassword(email) {
-  try {
-    const actionCodeSettings = {
-      // Firebase redirects the user HERE after they click the link in the email.
-      // handleCodeInApp: true means our app handles the code directly.
-      url: 'http://localhost:5173/reset-password',
-      handleCodeInApp: true,
-    };
-    await sendPasswordResetEmail(auth, email.trim(), actionCodeSettings);
-    return { success: true };
-  } catch (error) {
-    if (error.code === 'auth/user-not-found') {
-      throw new Error("L'utilisateur n'existe pas");
-    }
-    console.error("Erreur de réinitialisation Firebase :", error);
-    throw new Error("Erreur lors de l'envoi du lien de réinitialisation");
+// ─────────────────────────────────────────────────────────────────────────────
+// Email Verification (OTP)
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendVerificationOtp(email) {
+  const response = await apiFetch("/auth/send-verification", {
+    method: "POST",
+    body: JSON.stringify({ email: email.trim() }),
+    skipRedirect: true
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Erreur lors de l'envoi du code");
   }
+  return response.json();
 }
 
-export async function confirmNewPassword(oobCode, newPassword) {
-  try {
-    await confirmPasswordReset(auth, oobCode, newPassword);
-    return { success: true };
-  } catch (error) {
-    console.error("Erreur de modification du mot de passe :", error);
-    throw new Error("Le lien est invalide ou a expiré.");
+export async function verifyEmail(email, otp) {
+  const response = await apiFetch("/auth/verify-email", {
+    method: "POST",
+    body: JSON.stringify({ email: email.trim(), otp: otp.trim() }),
+    skipRedirect: true
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Code de vérification incorrect ou expiré");
   }
+  return response.json();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Password Reset (via Backend OTP — not Firebase link)
+// ─────────────────────────────────────────────────────────────────────────────
+export async function forgotPassword(email) {
+  const response = await apiFetch("/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email: email.trim() }),
+    skipRedirect: true
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Erreur");
+  }
+  return response.json();
+}
+
+export async function resetPassword(email, otp, newPassword) {
+  const response = await apiFetch("/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ email: email.trim(), otp: otp.trim(), new_password: newPassword }),
+    skipRedirect: true
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || "Erreur lors de la réinitialisation du mot de passe");
+  }
+  return response.json();
 }

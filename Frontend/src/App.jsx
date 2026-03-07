@@ -1,6 +1,7 @@
-import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import VerificationPage from "./pages/EmailVerification";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -14,8 +15,8 @@ import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import Payment from "./pages/Payment";
 import Notifications from "./pages/Notifications";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -24,42 +25,45 @@ function App() {
         {/* Home page */}
         <Route path="/" element={<Home />} />
 
-        {/* Login page */}
+        {/* Auth pages */}
         <Route path="/connexion" element={<Login />} />
-        {/* Forgot Password page */}
-        <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
-        {/* Reset Password Handle URL */}
-        <Route path="/reset-password" element={<ResetPassword />} />
-        {/* Verification page */}
-        <Route path="/verification" element={<VerificationPage />} />
-        {/* Register page */}
         <Route path="/inscription" element={<Register />} />
-        {/* Social Callback page */}
-        <Route path="/social-callback" element={<SocialCallback />} />
-        {/* Dashboard page */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        {/* Control Center page */}
-        <Route path="/control-center" element={<ControlCenter />} />
-        {/* Settings page */}
-        <Route path="/parametre" element={<Settings />} />
-        {/* Settings page */}
-        <Route path="/parametre" element={<Settings />} />
-        {/* Profile page */}
-        <Route path="/profile" element={<Profile />} />
-        {/* Messages page */}
-        <Route path="/messages" element={<Messages />} />
+        <Route path="/verification" element={<VerificationPage />} />
 
-        {/* Hotel Details page */}
+        {/* Password reset — both routes for compatibility */}
+        <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+
+        {/* Social OAuth callback */}
+        <Route path="/social-callback" element={<SocialCallback />} />
+
+        {/* Protected Dashboard page (Admin) */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute requireDashboard={true}>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+
+        {/* Protected Control Center page (Super Admin) */}
+        <Route path="/control-center" element={
+          <ProtectedRoute requireControlCenter={true}>
+            <ControlCenter />
+          </ProtectedRoute>
+        } />
+
+        {/* App pages */}
+        <Route path="/parametre" element={<Settings />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/notifications" element={<Notifications />} />
+
+        {/* Hotel & Room pages */}
         <Route path="/hotel/:id" element={<HotelDetails />} />
+        <Route path="/room/:id" element={<RoomDetails />} />
 
         {/* Payment page */}
         <Route path="/payment/:bookingId" element={<Payment />} />
-
-        {/* Room Details page */}
-        <Route path="/room/:id" element={<RoomDetails />} />
-
-        {/* Notifications page */}
-        <Route path="/notifications" element={<Notifications />} />
       </Routes>
     </>
   );

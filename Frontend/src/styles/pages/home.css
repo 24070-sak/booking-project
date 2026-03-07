@@ -290,13 +290,43 @@
 }
 
 @media (max-width: 768px) {
+    .home-container {
+        gap: 30px;
+    }
+
     .paragraphe {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        gap: 12px;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
     }
 
     .paragraphe h2 {
-        font-size: 28px;
+        font-size: 24px;
+    }
+
+    .hotels-grid {
+        gap: 20px;
+    }
+
+    .pagination-container {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .pagination-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .paragraphe h2 {
+        font-size: 22px;
     }
 }

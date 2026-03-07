@@ -10,21 +10,17 @@ function Payment() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // We can receive booking object from state if navigated from RoomDetails, 
-    // or fetch it if direct access.
     const [booking, setBooking] = useState(location.state?.booking || null);
     const [loading, setLoading] = useState(!booking);
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState(null);
 
-    // Payment Form State
-    const [paymentMethod, setPaymentMethod] = useState('credit_card'); // 'credit_card' or 'local_app'
+    const [paymentMethod, setPaymentMethod] = useState('credit_card');
     const [cardName, setCardName] = useState("");
     const [cardNumber, setCardNumber] = useState("");
     const [expiry, setExpiry] = useState("");
     const [cvc, setCvc] = useState("");
 
-    // Local App State
     const [bankApp, setBankApp] = useState("bankily");
     const [phone, setPhone] = useState("");
     const [screenshot, setScreenshot] = useState(null);
@@ -56,7 +52,6 @@ function Payment() {
                     throw new Error("Veuillez sélectionner une capture d'écran du paiement.");
                 }
                 const formData = new FormData();
-                // Use the fetched booking object's ID to ensure correct reference
                 formData.append('booking_id', booking.id);
                 formData.append('bank_app', bankApp);
                 formData.append('transaction_phone', phone);
@@ -94,56 +89,29 @@ function Payment() {
             <div className="payment-page-container">
                 <div className="payment-wrapper">
 
-                    {/* Left Column: Payment Form */}
                     <div className="payment-main">
-                        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '20px', color: '#64748b', textDecoration: 'none', fontWeight: '500' }}>
+                        <Link to="/" className="payment-back-link">
                             <i className="fa-solid fa-arrow-left"></i> Retour à l'accueil
                         </Link>
 
-
                         <div className="payment-card">
-                            <h3 style={{ marginBottom: '25px', marginTop: 0 }}>Méthode de paiement</h3>
+                            <h3>Méthode de paiement</h3>
 
-                            {/* Method Selector */}
-                            <div className="payment-methods" style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
+                            <div className="payment-methods">
                                 <div
                                     className={`method-option ${paymentMethod === 'credit_card' ? 'active' : ''}`}
                                     onClick={() => setPaymentMethod('credit_card')}
-                                    style={{
-                                        flex: '1 1 200px',
-                                        padding: '15px',
-                                        border: `2px solid ${paymentMethod === 'credit_card' ? '#0b6ad6' : '#e2e8f0'}`,
-                                        borderRadius: '12px',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '10px',
-                                        backgroundColor: paymentMethod === 'credit_card' ? '#f0f9ff' : 'white',
-                                        transition: 'all 0.2s'
-                                    }}
                                 >
-                                    <i className="fa-solid fa-address-card" style={{ fontSize: '24px', color: paymentMethod === 'credit_card' ? '#0b6ad6' : '#64748b' }}></i>
-                                    <span style={{ fontWeight: '600', color: paymentMethod === 'credit_card' ? '#0b6ad6' : '#1e293b' }}>Assurance / Carte Bancaire</span>
+                                    <i className="fa-solid fa-address-card"></i>
+                                    <span>Assurance / Carte Bancaire</span>
                                 </div>
 
                                 <div
                                     className={`method-option ${paymentMethod === 'local_app' ? 'active' : ''}`}
                                     onClick={() => setPaymentMethod('local_app')}
-                                    style={{
-                                        flex: '1 1 200px',
-                                        padding: '15px',
-                                        border: `2px solid ${paymentMethod === 'local_app' ? '#10b981' : '#e2e8f0'}`,
-                                        borderRadius: '12px',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '10px',
-                                        backgroundColor: paymentMethod === 'local_app' ? '#ecfdf5' : 'white',
-                                        transition: 'all 0.2s'
-                                    }}
                                 >
-                                    <i className="fa-solid fa-mobile-screen-button" style={{ fontSize: '24px', color: paymentMethod === 'local_app' ? '#10b981' : '#64748b' }}></i>
-                                    <span style={{ fontWeight: '600', color: paymentMethod === 'local_app' ? '#10b981' : '#1e293b' }}>App Bancaire (MR)</span>
+                                    <i className="fa-solid fa-mobile-screen-button"></i>
+                                    <span>App Bancaire (MR)</span>
                                 </div>
                             </div>
 
@@ -185,7 +153,7 @@ function Payment() {
                                                 onChange={e => setScreenshot(e.target.files[0])}
                                                 required={paymentMethod === 'local_app'}
                                             />
-                                            <p style={{ fontSize: '12px', color: '#64748b', marginTop: '5px' }}>
+                                            <p className="form-hint">
                                                 Veuillez joindre une capture d'écran claire de votre reçu de transaction.
                                             </p>
                                         </div>
@@ -265,10 +233,6 @@ function Payment() {
                                     type="submit"
                                     className="pay-btn"
                                     disabled={processing}
-                                    style={{
-                                        backgroundColor: paymentMethod === 'local_app' ? '#10b981' : '#0b6ad6',
-                                        color: 'white'
-                                    }}
                                 >
                                     {processing ? 'Traitement...' : (
                                         paymentMethod === 'local_app'
@@ -277,14 +241,13 @@ function Payment() {
                                     )}
                                 </button>
 
-                                <div style={{ textAlign: 'center', marginTop: '15px', color: '#718096', fontSize: '13px' }}>
+                                <div className="payment-terms">
                                     En cliquant sur Payer, vous acceptez nos conditions générales de vente.
                                 </div>
                             </form>
                         </div>
                     </div>
 
-                    {/* Right Column: Summary */}
                     <div className="payment-sidebar">
                         <div className="booking-summary-card">
                             <div className="summary-header">
@@ -299,7 +262,7 @@ function Payment() {
                                             <div className="hotel-loc">
                                                 <i className="fa-solid fa-location-dot"></i> {booking.room.location || 'Mauritanie'}
                                             </div>
-                                            <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
+                                            <div className="hotel-rating-mini">
                                                 {booking.room.rating} <i className="fa-solid fa-star" style={{ color: 'gold' }}></i> (Superbe)
                                             </div>
                                         </div>
@@ -323,7 +286,7 @@ function Payment() {
 
                                 <div className="price-row">
                                     <span>Total à payer</span>
-                                    <span style={{ color: '#0b6ad6' }}>{booking.total_price} €</span>
+                                    <span className="price-total-value">{booking.total_price} €</span>
                                 </div>
                             </div>
                         </div>

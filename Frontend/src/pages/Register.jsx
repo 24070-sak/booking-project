@@ -23,6 +23,31 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const getPasswordStrength = (password) => {
+    let score = 0;
+    if (!password) return { score: 0, text: "", color: "#e2e8f0" };
+
+    if (password.length > 7) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/\d/.test(password)) score += 1;
+    if (/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/]/.test(password)) score += 1;
+
+    switch (score) {
+      case 1:
+        return { score: 25, text: t('weak', 'Faible'), color: "#ef4444" };
+      case 2:
+        return { score: 50, text: t('medium', 'Moyen'), color: "#f59e0b" };
+      case 3:
+        return { score: 75, text: t('strong', 'Fort'), color: "#10b981" };
+      case 4:
+        return { score: 100, text: t('very_strong', 'Très Fort'), color: "#006233" };
+      default:
+        return { score: 0, text: "", color: "#e2e8f0" };
+    }
+  };
+
+  const strength = getPasswordStrength(formData.password);
+
   const handleChange = (e) => {
     const value = e.target.name === 'email' ? e.target.value.trim() : e.target.value;
     setFormData({
@@ -58,8 +83,12 @@ function Register() {
         phone: formData.phone
       };
 
-      // الآن سيعمل الـ await بدون أخطاء
       const data = await register(userData);
+
+      if (data.email_verification_required) {
+        navigate("/verification", { state: { email: formData.email } });
+        return;
+      }
 
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.access_token);
@@ -223,6 +252,27 @@ function Register() {
                 id="toggle"
               ></i>
             </div>
+            {formData.password && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px', padding: '0 4px' }}>
+                <div style={{ display: 'flex', gap: '6px', flex: 1 }}>
+                  {[1, 2, 3, 4].map((step) => (
+                    <div
+                      key={step}
+                      style={{
+                        height: '4px',
+                        flex: 1,
+                        borderRadius: '4px',
+                        backgroundColor: strength.score >= step * 25 ? strength.color : '#e2e8f0',
+                        transition: 'all 0.3s ease'
+                      }}
+                    />
+                  ))}
+                </div>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: strength.color, transition: 'all 0.3s ease' }}>
+                  {strength.text}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* CONFIRMATION MOT DE PASSE */}
