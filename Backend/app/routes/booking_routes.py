@@ -191,7 +191,7 @@ def confirm_booking(booking_id):
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     
-    if user.role not in ['admin', 'manager']:
+    if user.role not in ['admin', 'manager'] and not user.access_dashboard:
         return jsonify({'error': 'Accès non autorisé'}), 403
     
     booking = Booking.query.get(booking_id)
@@ -203,6 +203,27 @@ def confirm_booking(booking_id):
         return jsonify({'error': 'Seules les réservations en attente peuvent être confirmées'}), 400
     
     booking.status = 'confirmed'
+    
+    # Auto-create a payment record if none exists for this booking
+    from app.models.payment import Payment
+    existing_payment = Payment.query.filter_by(booking_id=booking.id).first()
+    if not existing_payment:
+        import uuid
+        new_payment = Payment(
+            booking_id=booking.id,
+            amount=booking.total_price,
+            currency='MRU',
+            payment_method='credit_card',
+            transaction_id=f"TXN_{uuid.uuid4().hex[:12].upper()}",
+            status='completed',
+            paid_at=datetime.utcnow()
+        )
+        db.session.add(new_payment)
+    else:
+        # If a payment already exists as pending, mark it completed
+        if existing_payment.status == 'pending':
+            existing_payment.status = 'completed'
+            existing_payment.paid_at = datetime.utcnow()
     
     from app.models.notification import Notification
     room = booking.room

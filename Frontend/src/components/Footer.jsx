@@ -13,7 +13,6 @@ const Footer = () => {
                     <div className="footer-brand">
                         <div className="footer-logo">
                             <img src={logo} alt="Hotely Logo" />
-                            <span>Hotely</span>
                         </div>
                         <p className="footer-description">
                             {t('footer_desc')}

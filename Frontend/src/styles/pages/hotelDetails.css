@@ -35,16 +35,30 @@
   align-items: center;
   gap: 8px;
   margin: 24px 0;
+  padding: 10px 20px;
   color: var(--primary-color);
   text-decoration: none;
-  font-weight: 500;
-  transition: transform 0.2s;
+  font-weight: 600;
+  font-size: 14px;
+  background: var(--bg-light);
+  border: 1px solid rgba(0, 98, 51, 0.15);
+  border-radius: 100px;
+  transition: all 0.25s ease;
+}
+
+.nav-back i {
+  transition: transform 0.25s ease;
 }
 
 .nav-back:hover {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0, 98, 51, 0.2);
+}
+
+.nav-back:hover i {
   transform: translateX(-4px);
-  text-decoration: underline;
-  color: var(--primary-dark);
 }
 
 /* Title & Stats */
@@ -314,8 +328,11 @@
 
 /* Reviews Section */
 .reviews-section {
-  padding-top: 48px;
+  padding: 48px 32px 32px;
   border-top: 1px solid var(--border-color);
+  background: var(--bg-light);
+  border-radius: var(--radius-xl);
+  margin-top: 48px;
 }
 
 .reviews-header {
@@ -406,6 +423,7 @@
 
 .inline-review-form .form-textarea {
   background: #fff;
+    color: #1a1a1a;
 }
 
 .inline-review-form .rating-select {
@@ -536,16 +554,70 @@
 }
 
 @media (max-width: 768px) {
+  .max-w-container {
+    padding: 0 14px;
+  }
+
+  .hotel-title {
+    font-size: 22px;
+  }
+
+  .hotel-meta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .meta-left {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
   .content-grid {
     grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .booking-card {
+    position: static;
+  }
+
+  .reviews-section {
+    padding: 32px 16px 24px;
   }
 
   .reviews-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 
   .hero-section {
-    height: 300px;
+    height: 260px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 32px;
+  }
+
+  .rooms-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-review-form {
+    padding: 20px;
+  }
+
+  .modal-box {
+    max-width: 95vw;
+    padding: 20px;
+    margin: 16px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .nav-back {
+    margin: 16px 0;
+    padding: 8px 16px;
+    font-size: 13px;
   }
 }
 
@@ -558,4 +630,9 @@
   padding-bottom: 24px !important;
   margin-bottom: 32px !important;
   border-radius: 0 0 24px 24px !important;
+  background: linear-gradient(135deg, #e8f5e9 0%, #f0fdf4 100%) !important;
+}
+
+.hotel-details-page .header-wrapper::before {
+  display: none;
 }

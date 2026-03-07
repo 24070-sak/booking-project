@@ -132,7 +132,6 @@
     background: rgba(0, 98, 51, 0.04);
     padding: 14px 18px;
     border-radius: 6px;
-    border-left: 4px solid var(--primary-green, #006233);
 }
 
 .review-actions {
@@ -172,7 +171,6 @@
     background: rgba(0, 98, 51, 0.05);
     padding: 14px 18px;
     border-radius: 6px;
-    border-left: 4px solid var(--primary-green, #006233);
 }
 
 .current-reply strong {

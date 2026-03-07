@@ -9,7 +9,6 @@ import DashboardReservations from "../components/DashboardReservations";
 import DashboardCalendar from "../components/DashboardCalendar";
 import DashboardReviews from "../components/DashboardReviews";
 import DashboardMessages from "../components/DashboardMessages";
-import DashboardPayments from "../components/DashboardPayments";
 import DashboardAnalytics from "../components/DashboardAnalytics";
 import DashboardSettings from "../components/DashboardSettings";
 
@@ -84,8 +83,6 @@ function Dashboard() {
         return <DashboardReviews />;
       case 'messages':
         return <DashboardMessages />;
-      case 'payments':
-        return <DashboardPayments />;
       case 'analytics':
         return <DashboardAnalytics />;
       case 'settings':
@@ -114,16 +111,12 @@ function Dashboard() {
 
           <span className={`label ${activeTab === 'reservations' ? 'selected' : ''}`} id="reservations" onClick={handleLabelClick}>
             <ReservationsIcon className="icon" />
-            <span>{isAdmin ? 'Toutes les réservations' : 'Mes Réservations'}</span>
+            <span>Réservations</span>
           </span>
 
           <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
             <AnalyticsIcon className="icon" />
             <span>Analytique</span>
-          </span>
-          <span className={`label ${activeTab === 'payments' ? 'selected' : ''}`} id="payments" onClick={handleLabelClick}>
-            <PaymentsIcon className="icon" />
-            <span>Paiements</span>
           </span>
 
           <span className={`label ${activeTab === 'messages' ? 'selected' : ''}`} id="messages" onClick={handleLabelClick}>

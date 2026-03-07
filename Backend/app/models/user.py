@@ -18,13 +18,22 @@ class User(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     phone = db.Column(db.String(20))
     username = db.Column(db.String(100), unique=True, nullable=False)
-    access_dashboard = db.Column(db.Boolean, default=True) # "permissions"
-    access_control_center = db.Column(db.Boolean, default=False) # "hight-permission"
+    access_dashboard = db.Column(db.Boolean, default=True)
+    access_control_center = db.Column(db.Boolean, default=False)
     role = db.Column(db.String(20), default='client')  # 'client', 'admin', 'manager'
     is_active = db.Column(db.Boolean, default=True)
-    profile_picture = db.Column(db.String(500), nullable=True) # URL to cloud storage or local path
+    profile_picture = db.Column(db.String(500), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Email verification
+    is_email_verified = db.Column(db.Boolean, default=False)
+    verification_otp = db.Column(db.String(6), nullable=True)
+    otp_expires_at = db.Column(db.DateTime, nullable=True)
+
+    # Password reset
+    reset_otp = db.Column(db.String(6), nullable=True)
+    reset_otp_expires_at = db.Column(db.DateTime, nullable=True)
     
     # Relations
     bookings = db.relationship('Booking', backref='user', lazy='dynamic')
@@ -53,6 +62,7 @@ class User(db.Model):
             'access_control_center': self.access_control_center,
             'role': self.role,
             'is_active': self.is_active,
+            'is_email_verified': self.is_email_verified,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
     

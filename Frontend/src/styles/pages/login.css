@@ -75,11 +75,12 @@ img {
    INPUT CONTAINER & ICONS
    ========================================= */
 
-/* Conteneur relatif pour positionner les icônes */
 .input-container {
     position: relative;
     width: 100%;
     margin-top: 8px;
+    display: flex;
+    align-items: center;
 }
 
 /* Input Fields */
@@ -95,6 +96,7 @@ img {
     outline: none;
     transition: 0.25s ease-in-out;
     color: #333;
+    box-sizing: border-box;
 }
 
 .form-input:focus {
@@ -102,8 +104,8 @@ img {
     box-shadow: 0 0 0 3px rgba(0, 98, 51, 0.15);
 }
 
-/* Icône de GAUCHE (cadenas, enveloppe, etc.) — toutes les <i> par défaut */
-.input-container>i {
+/* Left icon (envelope, lock, user, etc.) */
+.input-container>i:first-child {
     position: absolute;
     left: 15px;
     top: 50%;
@@ -111,24 +113,32 @@ img {
     color: #006233;
     font-size: 17px;
     pointer-events: none;
+    z-index: 2;
 }
 
-/* Icône de DROITE (l'œil toggle) — classe .toggle-password ET anciens IDs */
+/* Right icon (eye toggle) */
 .input-container>i.toggle-password,
 .input-container>#togglePassword,
-.input-container>#toggleConfirmPassword {
+.input-container>#toggleConfirmPassword,
+.input-container>#toggle {
+    position: absolute !important;
     left: auto !important;
     right: 15px !important;
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
     pointer-events: auto;
     color: #888;
+    font-size: 17px;
     transition: color 0.2s ease;
     padding: 5px;
+    z-index: 3;
 }
 
 .input-container>i.toggle-password:hover,
 .input-container>#togglePassword:hover,
-.input-container>#toggleConfirmPassword:hover {
+.input-container>#toggleConfirmPassword:hover,
+.input-container>#toggle:hover {
     color: #006233;
 }
 
@@ -178,6 +188,12 @@ img {
     box-shadow: 0 6px 20px rgba(0, 98, 51, 0.35);
 }
 
+.login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
 /* Social Login */
 .social-login {
     display: flex;
@@ -221,6 +237,15 @@ img {
     .login-container {
         width: 90%;
         padding: 30px 20px;
+    }
+
+    .social-login {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .social-login div {
+        justify-content: center;
     }
 }
 
