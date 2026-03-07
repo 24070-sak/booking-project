@@ -114,6 +114,37 @@ export async function socialLoginSync(firebaseUser) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Google Login — Dedicated endpoint (Firebase Google → Backend /api/auth/google)
+// ─────────────────────────────────────────────────────────────────────────────
+export async function googleLogin(firebaseUser) {
+  try {
+    const nameParts = (firebaseUser.displayName || "").split(" ");
+    const response = await apiFetch("/auth/google", {
+      method: "POST",
+      body: JSON.stringify({
+        google_id: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName || "",
+        first_name: nameParts[0] || firebaseUser.email.split("@")[0],
+        last_name: nameParts.slice(1).join(" ") || "",
+        profile_picture: firebaseUser.photoURL || null
+      }),
+      skipRedirect: true
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Erreur lors de la connexion Google");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Erreur Google Login:", error);
+    throw error;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Profile Update
 // ─────────────────────────────────────────────────────────────────────────────
 export async function updateProfile(userData) {
@@ -142,10 +173,10 @@ export async function sendVerificationOtp(email) {
   return response.json();
 }
 
-export async function verifyEmail(email, otp) {
+export async function verifyEmail(email, token) {
   const response = await apiFetch("/auth/verify-email", {
     method: "POST",
-    body: JSON.stringify({ email: email.trim(), otp: otp.trim() }),
+    body: JSON.stringify({ email: email.trim(), token: token }),
     skipRedirect: true
   });
   if (!response.ok) {
@@ -171,10 +202,10 @@ export async function forgotPassword(email) {
   return response.json();
 }
 
-export async function resetPassword(email, otp, newPassword) {
+export async function resetPassword(email, token, newPassword) {
   const response = await apiFetch("/auth/reset-password", {
     method: "POST",
-    body: JSON.stringify({ email: email.trim(), otp: otp.trim(), new_password: newPassword }),
+    body: JSON.stringify({ email: email.trim(), token: token, new_password: newPassword }),
     skipRedirect: true
   });
   if (!response.ok) {

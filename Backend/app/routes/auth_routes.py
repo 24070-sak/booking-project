@@ -3,7 +3,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 from app.extensions import db, oauth
 from app.models.user import User
 from app.utils.helpers import update_db_dump
-from app.utils.email_sender import send_otp_email
+# from app.utils.email_sender import send_verification_email, send_password_reset_email
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 import random
@@ -17,8 +17,11 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
-def generate_otp():
-    return str(random.randint(100000, 999999))
+import secrets
+
+def generate_token():
+    """Génère un token sécurisé unique"""
+    return secrets.token_urlsafe(32)
 
 
 def validate_password_strength(password):
@@ -73,6 +76,9 @@ def firebase_register():
     if User.query.filter_by(username=username).first():
         username = f"{base_username}-{random.randint(1000, 9999)}"
 
+    token = generate_token()
+    token_expiry = datetime.utcnow() + timedelta(minutes=15)
+
     user = User(
         email=data['email'],
         google_id=data['firebase_uid'],
@@ -82,7 +88,9 @@ def firebase_register():
         username=username,
         access_dashboard=False,
         is_active=True,
-        is_email_verified=True,  # Firebase already verified
+        is_email_verified=False,
+        verification_token=token,
+        token_expires_at=token_expiry,
         created_at=datetime.utcnow()
     )
 
@@ -91,14 +99,24 @@ def firebase_register():
         db.session.commit()
         update_db_dump()
 
+        # Envoi de l'email de vérification (désactivé)
+        # frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+        # verification_link = f"{frontend_url}/verification?token={token}&email={user.email}"
+        # 
+        # send_verification_email(
+        #     to_email=data['email'],
+        #     verification_link=verification_link
+        # )
+
         access_token = create_access_token(identity=str(user.id))
         refresh_token = create_refresh_token(identity=str(user.id))
 
         return jsonify({
-            'message': 'Inscription Firebase réussie',
+            'message': 'Inscription réussie. Veuillez vérifier votre email.',
             'user': user.to_dict(),
             'access_token': access_token,
-            'refresh_token': refresh_token
+            'refresh_token': refresh_token,
+            'email_verification_required': True
         }), 201
     except Exception as e:
         db.session.rollback()
@@ -172,6 +190,91 @@ def firebase_login():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Google Authentication — Dedicated endpoint for Firebase Google sign-in
+# ─────────────────────────────────────────────────────────────────────────────
+
+@auth_bp.route('/google', methods=['POST'])
+def google_auth():
+    """
+    Authentification Google via Firebase.
+    Reçoit le UID Firebase, email et displayName après signInWithPopup.
+    
+    Logique :
+    1. Cherche un utilisateur par google_id (Firebase UID)
+    2. Si non trouvé, cherche par email et lie le google_id
+    3. Si complètement nouveau, crée un nouvel utilisateur
+    """
+    data = request.get_json()
+
+    google_id = data.get('google_id') or data.get('firebase_uid')
+    email = data.get('email', '').strip()
+    display_name = data.get('displayName', '')
+    profile_picture = data.get('profile_picture')
+
+    if not google_id or not email:
+        return jsonify({'error': 'google_id et email sont requis'}), 400
+
+    # Parse display name into first/last
+    name_parts = display_name.split(' ', 1) if display_name else [email.split('@')[0]]
+    first_name = data.get('first_name') or name_parts[0] or email.split('@')[0]
+    last_name = data.get('last_name') or (name_parts[1] if len(name_parts) > 1 else '')
+
+    user = None
+
+    # ── Étape 1 : Chercher par google_id ──────────────────────────────────
+    user = User.query.filter_by(google_id=google_id).first()
+
+    if not user:
+        # ── Étape 2 : Chercher par email (lier le compte) ─────────────────
+        user = User.query.filter_by(email=email).first()
+
+        if user:
+            # Lier le google_id au compte existant
+            user.google_id = google_id
+            if not user.is_email_verified:
+                user.is_email_verified = True  # Google vérifie l'email
+            if profile_picture and not user.profile_picture:
+                user.profile_picture = profile_picture
+            db.session.commit()
+        else:
+            # ── Étape 3 : Créer un nouvel utilisateur ─────────────────────
+            base_username = first_name.lower()
+            username = base_username
+            if User.query.filter_by(username=username).first():
+                username = f"{base_username}-{random.randint(1000, 9999)}"
+
+            user = User(
+                email=email,
+                google_id=google_id,
+                first_name=first_name,
+                last_name=last_name,
+                username=username,
+                is_active=True,
+                is_email_verified=True,  # Google vérifie l'email
+                access_dashboard=False,
+                profile_picture=profile_picture
+            )
+            db.session.add(user)
+            db.session.commit()
+            update_db_dump()
+
+    # ── Vérifier que le compte est actif ──────────────────────────────────
+    if not user.is_active:
+        return jsonify({'error': 'Compte désactivé'}), 403
+
+    # ── Générer les tokens JWT ────────────────────────────────────────────
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
+
+    return jsonify({
+        'message': 'Connexion Google réussie',
+        'user': user.to_dict(),
+        'access_token': access_token,
+        'refresh_token': refresh_token
+    }), 200
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Register (classic — kept for admin or manual use)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -199,8 +302,8 @@ def register():
     if User.query.filter_by(username=username).first():
         username = f"{base_username}-{random.randint(100000, 999999)}"
 
-    otp = generate_otp()
-    otp_expiry = datetime.utcnow() + timedelta(minutes=15)
+    token = generate_token()
+    token_expiry = datetime.utcnow() + timedelta(minutes=15)
 
     user = User(
         email=data['email'],
@@ -211,8 +314,8 @@ def register():
         access_dashboard=False,
         access_control_center=False,
         is_email_verified=False,
-        verification_otp=otp,
-        otp_expires_at=otp_expiry
+        verification_token=token,
+        token_expires_at=token_expiry
     )
     user.set_password(data['password'])
 
@@ -220,12 +323,14 @@ def register():
     db.session.commit()
     update_db_dump()
 
-    # Send verification email
-    send_otp_email(
-        to_email=data['email'],
-        otp_code=otp,
-        subject="Vérifiez votre adresse email"
-    )
+    # Send verification email (désactivé)
+    # frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+    # verification_link = f"{frontend_url}/verification?token={token}&email={user.email}"
+    # 
+    # send_verification_email(
+    #     to_email=data['email'],
+    #     verification_link=verification_link
+    # )
 
     access_token = create_access_token(identity=str(user.id))
     refresh_token = create_refresh_token(identity=str(user.id))
@@ -256,18 +361,20 @@ def send_verification():
     if user.is_email_verified:
         return jsonify({'message': 'Email déjà vérifié'}), 200
 
-    otp = generate_otp()
-    user.verification_otp = otp
-    user.otp_expires_at = datetime.utcnow() + timedelta(minutes=15)
+    token = generate_token()
+    user.verification_token = token
+    user.token_expires_at = datetime.utcnow() + timedelta(minutes=15)
     db.session.commit()
 
-    send_otp_email(
-        to_email=email,
-        otp_code=otp,
-        subject="Code de vérification"
-    )
+    # frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+    # verification_link = f"{frontend_url}/verification?token={token}&email={user.email}"
+    # 
+    # send_verification_email(
+    #     to_email=email,
+    #     verification_link=verification_link
+    # )
 
-    return jsonify({'message': 'Code envoyé'}), 200
+    return jsonify({'message': 'Lien envoyé'}), 200
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -276,10 +383,10 @@ def send_verification():
 
 @auth_bp.route('/verify-email', methods=['POST'])
 def verify_email():
-    """Vérifier l'email avec l'OTP reçu"""
+    """Vérifier l'email avec le token reçu"""
     data = request.get_json()
     email = data.get('email', '').strip()
-    otp = data.get('otp', '').strip()
+    token = data.get('token', '').strip()
 
     user = User.query.filter_by(email=email).first()
     if not user:
@@ -288,15 +395,15 @@ def verify_email():
     if user.is_email_verified:
         return jsonify({'message': 'Email déjà vérifié'}), 200
 
-    if user.verification_otp != otp:
-        return jsonify({'error': 'Code incorrect'}), 400
+    if user.verification_token != token:
+        return jsonify({'error': 'Lien invalide ou corrompu'}), 400
 
-    if user.otp_expires_at and datetime.utcnow() > user.otp_expires_at:
-        return jsonify({'error': 'Code expiré. Demandez un nouveau code.'}), 400
+    if user.token_expires_at and datetime.utcnow() > user.token_expires_at:
+        return jsonify({'error': 'Lien expiré. Veuillez demander un nouveau lien.'}), 400
 
     user.is_email_verified = True
-    user.verification_otp = None
-    user.otp_expires_at = None
+    user.verification_token = None
+    user.token_expires_at = None
     db.session.commit()
     update_db_dump()
 
@@ -310,64 +417,66 @@ def verify_email():
 # Forgot Password — Send Reset OTP
 # ─────────────────────────────────────────────────────────────────────────────
 
-@auth_bp.route('/forgot-password', methods=['POST'])
-def forgot_password():
-    """Envoyer un code OTP pour réinitialiser le mot de passe"""
-    data = request.get_json()
-    email = data.get('email', '').strip()
-
-    user = User.query.filter_by(email=email).first()
-    # Always return 200 to prevent email enumeration
-    if not user:
-        return jsonify({'message': "Si l'email existe, un code a été envoyé."}), 200
-
-    otp = generate_otp()
-    user.reset_otp = otp
-    user.reset_otp_expires_at = datetime.utcnow() + timedelta(minutes=15)
-    db.session.commit()
-
-    send_otp_email(
-        to_email=email,
-        otp_code=otp,
-        subject="Réinitialisation de mot de passe"
-    )
-
-    return jsonify({'message': "Si l'email existe, un code a été envoyé."}), 200
+# @auth_bp.route('/forgot-password', methods=['POST'])
+# def forgot_password():
+#     \"\"\"Envoyer un code OTP pour réinitialiser le mot de passe\"\"\"
+#     data = request.get_json()
+#     email = data.get('email', '').strip()
+# 
+#     user = User.query.filter_by(email=email).first()
+#     # Always return 200 to prevent email enumeration
+#     if not user:
+#         return jsonify({'message': \"Si l'email existe, un code a été envoyé.\"}), 200
+# 
+#     token = generate_token()
+#     user.reset_token = token
+#     user.reset_token_expires_at = datetime.utcnow() + timedelta(minutes=15)
+#     db.session.commit()
+# 
+#     frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+#     reset_link = f\"{frontend_url}/reset-password?token={token}&email={user.email}\"
+# 
+#     # send_password_reset_email(
+#     #     to_email=email,
+#     #     reset_link=reset_link
+#     # )
+# 
+#     return jsonify({'message': \"Si l'email existe, un lien a été envoyé.\"}), 200
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Reset Password — Verify OTP + Set New Password
 # ─────────────────────────────────────────────────────────────────────────────
 
-@auth_bp.route('/reset-password', methods=['POST'])
-def reset_password():
-    """Réinitialiser le mot de passe avec l'OTP"""
-    data = request.get_json()
-    email = data.get('email', '').strip()
-    otp = data.get('otp', '').strip()
-    new_password = data.get('new_password', '')
-
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        return jsonify({'error': 'Utilisateur non trouvé'}), 404
-
-    if user.reset_otp != otp:
-        return jsonify({'error': 'Code incorrect'}), 400
-
-    if user.reset_otp_expires_at and datetime.utcnow() > user.reset_otp_expires_at:
-        return jsonify({'error': 'Code expiré. Demandez un nouveau code.'}), 400
-
-    is_strong, msg = validate_password_strength(new_password)
-    if not is_strong:
-        return jsonify({'error': msg}), 400
-
-    user.set_password(new_password)
-    user.reset_otp = None
-    user.reset_otp_expires_at = None
-    db.session.commit()
-    update_db_dump()
-
-    return jsonify({'message': 'Mot de passe réinitialisé avec succès'}), 200
+# @auth_bp.route('/reset-password', methods=['POST'])
+# def reset_password():
+#     \"\"\"Réinitialiser le mot de passe avec le token\"\"\"
+#     data = request.get_json()
+#     email = data.get('email', '').strip()
+#     token = data.get('token', '').strip()
+#     new_password = data.get('new_password', '')
+# 
+#     user = User.query.filter_by(email=email).first()
+#     if not user:
+#         return jsonify({'error': 'Utilisateur non trouvé'}), 404
+# 
+#     if not user.reset_token or user.reset_token != token:
+#         return jsonify({'error': 'Lien invalide ou corrompu'}), 400
+# 
+#     if user.reset_token_expires_at and datetime.utcnow() > user.reset_token_expires_at:
+#         return jsonify({'error': 'Lien expiré. Demandez un nouveau lien.'}), 400
+# 
+#     is_strong, msg = validate_password_strength(new_password)
+#     if not is_strong:
+#         return jsonify({'error': msg}), 400
+# 
+#     user.set_password(new_password)
+#     user.reset_token = None
+#     user.reset_token_expires_at = None
+#     db.session.commit()
+#     update_db_dump()
+# 
+#     return jsonify({'message': 'Mot de passe réinitialisé avec succès'}), 200
 
 
 # ─────────────────────────────────────────────────────────────────────────────

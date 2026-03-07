@@ -1,0 +1,36 @@
+RÉSUMÉ DES MODIFICATIONS DE CONNEXION BASE DE DONNÉES
+===================================================
+
+Identifiants utilisés :
+----------------------
+- Nom de la Base de Données : booking_system
+- Utilisateur MySQL : abass
+- Mot de passe : 12345678
+- Hôte : localhost
+- Port : 3306
+
+Fichiers Configurés :
+--------------------
+
+1. Fichier .env (/Backend/.env) :
+   La variable DATABASE_URL a été vérifiée et configurée comme suit :
+   DATABASE_URL=mysql+pymysql://abass:12345678@localhost:3306/booking_system
+
+2. Fichier config.py (/Backend/app/config.py) :
+   - Mise à jour de la classe DevelopmentConfig.
+   - Modification de SQLALCHEMY_DATABASE_URI pour utiliser dynamiquement 
+     la variable Config.MYSQL_DATABASE au lieu d'une valeur textuelle fixe.
+   
+   Avant : .../booking_system'
+   Après : .../{Config.MYSQL_DATABASE}'
+
+Instructions MySQL (à exécuter dans votre terminal MySQL) :
+---------------------------------------------------------
+CREATE DATABASE IF NOT EXISTS booking_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'abass'@'localhost' IDENTIFIED BY '12345678';
+GRANT ALL PRIVILEGES ON booking_system.* TO 'abass'@'localhost';
+FLUSH PRIVILEGES;
+
+État du Backend :
+----------------
+Le backend est maintenant prêt à se connecter avec vos identifiants personnels.
