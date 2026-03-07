@@ -12,9 +12,9 @@ class Config:
     # Configuration MySQL
     MYSQL_HOST = os.environ.get('MYSQL_HOST', 'localhost')
     MYSQL_PORT = os.environ.get('MYSQL_PORT', '3306')
-    MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
-    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '')
-    MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', 'booking_db')
+    MYSQL_USER = os.environ.get('MYSQL_USER', 'abass')
+    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '12345678')
+    MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', 'booking_system')
     
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}'

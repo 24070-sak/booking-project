@@ -14,6 +14,8 @@ import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import Payment from "./pages/Payment";
 import Notifications from "./pages/Notifications";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -24,6 +26,10 @@ function App() {
 
         {/* Login page */}
         <Route path="/connexion" element={<Login />} />
+        {/* Forgot Password page */}
+        <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
+        {/* Reset Password Handle URL */}
+        <Route path="/reset-password" element={<ResetPassword />} />
         {/* Verification page */}
         <Route path="/verification" element={<VerificationPage />} />
         {/* Register page */}

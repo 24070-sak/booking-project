@@ -81,6 +81,20 @@ export const LanguageProvider = ({ children }) => {
             register_google: "S'inscrire avec Google",
             register_facebook: "S'inscrire avec Facebook",
             already_have_account: "Tu as déjà un compte ?",
+
+            // Forgot Password
+            reset_password_title: "Réinitialiser le mot de passe",
+            insert_email: "Veuillez entrer votre adresse email",
+            send_link: "Envoyer le lien de réinitialisation",
+            sending: "Envoi...",
+            back_to_login: "Retour à la connexion",
+            reset_link_sent: "Un lien a été envoyé à votre adresse email",
+            reset_error: "Erreur lors de l'envoi du lien. Veuillez réessayer.",
+            new_password_title: "Nouveau mot de passe",
+            new_password_placeholder: "Entrez votre nouveau mot de passe",
+            save_password: "Enregistrer le mot de passe",
+            saving: "Enregistrement...",
+            password_changed_success: "Mot de passe modifié avec succès !",
         },
         ar: {
             // General
@@ -147,6 +161,20 @@ export const LanguageProvider = ({ children }) => {
             register_google: "التسجيل عبر جوجل",
             register_facebook: "التسجيل عبر فيسبوك",
             already_have_account: "لدي حساب بالفعل؟",
+
+            // Forgot Password
+            reset_password_title: "استعادة كلمة المرور",
+            insert_email: "أدخل عنوان بريدك الإلكتروني",
+            send_link: "إرسال رابط الاستعادة",
+            sending: "جاري الإرسال...",
+            back_to_login: "العودة لتسجيل الدخول",
+            reset_link_sent: "تم إرسال رابط إلى بريدك الإلكتروني",
+            reset_error: "حدث خطأ أثناء إرسال الرابط. أعد المحاولة.",
+            new_password_title: "كلمة مرور جديدة",
+            new_password_placeholder: "أدخل كلمة المرور الجديدة",
+            save_password: "حفظ كلمة المرور",
+            saving: "جاري الحفظ...",
+            password_changed_success: "تم تغيير كلمة المرور بنجاح!",
         }
     };
 
