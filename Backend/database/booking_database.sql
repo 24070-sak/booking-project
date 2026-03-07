@@ -61,7 +61,7 @@ CREATE TABLE `hotels` (
   CONSTRAINT `hotels_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 LOCK TABLES `hotels` WRITE;
-INSERT INTO `hotels` VALUES (1,'Hotel Azalai','Nouakchott','L\'hôtel Azalaï Nouakchott est situé en plein centre-ville...','https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',4.5,'2026-03-07 12:16:46',1,1,1,58),(2,'Hotel Monotel','Nouakchott','Monotel Dar El Barka offre un cadre luxueux...','https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',4.2,'2026-03-07 12:16:46',1,0,0,0),(3,'Hotel Tfeila','Nouadhibou','Hôtel historique avec vue sur la mer...','https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',4,'2026-03-07 12:16:46',1,1,1,60),(4,'Hotel Sahara','Atar','Au cœur du désert, le confort moderne...','https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800',4.3,'2026-03-07 12:16:46',1,0,0,0);
+INSERT INTO `hotels` VALUES (1,'Hotel Azalai','Nouakchott','L\'hôtel Azalaï Nouakchott est situé en plein centre-ville...','https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',4.5,'2026-03-07 12:16:46',1,1,1,58),(2,'Hotel Monotel','Nouakchott','Monotel Dar El Barka offre un cadre luxueux...','https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',3,'2026-03-07 12:16:46',1,5,1,46),(3,'Hotel Tfeila','Nouadhibou','Hôtel historique avec vue sur la mer...','https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',4,'2026-03-07 12:16:46',1,1,1,60),(4,'Hotel Sahara','Atar','Au cœur du désert, le confort moderne...','https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800',4.3,'2026-03-07 12:16:46',1,0,0,0);
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `messages`;
 CREATE TABLE `messages` (
@@ -77,9 +77,9 @@ CREATE TABLE `messages` (
   KEY `receiver_id` (`receiver_id`),
   CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`),
   CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 LOCK TABLES `messages` WRITE;
-INSERT INTO `messages` VALUES (1,3,1,'Question sur ma réservation','Bonjour, j\'aimerais savoir si le petit déjeuner est inclus.',0,'2026-03-07 07:16:46'),(2,1,3,'Re: Question sur ma réservation','Oui, bien sûr !',0,'2026-03-07 08:16:46');
+INSERT INTO `messages` VALUES (1,3,1,'Question sur ma réservation','Bonjour, j\'aimerais savoir si le petit déjeuner est inclus.',0,'2026-03-07 07:16:46'),(2,1,3,'Re: Question sur ma réservation','Oui, bien sûr !',0,'2026-03-07 08:16:46'),(3,4,NULL,'oumar','cv',0,'2026-03-07 15:22:30'),(4,4,NULL,'Re: oumar ','cc',0,'2026-03-07 15:22:44'),(5,4,NULL,'admin24070','kin',1,'2026-03-07 15:23:36'),(6,4,5,'PI','FEEEFS',1,'2026-03-07 15:35:17'),(7,4,5,'Re: PI ','xc',0,'2026-03-07 16:18:36');
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE `notifications` (
@@ -141,8 +141,9 @@ CREATE TABLE `reviews` (
   KEY `room_id` (`room_id`),
   CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 LOCK TABLES `reviews` WRITE;
+INSERT INTO `reviews` VALUES (1,6,3,3,'zxcvdhf',NULL,0,'2026-03-07 18:22:49','2026-03-07 18:22:49');
 UNLOCK TABLES;
 DROP TABLE IF EXISTS `room_amenities`;
 CREATE TABLE `room_amenities` (
@@ -228,14 +229,19 @@ CREATE TABLE `users` (
   `profile_picture` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `is_email_verified` tinyint(1) DEFAULT '0',
+  `verification_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `token_expires_at` datetime DEFAULT NULL,
+  `reset_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reset_token_expires_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `ix_users_email` (`email`),
   UNIQUE KEY `google_id` (`google_id`),
   UNIQUE KEY `facebook_id` (`facebook_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 LOCK TABLES `users` WRITE;
-INSERT INTO `users` VALUES (1,'24070@supnum.mr','scrypt:32768:8:1$JXTv5mUZoSyp5wdT$821e808b49bf35c037f2d5bff81396b5cdc30a28b4339eb9311e2b916558a65d9e04aff27505a52337fd251666850467e3345fb482ea3225867d67df69166aae',NULL,NULL,'Admin','Sak','+222 20103014','admin24070',1,1,'admin',1,NULL,'2026-03-07 12:16:45','2026-03-07 12:16:45'),(2,'24102@supnum.mr','scrypt:32768:8:1$hphJ3PJeeuDEFskn$4847e6f363a32cd2e600fdd51bd8e8cd7cfc83b9a8b78b6e032421cdd2b0fb4736861c0bbec062179bdf485f479fa01b0bccf4ad625a12e20819203f8aa11ac1',NULL,NULL,'Abdurrahmane','Sak','+222 20103014','abdurrahmane24102',1,1,'admin',1,NULL,'2026-03-07 12:16:46','2026-03-07 12:16:46'),(3,'client@test.com','scrypt:32768:8:1$ost3f2fO3Wv9kBqs$ca18e05e9cda73fa9660671034832750606d0738aab88de11326ec7b1fb98f0be26114557a57cfc61350cee1abdb97a095e85ce926d3ed9ff304098cb70dd6e0',NULL,NULL,'Jean','Dupont','+222 33 44 55 66','jdupont',0,0,'client',1,NULL,'2026-03-07 12:16:46','2026-03-07 12:16:46'),(4,'24041@supnum.mr','scrypt:32768:8:1$CPwF0f8u4Q8s95d8$507954c5a10284ec5a5c75cea9f2c2c11b14cc81214318003023d8463fb0d2df656475e3bb736474b7dedbc8f4cd0fa1217c37596643ecdf8225f9b17601cad4','tXNDuOg8b7bzCNCxDde7qUuNITj1',NULL,'abass','med','32040505','abass',0,0,'client',1,NULL,'2026-03-07 12:22:16','2026-03-07 13:50:49'),(5,'24037@supnum.mr',NULL,'8MTURK1M1ERNJLOCBSXQFzHHfW62',NULL,'oumar','med','32040534','oumar',0,0,'client',1,NULL,'2026-03-07 13:53:42','2026-03-07 13:53:42');
+INSERT INTO `users` VALUES (1,'24070@supnum.mr','scrypt:32768:8:1$JXTv5mUZoSyp5wdT$821e808b49bf35c037f2d5bff81396b5cdc30a28b4339eb9311e2b916558a65d9e04aff27505a52337fd251666850467e3345fb482ea3225867d67df69166aae',NULL,NULL,'Admin','Sak','+222 20103014','admin24070',1,1,'admin',1,NULL,'2026-03-07 12:16:45','2026-03-07 12:16:45',0,NULL,NULL,NULL,NULL),(2,'24102@supnum.mr','scrypt:32768:8:1$hphJ3PJeeuDEFskn$4847e6f363a32cd2e600fdd51bd8e8cd7cfc83b9a8b78b6e032421cdd2b0fb4736861c0bbec062179bdf485f479fa01b0bccf4ad625a12e20819203f8aa11ac1',NULL,NULL,'Abdurrahmane','Sak','+222 20103014','abdurrahmane24102',1,1,'admin',1,NULL,'2026-03-07 12:16:46','2026-03-07 12:16:46',0,NULL,NULL,NULL,NULL),(3,'client@test.com','scrypt:32768:8:1$ost3f2fO3Wv9kBqs$ca18e05e9cda73fa9660671034832750606d0738aab88de11326ec7b1fb98f0be26114557a57cfc61350cee1abdb97a095e85ce926d3ed9ff304098cb70dd6e0',NULL,NULL,'Jean','Dupont','+222 33 44 55 66','jdupont',0,0,'client',1,NULL,'2026-03-07 12:16:46','2026-03-07 12:16:46',0,NULL,NULL,NULL,NULL),(4,'24041@supnum.mr','scrypt:32768:8:1$CPwF0f8u4Q8s95d8$507954c5a10284ec5a5c75cea9f2c2c11b14cc81214318003023d8463fb0d2df656475e3bb736474b7dedbc8f4cd0fa1217c37596643ecdf8225f9b17601cad4','tXNDuOg8b7bzCNCxDde7qUuNITj1',NULL,'abass','med','32040505','abass',0,0,'client',1,NULL,'2026-03-07 12:22:16','2026-03-07 20:33:27',0,NULL,NULL,'Cpx6214piaXvTQ70smJNEIpMfNPIYhuunmHlP5WgRB0','2026-03-07 20:48:27'),(5,'24037@supnum.mr',NULL,'8MTURK1M1ERNJLOCBSXQFzHHfW62',NULL,'oumar','med','32040534','oumar',0,0,'client',1,NULL,'2026-03-07 13:53:42','2026-03-07 13:53:42',0,NULL,NULL,NULL,NULL),(6,'medahmed24041@gmail.com',NULL,'zyVCOBZUYLVkLZfhUUSRJ1KXuHC3',NULL,'Med','Ahmed',NULL,'med',0,0,'client',1,'https://lh3.googleusercontent.com/a/ACg8ocLumbCSaoKq3JJn735zs7v1ZBWwkwOxR0pfr7Mz_bt0Lq-0Ug=s96-c','2026-03-07 18:20:57','2026-03-07 18:20:57',1,NULL,NULL,NULL,NULL),(7,'vibepi91@gmail.com',NULL,'Xj0I2g7H8laq2oVlGPOrIVP579l2',NULL,'pi','vibe',NULL,'pi',0,0,'client',1,'https://lh3.googleusercontent.com/a/ACg8ocKmLBDH8u7J2o6UCttv-CW3ziaTkr2b2uqk3XVbxodwCN0kvQ=s96-c','2026-03-07 22:55:37','2026-03-07 22:55:37',1,NULL,NULL,NULL,NULL);
 UNLOCK TABLES;
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { register, socialLoginSync } from "../services/authService";
+import { register, googleLogin, socialLoginSync } from "../services/authService";
 import { signInWithGoogle, signInWithFacebook } from "../services/firebase";
 import "../styles/pages/register.css";
 import logo from "../assets/logos/logo.svg";
@@ -86,7 +86,8 @@ function Register() {
       const data = await register(userData);
 
       if (data.email_verification_required) {
-        navigate("/verification", { state: { email: formData.email } });
+        // Pass email as query param so EmailVerification.jsx can read it
+        navigate(`/verification?email=${encodeURIComponent(formData.email)}`);
         return;
       }
 
@@ -119,10 +120,20 @@ function Register() {
       }
 
       if (firebaseUser) {
-        const data = await socialLoginSync(firebaseUser);
+        // Google uses dedicated /api/auth/google endpoint
+        const data = platform === 'Google'
+          ? await googleLogin(firebaseUser)
+          : await socialLoginSync(firebaseUser);
+
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.access_token);
-        navigate("/");
+
+        // Redirect to dashboard if user has access, otherwise home
+        if (data.user?.access_dashboard) {
+          navigate("/dashboard");
+        } else {
+          navigate("/");
+        }
       }
     } catch (err) {
       console.error(err);

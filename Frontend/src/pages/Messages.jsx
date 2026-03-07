@@ -4,7 +4,6 @@ import { useLanguage } from "../context/LanguageContext";
 import DashboardMessages from "../components/DashboardMessages";
 import '../styles/pages/messages.css';
 import '../styles/components/dashboardMessages.css';
-import { useLanguage } from "../context/LanguageContext";
 
 function Messages() {
     const { t } = useLanguage();

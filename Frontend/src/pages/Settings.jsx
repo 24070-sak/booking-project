@@ -125,7 +125,7 @@ export default function Settings() {
         {/* Profile Section */}
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>Profile</h2>
-          
+
           <div style={styles.profileContainer}>
             <div style={styles.avatarSection}>
               <div style={styles.avatar}>
@@ -162,7 +162,7 @@ export default function Settings() {
         {/* Account Section */}
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>Account</h2>
-          
+
           <div style={styles.gridContainer}>
             <div>
               <label style={styles.label}>Language</label>
@@ -197,7 +197,7 @@ export default function Settings() {
         {/* Security Section */}
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>Security</h2>
-          
+
           <div style={styles.gridContainer}>
             <div>
               <label style={styles.label}>Old Password</label>

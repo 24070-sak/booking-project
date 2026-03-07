@@ -1,0 +1,41 @@
+nohup: ignoring input
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.10.2:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 132-295-551
+127.0.0.1 - - [07/Mar/2026 19:19:46] "POST /api/auth/forgot-password HTTP/1.1" 200 -
+127.0.0.1 - - [07/Mar/2026 19:20:07] "OPTIONS /api/auth/forgot-password HTTP/1.1" 200 -
+127.0.0.1 - - [07/Mar/2026 19:20:07] "POST /api/auth/forgot-password HTTP/1.1" 200 -
+127.0.0.1 - - [07/Mar/2026 19:20:48] "OPTIONS /api/auth/forgot-password HTTP/1.1" 200 -
+127.0.0.1 - - [07/Mar/2026 19:20:48] "POST /api/auth/forgot-password HTTP/1.1" 200 -
+ * Detected change in '/home/abass/Desktop/vibepi/booking-project/Backend/app/utils/email_sender.py', reloading
+╔══════════════════════════════════════════╗
+║  📧 LIEN POUR : 24041@supnum.mr          ║
+║  🔗 LIEN : http://localhost:5173/reset-password?token=N_ieSwBpM51Ir9eQPy7hUy77N-Ksu51PO_2rMGX_0VI&email=24041@supnum.mr ║
+║  📌 SUJET : Réinitialisation de mot de passe ║
+╚══════════════════════════════════════════╝
+[EMAIL] ⚠️  MAIL_USERNAME ou MAIL_PASSWORD non configuré dans .env
+[EMAIL] ℹ️  Le lien est affiché ci-dessus dans les logs.
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 132-295-551
+ * Detected change in '/home/abass/Desktop/vibepi/booking-project/Backend/app/routes/auth_routes.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 132-295-551
+ * Detected change in '/home/abass/Desktop/vibepi/booking-project/Backend/app/routes/auth_routes.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 132-295-551
+127.0.0.1 - - [07/Mar/2026 20:15:27] "OPTIONS /api/hotels?limit=5&offset=0&search=&guests=0 HTTP/1.1" 200 -
+127.0.0.1 - - [07/Mar/2026 20:15:27] "OPTIONS /api/hotels?limit=5&offset=0&search=&guests=0 HTTP/1.1" 200 -
+127.0.0.1 - - [07/Mar/2026 20:15:27] "GET /api/hotels?limit=5&offset=0&search=&guests=0 HTTP/1.1" 200 -
+127.0.0.1 - - [07/Mar/2026 20:15:27] "GET /api/hotels?limit=5&offset=0&search=&guests=0 HTTP/1.1" 200 -
+127.0.0.1 - - [07/Mar/2026 20:15:38] "OPTIONS /api/auth/forgot-password HTTP/1.1" 200 -
+127.0.0.1 - - [07/Mar/2026 20:15:38] "POST /api/auth/forgot-password HTTP/1.1" 200 -

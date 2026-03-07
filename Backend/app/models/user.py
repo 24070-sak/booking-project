@@ -28,12 +28,12 @@ class User(db.Model):
 
     # Email verification
     is_email_verified = db.Column(db.Boolean, default=False)
-    verification_otp = db.Column(db.String(6), nullable=True)
-    otp_expires_at = db.Column(db.DateTime, nullable=True)
+    verification_token = db.Column(db.String(100), nullable=True) # Changed from verification_otp
+    token_expires_at = db.Column(db.DateTime, nullable=True)     # Changed from otp_expires_at
 
     # Password reset
-    reset_otp = db.Column(db.String(6), nullable=True)
-    reset_otp_expires_at = db.Column(db.DateTime, nullable=True)
+    reset_token = db.Column(db.String(100), nullable=True)       # Changed from reset_otp
+    reset_token_expires_at = db.Column(db.DateTime, nullable=True) # Changed from reset_otp_expires_at
     
     # Relations
     bookings = db.relationship('Booking', backref='user', lazy='dynamic')

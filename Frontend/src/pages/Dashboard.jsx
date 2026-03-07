@@ -153,6 +153,20 @@ function Dashboard() {
 
       </div>
       <div className="dashboard-body">
+        <div className="dashboard-user-profile" style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', padding: '15px', backgroundColor: '#f9fafb', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+          {user.profile_picture ? (
+            <img src={user.profile_picture} alt="Profile" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginRight: '15px' }} />
+          ) : (
+            <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', marginRight: '15px' }}>
+              {user.first_name ? user.first_name.charAt(0).toUpperCase() : '?'}
+            </div>
+          )}
+          <div>
+            <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#1f2937' }}>{user.first_name} {user.last_name}</h2>
+            <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem' }}>{user.email}</p>
+          </div>
+        </div>
+
         {notification && (
           <div className="dashboard-notification" style={{
             padding: '15px 20px',

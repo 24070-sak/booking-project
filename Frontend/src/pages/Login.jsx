@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login, socialLoginSync } from "../services/authService";
+import { login, googleLogin, socialLoginSync } from "../services/authService";
 import { signInWithGoogle, signInWithFacebook } from "../services/firebase";
 import '../styles/pages/login.css'
 import logo from '../assets/logos/logo.svg'
@@ -74,10 +74,20 @@ function Login() {
       }
 
       if (firebaseUser) {
-        const data = await socialLoginSync(firebaseUser);
+        // Google uses dedicated /api/auth/google endpoint
+        const data = platform === 'Google'
+          ? await googleLogin(firebaseUser)
+          : await socialLoginSync(firebaseUser);
+
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.access_token);
-        navigate("/");
+
+        // Redirect to dashboard if user has access, otherwise home
+        if (data.user?.access_dashboard) {
+          navigate("/dashboard");
+        } else {
+          navigate("/");
+        }
       }
     } catch (err) {
       console.error(err);
