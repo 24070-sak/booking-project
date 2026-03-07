@@ -74,16 +74,18 @@ img {
 
 /* Input Fields */
 .form-input {
-    width: 100%;
-    height: 52px;
-    border-radius: 10px;
-    border: 2px solid rgba(0, 98, 51, 0.15);
-    background: #fff;
-    font-size: 16px;
-    padding-left: 45px;
-    outline: none;
-    transition: 0.25s;
-    color: black;
+    width: 100% !important;
+    height: 52px !important;
+    border-radius: 10px !important;
+    border: 2px solid rgba(0, 98, 51, 0.15) !important;
+    background: #fff !important;
+    font-size: 16px !important;
+    padding-left: 45px !important;
+    padding-right: 45px !important;
+    outline: none !important;
+    transition: 0.25s !important;
+    color: black !important;
+    box-sizing: border-box !important;
 }
 
 .form-input:focus {
@@ -93,22 +95,34 @@ img {
 
 /* Icon Positioning */
 .input-container {
-    position: relative;
+    position: relative !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
-.input-container i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #006233;
-    font-size: 17px;
+.input-container i:first-child {
+    position: absolute !important;
+    left: 15px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #006233 !important;
+    font-size: 17px !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
 }
 
-.input-container #togglePassword {
-    right: 15px;
-    left: auto;
-    cursor: pointer;
+.input-container #togglePassword, .input-container #toggle {
+    position: absolute !important;
+    right: 15px !important;
+    left: auto !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #666 !important;
+    font-size: 17px !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    z-index: 3 !important;
 }
 
 /* Forgot password — sits below the password input, left aligned */

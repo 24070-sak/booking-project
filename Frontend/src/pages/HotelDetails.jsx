@@ -260,10 +260,6 @@ function HotelDetails() {
                                 <span className="price-tag">
                                     À partir de {Math.min(...rooms.map(r => r.price_per_night), 0) || 100} € <span className="price-unit">par nuit</span>
                                 </span>
-                                <div className="card-rating">
-                                    <i className="fa-solid fa-star" style={{ color: '#FFD700' }}></i>
-                                    {hotel.rating}
-                                </div>
                             </div>
 
                             <button onClick={() => {

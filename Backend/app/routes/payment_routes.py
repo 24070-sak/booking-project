@@ -101,10 +101,17 @@ def get_pending_payments():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     
-    if user.role not in ['admin', 'manager']:
+    if user.role not in ['admin', 'manager'] and not user.access_dashboard:
         return jsonify({'error': 'Accès non autorisé'}), 403
         
-    payments = Payment.query.filter_by(status='pending').all()
+    query = Payment.query.filter_by(status='pending')
+    
+    if user.role not in ['admin', 'manager']:
+        owned_hotel_ids = [h.id for h in user.hotels]
+        from app.models.room import Room
+        query = query.join(Booking).join(Room).filter(Room.hotel_id.in_(owned_hotel_ids))
+        
+    payments = query.all()
     return jsonify({
         'payments': [p.to_dict() for p in payments],
         'total': len(payments)
@@ -117,7 +124,7 @@ def verify_payment(payment_id):
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     
-    if user.role not in ['admin', 'manager']:
+    if user.role not in ['admin', 'manager'] and not user.access_dashboard:
         return jsonify({'error': 'Accès non autorisé'}), 403
         
     data = request.get_json()

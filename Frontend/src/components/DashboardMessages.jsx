@@ -12,7 +12,7 @@ const DashboardMessages = () => {
 
     // Composer State
     const [isComposing, setIsComposing] = useState(false);
-    const [composeData, setComposeData] = useState({ subject: '', content: '' });
+    const [composeData, setComposeData] = useState({ email: '', content: '' });
 
     // Derive unique conversations from messages
     const conversations = React.useMemo(() => {
@@ -107,13 +107,14 @@ const DashboardMessages = () => {
         }
         try {
             await sendMessage({
-                subject: composeData.subject || "Message",
+                subject: "Message",
                 content: composeData.content,
+                receiver_email: composeData.email || null,
                 receiver_id: null
             });
-            showSuccess("Message envoyé à l'administration !");
+            showSuccess(composeData.email ? "Message envoyé !" : "Message envoyé à l'administration !");
             setIsComposing(false);
-            setComposeData({ subject: '', content: '' });
+            setComposeData({ email: '', content: '' });
             fetchMessages();
         } catch (error) {
             showError("Erreur: " + error.message);
@@ -196,9 +197,9 @@ const DashboardMessages = () => {
                                         return (
                                             <>
                                                 {otherPic ? (
-                                                    <img src={otherPic} alt="Avatar" style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover' }} />
+                                                    <img src={otherPic} alt="Avatar" className="chat-avatar" />
                                                 ) : (
-                                                    <div className="user-avatar" style={{ background: '#0b6ad6', color: 'white', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontWeight: 'bold' }}>
+                                                    <div className="message-avatar-placeholder" style={{ width: '42px', height: '42px', fontSize: '16px', flexShrink: 0 }}>
                                                         {otherName?.charAt(0)}
                                                     </div>
                                                 )}
@@ -225,11 +226,11 @@ const DashboardMessages = () => {
                                     ).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
                                     return conversationMessages.map(msg => (
-                                        <div key={msg.id} className="message-bubble-container" style={{ alignSelf: msg.sender_id === currentUser?.id ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
+                                        <div key={msg.id} className={`message-bubble-container ${msg.sender_id === currentUser?.id ? 'me' : 'other'}`}>
                                             <div className={`message-bubble ${msg.sender_id === currentUser?.id ? 'me' : 'other'}`}>
                                                 {msg.content}
                                             </div>
-                                            <div className="message-time" style={{ textAlign: msg.sender_id === currentUser?.id ? 'right' : 'left' }}>
+                                            <div className={`message-time ${msg.sender_id === currentUser?.id ? 'me' : 'other'}`}>
                                                 {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </div>
                                         </div>
@@ -263,39 +264,38 @@ const DashboardMessages = () => {
             {
                 isComposing && (
                     <div className="modal-overlay">
-                        <div className="modal-content-mac">
-                            <div className="modal-header-mac">
-                                <div className="window-controls">
-                                    <div className="control-dot dot-red" onClick={() => setIsComposing(false)}></div>
-                                    <div className="control-dot dot-yellow"></div>
-                                    <div className="control-dot dot-green"></div>
-                                </div>
+                        <div className="message-modal-premium">
+                            <div className="modal-header-premium">
                                 <h3>Nouveau Message</h3>
-                                <div style={{ width: '40px' }}></div> {/* Spacer */}
+                                <button className="modal-close" onClick={() => setIsComposing(false)}>&times;</button>
                             </div>
-                            <div className="modal-body-mac">
-                                <div className="search-user-wrapper">
-                                    <i className="fa-solid fa-search search-icon"></i>
-                                    <input
-                                        type="text"
-                                        placeholder="Rechercher un utilisateur (Admin par défaut)"
-                                        className="search-user-input"
-                                        value={composeData.subject} // Using subject as user search query for now
-                                        onChange={e => setComposeData({ ...composeData, subject: e.target.value })}
-                                    />
+                            <div className="modal-body-premium">
+                                <div className="form-group-premium">
+                                    <label>Utilisateur cible (Email)</label>
+                                    <div className="input-wrapper">
+                                        <i className="fa-regular fa-envelope input-icon"></i>
+                                        <input
+                                            type="email"
+                                            placeholder="Ex: client@email.com (laissez vide pour contacter l'Admin)"
+                                            className="form-input-premium"
+                                            value={composeData.email}
+                                            onChange={e => setComposeData({ ...composeData, email: e.target.value })}
+                                        />
+                                    </div>
                                 </div>
 
-                                <div className="modal-message-area">
+                                <div className="form-group-premium">
+                                    <label>Message</label>
                                     <textarea
                                         className="modal-textarea"
                                         placeholder="Votre message..."
                                         value={composeData.content}
                                         onChange={e => setComposeData({ ...composeData, content: e.target.value })}
                                     />
-                                    <button className="btn-send-mac" onClick={handleComposeMessage}>
-                                        Envoyer <i className="fa-solid fa-paper-plane"></i>
-                                    </button>
                                 </div>
+                                <button className="btn-send-premium" onClick={handleComposeMessage}>
+                                    Envoyer <i className="fa-solid fa-paper-plane" style={{ marginLeft: '8px' }}></i>
+                                </button>
                             </div>
                         </div>
                     </div>

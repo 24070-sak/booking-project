@@ -5,8 +5,8 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color-scheme: light;
+  color: #1a1a1a;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -38,6 +38,33 @@ body {
   padding: 20px;
   color: #1a1a1a;
   overflow-x: hidden;
+}
+
+/* Base override for forms ensuring text doesn't turn invisible (white text on white backgrounds) */
+input, textarea, select {
+  color: #1a1a1a !important;
+  font-family: inherit;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #a0aec0; /* A soft, visible placeholder gray to contrast with black text */
+}
+
+/* Base override for forms ensuring text is white on black backgrounds */
+input[style*="background: black"], input[style*="background-color: black"],
+input[style*="background: #000"], input[style*="background-color: #000"],
+textarea[style*="background: black"], textarea[style*="background-color: black"],
+textarea[style*="background: #000"], textarea[style*="background-color: #000"],
+select[style*="background: black"], select[style*="background-color: black"],
+select[style*="background: #000"], select[style*="background-color: #000"] {
+  color: #ffffff !important;
+}
+
+input[style*="background: black"]::placeholder, input[style*="background-color: black"]::placeholder,
+input[style*="background: #000"]::placeholder, input[style*="background-color: #000"]::placeholder,
+textarea[style*="background: black"]::placeholder, textarea[style*="background-color: black"]::placeholder,
+textarea[style*="background: #000"]::placeholder, textarea[style*="background-color: #000"]::placeholder {
+  color: #e2e8f0 !important;
 }
 
 /* Custom Scrollbar */

@@ -147,7 +147,6 @@
 
 .notif-item.unread {
     background: #f0fdf4;
-    border-left: 3px solid #006233;
 }
 
 .notif-item.unread:hover {

@@ -1,34 +1,31 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 import DashboardMessages from "../components/DashboardMessages";
+import '../styles/pages/messages.css';
 import '../styles/components/dashboardMessages.css';
 
 function Messages() {
+    const { t } = useLanguage();
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     return (
-        <div className="messages-page-wrapper" style={{ height: '100vh', backgroundColor: '#f9fafb', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: '20px 20px 0', display: 'flex', alignItems: 'center', gap: '15px' }}>
-                <Link to="/" style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: 'white',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                    color: '#1a202c',
-                    textDecoration: 'none'
-                }}>
-                    <i className="fa-solid fa-arrow-left"></i>
-                </Link>
-                <h1 style={{ margin: 0, fontSize: '20px', color: '#1a202c' }}>Retour à l'accueil</h1>
-            </div>
-            <div style={{ flex: 1, padding: '20px', overflow: 'hidden' }}>
-                <DashboardMessages />
+        <div className="msg-page">
+            <div className="msg-page-card">
+                <div className="msg-page-header">
+                    <Link to="/" className="msg-back-link">
+                        <i className="fa-solid fa-chevron-left"></i>
+                    </Link>
+                    <div className="msg-page-brand">
+                        <h1 className="msg-page-heading">Messages</h1>
+                    </div>
+                </div>
+                <div className="msg-page-content">
+                    <DashboardMessages />
+                </div>
             </div>
         </div>
     )
