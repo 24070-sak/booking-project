@@ -6,15 +6,20 @@ import '../styles/components/hotelCard.css'
 function HotelCard({ id, title, location, price, imageUrl, rating, dateAvailable }) {
     return (
         <div className="Card">
-            <img src={imageUrl} alt={title} className="card-image" />
+            <div className="card-image-wrapper">
+                <img src={imageUrl} alt={title} className="card-image" />
+                <div className="card-rating">
+                    {[...Array(5)].map((_, i) => (
+                        <span key={i} className={i < Math.round(rating) ? 'star filled' : 'star empty'}>
+                            {i < Math.round(rating) ? '★' : '☆'}
+                        </span>
+                    ))}
+                </div>
+            </div>
             <div className="card-content">
                 <h3 className="card-title">{title}</h3>
                 <p className="card-location"><i className="fa-solid fa-location-dot"></i> {location}</p>
                 <p className="card-price">{price} €</p>
-                <p className="card-date">{dateAvailable}</p>
-                <div className="card-rating">
-                    Av. Note {rating} ⭐
-                </div>
                 <Link to={`/hotel/${id}`} className="card-button-link">
                     <button className="card-button">
                         Voir plus
