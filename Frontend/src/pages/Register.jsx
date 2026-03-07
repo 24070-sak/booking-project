@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../services/authService";
+import { signInWithGoogle } from "../services/firebase";
 import "../styles/pages/register.css";
 import logo from "../assets/logos/logo.svg";
 import google from "../assets/logos/google.png";
@@ -69,11 +70,36 @@ function Register() {
     }
   };
 
-  const handleSocialLogin = (platform) => {
-    // Rediriger vers l'URL d'authentification du backend
-    // Note: Utiliser une variable d'environnement pour l'URL de base serait mieux
-    const backendUrl = "http://127.0.0.1:5000/api/auth";
-    window.location.href = `${backendUrl}/${platform.toLowerCase()}`;
+  const handleSocialLogin = async (platform) => {
+    if (platform === 'Google') {
+      try {
+        setLoading(true);
+        const { user, token } = await signInWithGoogle();
+
+        // Simuler la structure de données attendue
+        const userData = {
+          id: user.uid,
+          email: user.email,
+          name: user.displayName,
+          avatar: user.photoURL
+        };
+
+        // Stocker les infos comme avec un login classique
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", token); // Vous pouvez stocker le token Firebase ici
+
+        navigate("/");
+      } catch (err) {
+        setError("Erreur lors de la connexion Google.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Rediriger vers l'URL d'authentification du backend
+      // Note: Utiliser une variable d'environnement pour l'URL de base serait mieux
+      const backendUrl = "http://127.0.0.1:5000/api/auth";
+      window.location.href = `${backendUrl}/${platform.toLowerCase()}`;
+    }
   };
 
   return (
