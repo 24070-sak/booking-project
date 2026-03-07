@@ -32,7 +32,8 @@ def update_db_dump():
         cmd = [
             "mysqldump",
             "-h", "127.0.0.1",
-            "-u", "root",
+            "-u", "abass",
+            "-p12345678",
             "--no-create-db",
             "--skip-comments",
             "--skip-set-charset",

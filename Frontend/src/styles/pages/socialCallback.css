@@ -1,0 +1,76 @@
+/* =====================================================
+   ANTI-GRAVITY SOCIAL CALLBACK — Thème Spatial
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --void: #03060f;
+    --nebula1: #6c3aff;
+    --nebula2: #3a8fff;
+    --text-main: #f0edff;
+    --text-muted: #9490b8;
+}
+
+.social-callback-wrapper {
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--void);
+    position: relative;
+    overflow: hidden;
+    gap: 24px;
+}
+
+.social-callback-wrapper::before {
+    content: '';
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    top: -200px;
+    left: -200px;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(108, 58, 255, 0.35) 0%, transparent 70%);
+    animation: driftA 14s ease-in-out infinite alternate;
+}
+
+@keyframes driftA {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(80px, 60px) scale(1.15);
+    }
+}
+
+.social-callback-spinner {
+    width: 56px;
+    height: 56px;
+    border: 3px solid rgba(108, 58, 255, 0.2);
+    border-top-color: var(--nebula1);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    box-shadow: 0 0 20px rgba(108, 58, 255, 0.3);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.social-callback-text {
+    font-size: 18px;
+    font-weight: 600;
+    background: linear-gradient(90deg, var(--nebula1), var(--nebula2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Outfit', sans-serif;
+}

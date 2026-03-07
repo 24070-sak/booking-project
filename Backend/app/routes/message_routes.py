@@ -88,3 +88,39 @@ def mark_read(message_id):
     message.is_read = True
     db.session.commit()
     return jsonify({'message': 'Message marqué comme lu'}), 200
+
+
+@message_bp.route('/search-users', methods=['GET'])
+@jwt_required()
+def search_users():
+    """Rechercher des utilisateurs par nom ou email pour démarrer une conversation"""
+    user_id = get_jwt_identity()
+    query = request.args.get('q', '').strip()
+    
+    if len(query) < 2:
+        return jsonify({'users': []}), 200
+    
+    search_pattern = f"%{query}%"
+    
+    users = User.query.filter(
+        User.id != user_id,
+        User.is_active == True,
+        db.or_(
+            User.first_name.ilike(search_pattern),
+            User.last_name.ilike(search_pattern),
+            User.email.ilike(search_pattern),
+            User.username.ilike(search_pattern),
+            db.func.concat(User.first_name, ' ', User.last_name).ilike(search_pattern)
+        )
+    ).limit(10).all()
+    
+    return jsonify({
+        'users': [{
+            'id': u.id,
+            'first_name': u.first_name,
+            'last_name': u.last_name,
+            'email': u.email,
+            'profile_picture': u.profile_picture,
+            'role': u.role
+        } for u in users]
+    }), 200

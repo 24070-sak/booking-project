@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { register } from "../services/authService";
-import { signInWithGoogle } from "../services/firebase";
+import { register, socialLoginSync } from "../services/authService";
+import { signInWithGoogle, signInWithFacebook } from "../services/firebase";
 import "../styles/pages/register.css";
 import logo from "../assets/logos/logo.svg";
 import google from "../assets/logos/google.png";
@@ -31,9 +31,16 @@ function Register() {
     });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    // التحقق من الطول (الذي أضفناه)
+    if (formData.password.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères");
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setError("Les mots de passe ne correspondent pas");
@@ -51,13 +58,12 @@ function Register() {
         phone: formData.phone
       };
 
+      // الآن سيعمل الـ await بدون أخطاء
       const data = await register(userData);
 
-      // Stocker le token
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.access_token);
 
-      // Rediriger vers le dashboard ou l'accueil selon permissions
       if (data.user.access_dashboard) {
         navigate("/dashboard");
       } else {
@@ -69,36 +75,31 @@ function Register() {
       setLoading(false);
     }
   };
-
   const handleSocialLogin = async (platform) => {
-    if (platform === 'Google') {
-      try {
-        setLoading(true);
-        const { user, token } = await signInWithGoogle();
+    try {
+      setLoading(true);
+      setError("");
+      let firebaseUser;
 
-        // Simuler la structure de données attendue
-        const userData = {
-          id: user.uid,
-          email: user.email,
-          name: user.displayName,
-          avatar: user.photoURL
-        };
-
-        // Stocker les infos comme avec un login classique
-        localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", token); // Vous pouvez stocker le token Firebase ici
-
-        navigate("/");
-      } catch (err) {
-        setError("Erreur lors de la connexion Google.");
-      } finally {
-        setLoading(false);
+      if (platform === 'Google') {
+        const { user } = await signInWithGoogle();
+        firebaseUser = user;
+      } else if (platform === 'Facebook') {
+        const { user } = await signInWithFacebook();
+        firebaseUser = user;
       }
-    } else {
-      // Rediriger vers l'URL d'authentification du backend
-      // Note: Utiliser une variable d'environnement pour l'URL de base serait mieux
-      const backendUrl = "http://127.0.0.1:5000/api/auth";
-      window.location.href = `${backendUrl}/${platform.toLowerCase()}`;
+
+      if (firebaseUser) {
+        const data = await socialLoginSync(firebaseUser);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("token", data.access_token);
+        navigate("/");
+      }
+    } catch (err) {
+      console.error(err);
+      setError(`Erreur lors de la connexion ${platform}.`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -216,7 +217,7 @@ function Register() {
                 required
               />
               <i
-                className={`fa-solid ${showPsswd ? "fa-eye-slash" : "fa-eye"}`}
+                className={`fa-solid ${showPsswd ? "fa-eye-slash" : "fa-eye"} toggle-password`}
                 onClick={() => setShowPsswd(!showPsswd)}
                 style={{ cursor: "pointer" }}
                 id="toggle"
@@ -242,10 +243,9 @@ function Register() {
                 required
               />
               <i
-                className={`fa-solid ${showPsswd ? "fa-eye-slash" : "fa-eye"}`}
+                className={`fa-solid ${showPsswd ? "fa-eye-slash" : "fa-eye"} toggle-password`}
                 onClick={() => setShowPsswd(!showPsswd)}
                 style={{ cursor: "pointer" }}
-                id="toggle"
               ></i>
             </div>
           </div>

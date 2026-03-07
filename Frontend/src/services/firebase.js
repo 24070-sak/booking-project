@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 // 👉 لاحظ أننا أضفنا FacebookAuthProvider هنا
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, signOut, sendPasswordResetEmail } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCz5csiRhw8tzDSBQPYOzL81WevmiVJjyw",

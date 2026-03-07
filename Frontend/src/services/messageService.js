@@ -22,3 +22,9 @@ export async function markAsRead(messageId) {
     if (!response.ok) throw new Error("Erreur lors du marquage comme lu");
     return response.json();
 }
+
+export async function searchUsers(query) {
+    const response = await apiFetch(`/messages/search-users?q=${encodeURIComponent(query)}`);
+    if (!response.ok) throw new Error("Erreur lors de la recherche d'utilisateurs");
+    return response.json();
+}

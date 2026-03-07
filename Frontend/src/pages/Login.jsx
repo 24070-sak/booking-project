@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../services/authService";
-import { signInWithGoogle } from "../services/firebase";
+import { login, socialLoginSync } from "../services/authService";
+import { signInWithGoogle, signInWithFacebook } from "../services/firebase";
 import '../styles/pages/login.css'
 import logo from '../assets/logos/logo.svg'
 import google from '../assets/logos/google.png'
@@ -47,32 +47,30 @@ function Login() {
     }
   };
   const handleSocialLogin = async (platform) => {
-    if (platform === 'Google') {
-      try {
-        setLoading(true);
-        const { user, token } = await signInWithGoogle();
+    try {
+      setLoading(true);
+      setError("");
+      let firebaseUser;
 
-        // Simuler la structure de données attendue
-        const userData = {
-          id: user.uid,
-          email: user.email,
-          name: user.displayName,
-          avatar: user.photoURL
-        };
-
-        // Stocker les infos comme avec un login classique
-        localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", token); // Vous pouvez stocker le token Firebase ici
-
-        navigate("/");
-      } catch (err) {
-        setError("Erreur lors de la connexion Google.");
-      } finally {
-        setLoading(false);
+      if (platform === 'Google') {
+        const { user } = await signInWithGoogle();
+        firebaseUser = user;
+      } else if (platform === 'Facebook') {
+        const { user } = await signInWithFacebook();
+        firebaseUser = user;
       }
-    } else {
-      const backendUrl = "http://127.0.0.1:5000/api/auth";
-      window.location.href = `${backendUrl}/${platform.toLowerCase()}`;
+
+      if (firebaseUser) {
+        const data = await socialLoginSync(firebaseUser);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("token", data.access_token);
+        navigate("/");
+      }
+    } catch (err) {
+      console.error(err);
+      setError(`Erreur lors de la connexion ${platform}.`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,13 +122,13 @@ function Login() {
                 required
               />
               <i
-                className={`fa-solid ${showPsswd ? "fa-eye-slash" : "fa-eye"}`}
+                className={`fa-solid ${showPsswd ? "fa-eye-slash" : "fa-eye"} toggle-password`}
                 onClick={() => setShowPsswd(!showPsswd)}
                 id="togglePassword"
               ></i>
             </div>
             <span className="forgot-password">
-              <Link to="#"><span>{t('forgot_password')}</span></Link>
+              <Link to="/mot-de-passe-oublie"><span>{t('forgot_password')}</span></Link>
             </span>
           </div>
 

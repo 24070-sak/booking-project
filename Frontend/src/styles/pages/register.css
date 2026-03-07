@@ -93,11 +93,19 @@
     z-index: 2 !important;
 }
 
-.input-container #toggle {
+.input-container #toggle,
+.input-container .toggle-password {
     right: 20px !important;
     left: auto !important;
     cursor: pointer !important;
     pointer-events: auto !important;
+    color: #888 !important;
+    transition: color 0.2s ease !important;
+}
+
+.input-container #toggle:hover,
+.input-container .toggle-password:hover {
+    color: #006233 !important;
 }
 
 /* Register Button */

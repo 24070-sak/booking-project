@@ -1,0 +1,354 @@
+/* =====================================================
+   ANTI-GRAVITY SETTINGS PAGE — Thème Spatial
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --void: #03060f;
+    --deep: #080d1f;
+    --nebula1: #6c3aff;
+    --nebula2: #3a8fff;
+    --nebula3: #b93aff;
+    --glow: #7b5fff;
+    --glass-bg: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.10);
+    --glass-hover: rgba(255, 255, 255, 0.07);
+    --text-main: #f0edff;
+    --text-muted: #9490b8;
+    --success: #3affd3;
+    --danger: #ff5b7e;
+    --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- BACKGROUND ---------- */
+.settings-page {
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    background: var(--void);
+    position: relative;
+    overflow: hidden;
+    padding: 40px 24px 60px;
+}
+
+.settings-page::before,
+.settings-page::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(130px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.settings-page::before {
+    width: 700px;
+    height: 700px;
+    top: -250px;
+    left: -200px;
+    background: radial-gradient(circle, rgba(108, 58, 255, 0.3) 0%, transparent 70%);
+    animation: driftA 14s ease-in-out infinite alternate;
+}
+
+.settings-page::after {
+    width: 500px;
+    height: 500px;
+    bottom: -150px;
+    right: -100px;
+    background: radial-gradient(circle, rgba(58, 143, 255, 0.25) 0%, transparent 70%);
+    animation: driftB 18s ease-in-out infinite alternate;
+}
+
+@keyframes driftA {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(80px, 60px) scale(1.15);
+    }
+}
+
+@keyframes driftB {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(-60px, -80px) scale(1.2);
+    }
+}
+
+/* ---------- CARD ---------- */
+.settings-card {
+    position: relative;
+    z-index: 10;
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 28px;
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    box-shadow:
+        0 0 0 1px rgba(108, 58, 255, 0.15),
+        0 8px 40px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+    animation: fadeSlideIn 0.6s ease-out;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------- CARD HEADER ---------- */
+.settings-card-header {
+    padding: 32px 40px;
+    border-bottom: 1px solid var(--glass-border);
+    background: rgba(108, 58, 255, 0.06);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.settings-card-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0;
+    background: linear-gradient(90deg, var(--nebula1), var(--nebula2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.settings-card-header .header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(108, 58, 255, 0.3), rgba(58, 143, 255, 0.3));
+    border: 1px solid rgba(108, 58, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--nebula2);
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+/* ---------- CARD BODY ---------- */
+.settings-card-body {
+    padding: 36px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+/* ---------- SECTIONS ---------- */
+.settings-section {
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.settings-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.settings-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings-section-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 16px;
+    background: linear-gradient(var(--nebula1), var(--nebula2));
+    border-radius: 2px;
+}
+
+/* ---------- PROFILE LAYOUT ---------- */
+.settings-profile-container {
+    display: flex;
+    gap: 36px;
+    align-items: flex-start;
+}
+
+.settings-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 10px;
+}
+
+.settings-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(108, 58, 255, 0.2), rgba(58, 143, 255, 0.2));
+    border: 2px solid rgba(108, 58, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    box-shadow: 0 0 30px rgba(108, 58, 255, 0.25);
+    overflow: hidden;
+    position: relative;
+}
+
+.settings-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.settings-avatar-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+}
+
+.settings-form-section {
+    flex: 1;
+}
+
+/* ---------- INPUT GROUPS ---------- */
+.settings-input-group {
+    margin-bottom: 16px;
+}
+
+.settings-input-group:last-child {
+    margin-bottom: 0;
+}
+
+.settings-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+}
+
+.settings-input,
+.settings-select {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    color: var(--text-main);
+    font-size: 14px;
+    font-family: 'Outfit', sans-serif;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.settings-input::placeholder {
+    color: rgba(148, 144, 184, 0.5);
+}
+
+.settings-input:focus,
+.settings-select:focus {
+    background: rgba(108, 58, 255, 0.08);
+    border-color: var(--nebula1);
+    box-shadow: 0 0 0 3px rgba(108, 58, 255, 0.18), 0 0 20px rgba(108, 58, 255, 0.08);
+}
+
+.settings-select option {
+    background: #10162a;
+    color: var(--text-main);
+}
+
+/* Grid */
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ---------- SAVE BUTTON ---------- */
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 8px;
+}
+
+.settings-save-btn {
+    padding: 13px 36px;
+    background: linear-gradient(135deg, var(--nebula1), var(--nebula2));
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+    box-shadow: 0 4px 24px rgba(108, 58, 255, 0.4);
+}
+
+.settings-save-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.settings-save-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 36px rgba(108, 58, 255, 0.6);
+}
+
+.settings-save-btn:hover::after {
+    opacity: 1;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 700px) {
+    .settings-card-header {
+        padding: 24px 20px;
+    }
+
+    .settings-card-body {
+        padding: 24px 20px;
+    }
+
+    .settings-profile-container {
+        flex-direction: column;
+        gap: 24px;
+        align-items: center;
+    }
+
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+}
