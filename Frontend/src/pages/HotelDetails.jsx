@@ -217,7 +217,7 @@ function HotelDetails() {
                                 {hotel.owner_picture ? (
                                     <img src={hotel.owner_picture} alt={hotel.owner_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                                 ) : (
-                                    hotel.owner_name ? hotel.owner_name.charAt(0) : hotel.name.charAt(0)
+                                    <i className="fa-solid fa-user"></i>
                                 )}
                             </div>
                         </div>
@@ -349,7 +349,7 @@ function HotelDetails() {
                                             {review.user_picture ? (
                                                 <img src={review.user_picture} alt={review.user_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                                             ) : (
-                                                review.user_name.charAt(0)
+                                                <i className="fa-solid fa-user"></i>
                                             )}
                                         </div>
                                         <div className="user-meta">

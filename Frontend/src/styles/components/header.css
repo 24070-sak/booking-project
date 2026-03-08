@@ -163,12 +163,9 @@
     letter-spacing: 0.1px;
 }
 
-.labels > span:hover,
-.labels > a:hover {
-    background: #ffffff;
-    border-color: rgba(0, 98, 51, 0.25);
-    color: var(--primary-green);
-    box-shadow: 0 2px 8px rgba(0, 98, 51, 0.08);
+.labels > span:active,
+.labels > a:active {
+     opacity: 0.8;
 }
 
 /* ── Login / Dashboard CTA button ── */
@@ -197,10 +194,7 @@
     transition: color 0.2s ease;
 }
 
-.labels > span:hover i,
-.labels > a:hover i {
-    color: var(--primary-green);
-}
+/* Removed hover icon color change */
 
 /* ═══════════════════════════════════════════════════
    LOGO
@@ -230,10 +224,8 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.user-profile-link:hover {
-    background: #ffffff;
-    border-color: rgba(0, 98, 51, 0.25);
-    box-shadow: 0 2px 8px rgba(0, 98, 51, 0.08);
+.user-profile-link:active {
+    opacity: 0.8;
 }
 
 .header-profile-pic {
@@ -248,8 +240,8 @@
     width: 32px;
     height: 32px;
     border-radius: 6px;
-    background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
-    color: white;
+    background: transparent;
+    color: #4b5563; /* Dark gray for visibility */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -269,9 +261,7 @@
     transform: none !important;
 }
 
-.user-profile-link:hover .user-name {
-    color: var(--primary-green);
-}
+/* Removed hover user-name color change */
 
 /* ═══════════════════════════════════════════════════
    DESKTOP — Logout Button
@@ -442,9 +432,8 @@
         transition: background 0.2s ease, border-color 0.2s ease;
         flex-shrink: 0;
     }
-    .mobile-profile-chip:hover {
-        background: #fff;
-        border-color: rgba(0, 98, 51, 0.25);
+    .mobile-profile-chip:active {
+        opacity: 0.8;
     }
 
     .mobile-user-name {

@@ -20,9 +20,8 @@
     transition: all 0.3s ease;
 }
 
-.beautiful-filter-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 98, 51, 0.4);
+.beautiful-filter-btn:active {
+    transform: translateY(1px);
 }
 
 .beautiful-filter-btn i {

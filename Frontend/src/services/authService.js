@@ -118,7 +118,7 @@ export async function socialLoginSync(firebaseUser) {
         firebase_uid: firebaseUser.uid,
         first_name,
         last_name,
-        profile_picture: firebaseUser.photoURL || null
+        profile_picture: null // Force default icon instead of Google photo
       })
     });
 
@@ -148,7 +148,7 @@ export async function googleLogin(firebaseUser) {
         displayName: firebaseUser.displayName || "",
         first_name: nameParts[0] || firebaseUser.email.split("@")[0],
         last_name: nameParts.slice(1).join(" ") || "",
-        profile_picture: firebaseUser.photoURL || null
+        profile_picture: null // Force default icon instead of Google photo
       }),
       skipRedirect: true
     });

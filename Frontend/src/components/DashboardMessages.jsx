@@ -249,7 +249,7 @@ const DashboardMessages = () => {
                                             className="message-avatar-placeholder"
                                             style={{ display: other.picture ? 'none' : 'flex' }}
                                         >
-                                            {other.name?.charAt(0)?.toUpperCase()}
+                                            <i className="fa-solid fa-user"></i>
                                         </div>
                                     </div>
                                     <div className="message-text-content">
@@ -308,7 +308,7 @@ const DashboardMessages = () => {
                                             className="chat-header-avatar-placeholder"
                                             style={{ display: other.picture ? 'none' : 'flex' }}
                                         >
-                                            {other.name?.charAt(0)?.toUpperCase()}
+                                            <i className="fa-solid fa-user"></i>
                                         </div>
                                         <span className="chat-online-dot"></span>
                                     </div>
@@ -355,7 +355,7 @@ const DashboardMessages = () => {
                                                                     />
                                                                 ) : null}
                                                                 <span style={{ display: other.picture ? 'none' : 'flex' }}>
-                                                                    {other.name?.charAt(0)?.toUpperCase()}
+                                                                    <i className="fa-solid fa-user"></i>
                                                                 </span>
                                                             </div>
                                                         )}
@@ -459,7 +459,7 @@ const DashboardMessages = () => {
                                             {selectedUser.profile_picture ? (
                                                 <img src={getProfileUrl(selectedUser.profile_picture)} alt="" />
                                             ) : (
-                                                <span>{selectedUser.first_name?.charAt(0)}</span>
+                                                <span><i className="fa-solid fa-user"></i></span>
                                             )}
                                         </div>
                                         <span>{selectedUser.first_name} {selectedUser.last_name}</span>
@@ -492,7 +492,7 @@ const DashboardMessages = () => {
                                                         {user.profile_picture ? (
                                                             <img src={getProfileUrl(user.profile_picture)} alt="" />
                                                         ) : (
-                                                            <span>{user.first_name?.charAt(0)}</span>
+                                                            <span><i className="fa-solid fa-user"></i></span>
                                                         )}
                                                     </div>
                                                     <div className="search-result-info">

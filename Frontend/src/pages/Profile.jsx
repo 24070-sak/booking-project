@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { updateProfile } from "../services/authService";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import { Link } from "react-router-dom";
 import "../styles/pages/home.css"; // Reuse home styles for container
 
 function Profile() {
@@ -79,10 +78,58 @@ function Profile() {
     if (!user) return null;
 
     return (
-        <div className="home-body">
-            <Header />
-            <div className="home-container" style={{ marginTop: '40px', maxWidth: '800px' }}>
-                <h1 style={{ marginBottom: '30px' }}>Mon Profil</h1>
+        <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {/* Modern Back Button Header */}
+            <div style={{ 
+                width: '100%', 
+                maxWidth: '800px', 
+                display: 'flex', 
+                justifyContent: 'flex-start',
+                marginBottom: '30px',
+                padding: '20px 0'
+            }}>
+                <Link to="/" style={{ 
+                    textDecoration: 'none', 
+                    color: '#4b5563', 
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '12px',
+                    padding: '10px 20px',
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+                    transition: 'all 0.2s ease',
+                    border: '1px solid #e5e7eb'
+                }}
+                onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                    e.currentTarget.style.transform = 'translateX(-4px)';
+                }}
+                onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'white';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                }}
+                >
+                    <div style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        backgroundColor: '#f3f4f6',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#1a1a1a'
+                    }}>
+                        <i className="fa-solid fa-arrow-left"></i>
+                    </div>
+                    Retour à l'accueil
+                </Link>
+            </div>
+            
+            <div style={{ width: '100%', maxWidth: '800px' }}>
+                <h1 style={{ marginBottom: '30px', color: '#1a1a1a' }}>Mon Profil</h1>
 
                 <div style={{
                     backgroundColor: 'white',
@@ -114,16 +161,29 @@ function Profile() {
                             borderRadius: '50%',
                             overflow: 'hidden',
                             border: '4px solid #f0f0f0',
-                            backgroundColor: '#eee',
+                            backgroundColor: 'transparent',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
                         }}>
-                            {preview ? (
-                                <img src={preview} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            {preview && preview !== 'null' && preview !== 'undefined' ? (
+                                <>
+                                    <img 
+                                        src={preview} 
+                                        alt="" 
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'inline-block';
+                                        }}
+                                    />
+                                    <span style={{ fontSize: '3rem', color: '#ccc', display: 'none' }}>
+                                        <i className="fa-solid fa-user"></i>
+                                    </span>
+                                </>
                             ) : (
                                 <span style={{ fontSize: '3rem', color: '#ccc' }}>
-                                    {user.first_name.charAt(0)}
+                                    <i className="fa-solid fa-user"></i>
                                 </span>
                             )}
                         </div>
@@ -209,7 +269,6 @@ function Profile() {
 
                 </div>
             </div>
-            <Footer />
         </div>
     );
 }

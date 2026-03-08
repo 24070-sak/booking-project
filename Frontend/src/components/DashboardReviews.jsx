@@ -66,7 +66,7 @@ const DashboardReviews = () => {
                                         {review.user_picture ? (
                                             <img src={review.user_picture} alt={review.user_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                                         ) : (
-                                            review.user_name.charAt(0)
+                                            <i className="fa-solid fa-user"></i>
                                         )}
                                     </div>
                                     <div className="user-details">
