@@ -103,7 +103,7 @@ const DashboardSettings = () => {
                                     <img src={preview} alt="Avatar" />
                                 ) : (
                                     <span className="avatar-placeholder">
-                                        {profile.first_name.charAt(0)}
+                                        <i className="fa-solid fa-user"></i>
                                     </span>
                                 )}
                             </div>

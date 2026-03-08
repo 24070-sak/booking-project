@@ -62,11 +62,24 @@ function Header() {
                             )}
 
                             <Link to="/profile" className="user-profile-link">
-                                {user.profile_picture ? (
-                                    <img src={user.profile_picture} alt="Profile" className="header-profile-pic" />
+                                {user.profile_picture && user.profile_picture !== 'null' && user.profile_picture !== 'undefined' ? (
+                                    <>
+                                        <img 
+                                            src={user.profile_picture} 
+                                            alt="" 
+                                            className="header-profile-pic" 
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                e.target.nextSibling.style.display = 'flex';
+                                            }}
+                                        />
+                                        <div className="header-profile-placeholder" style={{ display: 'none' }}>
+                                            <i className="fa-solid fa-user"></i>
+                                        </div>
+                                    </>
                                 ) : (
                                     <div className="header-profile-placeholder">
-                                        {user.first_name ? user.first_name.charAt(0).toUpperCase() : 'U'}
+                                        <i className="fa-solid fa-user"></i>
                                     </div>
                                 )}
                                 <span className="user-name">{user.first_name}</span>
@@ -89,11 +102,24 @@ function Header() {
                     {user ? (
                         <>
                             <Link to="/profile" className="mobile-profile-chip">
-                                {user.profile_picture ? (
-                                    <img src={user.profile_picture} alt="Profile" className="header-profile-pic" />
+                                {user.profile_picture && user.profile_picture !== 'null' && user.profile_picture !== 'undefined' ? (
+                                    <>
+                                        <img 
+                                            src={user.profile_picture} 
+                                            alt="" 
+                                            className="header-profile-pic" 
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                e.target.nextSibling.style.display = 'flex';
+                                            }}
+                                        />
+                                        <div className="header-profile-placeholder" style={{ display: 'none' }}>
+                                            <i className="fa-solid fa-user"></i>
+                                        </div>
+                                    </>
                                 ) : (
                                     <div className="header-profile-placeholder">
-                                        {user.first_name ? user.first_name.charAt(0).toUpperCase() : 'U'}
+                                        <i className="fa-solid fa-user"></i>
                                     </div>
                                 )}
                                 <span className="mobile-user-name">{user.first_name}</span>
@@ -113,11 +139,24 @@ function Header() {
                                 {navOpen && (
                                     <div className="nav-dropdown">
                                         <div className="nav-dropdown-header">
-                                            {user.profile_picture ? (
-                                                <img src={user.profile_picture} alt="Profile" className="nav-dropdown-avatar" />
+                                            {user.profile_picture && user.profile_picture !== 'null' && user.profile_picture !== 'undefined' ? (
+                                                <>
+                                                    <img 
+                                                        src={user.profile_picture} 
+                                                        alt="" 
+                                                        className="nav-dropdown-avatar" 
+                                                        onError={(e) => {
+                                                            e.target.style.display = 'none';
+                                                            e.target.nextSibling.style.display = 'flex';
+                                                        }}
+                                                    />
+                                                    <div className="nav-dropdown-avatar-placeholder" style={{ display: 'none' }}>
+                                                        <i className="fa-solid fa-user"></i>
+                                                    </div>
+                                                </>
                                             ) : (
                                                 <div className="nav-dropdown-avatar-placeholder">
-                                                    {user.first_name ? user.first_name.charAt(0).toUpperCase() : 'U'}
+                                                    <i className="fa-solid fa-user"></i>
                                                 </div>
                                             )}
                                             <div className="nav-dropdown-user-info">

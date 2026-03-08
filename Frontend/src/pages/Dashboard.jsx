@@ -158,7 +158,7 @@ function Dashboard() {
             <img src={user.profile_picture} alt="Profile" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginRight: '15px' }} />
           ) : (
             <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', marginRight: '15px' }}>
-              {user.first_name ? user.first_name.charAt(0).toUpperCase() : '?'}
+              <i className="fa-solid fa-user"></i>
             </div>
           )}
           <div>
