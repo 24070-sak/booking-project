@@ -17,8 +17,8 @@ export async function apiFetch(endpoint, options = {}) {
         delete headers["Content-Type"];
     }
 
-    // Add Authorization header if token exists
-    if (token) {
+    // Add Authorization header if token exists and is valid
+    if (token && token !== "null" && token !== "undefined") {
         headers["Authorization"] = `Bearer ${token}`;
     }
 
