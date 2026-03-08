@@ -2,26 +2,26 @@ import os
 from langchain_community.document_loaders import Docx2txtLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq  # 👈 NOUVEAU : On importe Groq
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_classic.chains.combine_documents import create_stuff_documents_chain
 from langchain_classic.chains import create_retrieval_chain
 
-# 1. API Key pour le cerveau
-os.environ["GOOGLE_API_KEY"] = "AIzaSyDxMtTLuUZ4PyRE7s1E1mO61XvRKD7aA_w"
+# 1. API Key Groq (Plus besoin de VPN en Mauritanie !)
+os.environ["GROQ_API_KEY"] = "xxxxxxxxxxxxxx"
 
-print("📚 Reading the Word document...")
-# 2. Load your Word document
+print("📚 Lecture du document Word...")
+# 2. Charger le document Word
 loader = Docx2txtLoader("vibepi_rules.docx")
 docs = loader.load()
 
-# 3. Split the text into smaller chunks
+# 3. Découper le texte
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 splits = text_splitter.split_documents(docs)
 
-print("🧠 Saving to local ChromaDB memory (Fast & Light)...")
-# 4. Save to ChromaDB avec le modèle léger
+print("🧠 Sauvegarde dans la mémoire locale ChromaDB...")
+# 4. Sauvegarder dans ChromaDB
 vectorstore = Chroma.from_documents(
     documents=splits, 
     embedding=FastEmbedEmbeddings(),
@@ -29,16 +29,17 @@ vectorstore = Chroma.from_documents(
 )
 retriever = vectorstore.as_retriever()
 
-# 5. Set up the strict AI Brain (NOUVEAU MODÈLE ICI 👇)
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0)
+# 5. Configurer le NOUVEAU Cerveau IA (LLaMA 3 ultra-rapide) 👇
+llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0)
 
-# 6. The Strict Rule Prompt (En Français ! 🇫🇷)
+# 6. Le Prompt strict
 system_prompt = (
-    "Tu es l'assistant du support client officiel de Hotely. "
+    "Tu es l'assistant du support client officiel de Vibepi. "
     "Utilise UNIQUEMENT les éléments de contexte suivants pour répondre à la question de l'utilisateur. "
-    "Si tu ne connais pas la réponse ou si ce n'est pas dans le contexte, dis : 'Je suis désolé, je n'ai pas cette information, veuillez contacter le support Vibepi.' "
-    "N'invente aucune information.\n"
-    "RÉPONDS TOUJOURS EN FRANÇAIS, quelle que soit la langue du document d'origine.\n\n"
+    "Si tu ne trouves pas la réponse exacte dans le document, ne l'invente pas. "
+    "À la place, réponds exactement ceci : 'Je suis désolé, je n'ai pas cette information dans mes fichiers. "
+    "Veuillez contacter le support à l'adresse suivante : 24070@supnum.mr'\n"
+    "RÉPONDS TOUJOURS EN FRANÇAIS.\n\n"
     "{context}"
 )
 
@@ -47,16 +48,16 @@ prompt = ChatPromptTemplate.from_messages([
     ("human", "{input}"),
 ])
 
-# 7. Connect everything together
+# 7. Connecter le tout
 question_answer_chain = create_stuff_documents_chain(llm, prompt)
 rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
-print("🤖 Bot is ready! Asking a test question...\n")
+print("🤖 Le Bot est prêt ! Lancement de la question test...\n")
 print("-" * 30)
 
-# 8. Test the Bot!
+# 8. Tester le Bot !
 question = "À quelle heure est l'enregistrement (check-in) ?"
 print(f"User: {question}")
 
 response = rag_chain.invoke({"input": question})
-print(f"Hotely Bot: {response['answer']}")
+print(f"Vibepi Bot: {response['answer']}")
