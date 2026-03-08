@@ -25,8 +25,29 @@ export async function login(email, password) {
 
     return await response.json();
   } catch (error) {
+    // FALLBACK: Try classic backend login if Firebase fails
+    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+      console.log("Firebase login failed, trying classic backend login...");
+      try {
+        const response = await apiFetch("/auth/login", {
+          method: "POST",
+          body: JSON.stringify({ email: email.trim(), password }),
+          skipRedirect: true
+        });
+
+        if (response.ok) {
+          return await response.json();
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Identifiants incorrects");
+        }
+      } catch (backendError) {
+        throw backendError;
+      }
+    }
+
     if (error.code) {
-      // Firebase-specific errors
+      // Firebase-specific errors mapping
       const firebaseErrors = {
         'auth/user-not-found': "Email inconnu",
         'auth/wrong-password': "Mot de passe incorrect",

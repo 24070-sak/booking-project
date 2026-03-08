@@ -7,11 +7,11 @@ from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_classic.chains.combine_documents import create_stuff_documents_chain
-from langchain_classic.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_retrieval_chain
 
 # 1. Ta clé Groq
-os.environ["GROQ_API_KEY"] = "xxxxxxxxxxxxxx"
+os.environ["GROQ_API_KEY"] = "VOTRE_CLE_API_GROQ_ICI"
 
 app = FastAPI()
 

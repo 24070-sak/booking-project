@@ -205,7 +205,7 @@ const DashboardMessages = () => {
 
     return (
         <div className="dashboard-content dashboard-messages-content">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                 <h2>Messages</h2>
             </div>
 
