@@ -1,51 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getNotifications, markAsRead, markAllAsRead } from '../services/notificationService';
+import { useNotification } from '../context/NotificationContext';
+import { resolveImageUrl } from '../utils/urlHelper';
 import '../styles/pages/notifications.css';
 
 const Notifications = () => {
-    const [notifications, setNotifications] = useState([]);
+    const { notifications, unreadCount, markAsRead, markAllAsRead, fetchNotifications } = useNotification();
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all'); // 'all' | 'unread'
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchNotifications();
-    }, []);
-
-    const fetchNotifications = async () => {
-        try {
-            setLoading(true);
-            const data = await getNotifications();
-            setNotifications(data.notifications || []);
-        } catch (err) {
-            console.error("Impossible de récupérer les notifications:", err);
-        } finally {
+        // Fetch fresh data when entering the page
+        const load = async () => {
+            await fetchNotifications();
             setLoading(false);
-        }
-    };
+        };
+        load();
+    }, [fetchNotifications]);
 
     const handleMarkAsRead = async (id) => {
-        try {
-            await markAsRead(id);
-            setNotifications(prev =>
-                prev.map(n => n.id === id ? { ...n, is_read: true } : n)
-            );
-        } catch (err) {
-            console.error(err);
-        }
+        await markAsRead(id);
     };
 
     const handleMarkAllAsRead = async () => {
-        try {
-            await markAllAsRead();
-            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
-        } catch (err) {
-            console.error(err);
-        }
+        await markAllAsRead();
     };
 
-    const unreadCount = notifications.filter(n => !n.is_read).length;
     const displayed = filter === 'unread'
         ? notifications.filter(n => !n.is_read)
         : notifications;
@@ -133,13 +114,29 @@ const Notifications = () => {
                             >
                                 {/* Icon */}
                                 <div className={`notif-page-icon ${!notif.is_read ? 'unread-icon' : ''}`}>
-                                    <i className={`fa-solid ${getIcon(notif.type)}`}></i>
+                                    {notif.type === 'message' && notif.sender_picture ? (
+                                        <img 
+                                            src={resolveImageUrl(notif.sender_picture)} 
+                                            alt="" 
+                                            className="notif-sender-img"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                                e.target.nextSibling.style.display = 'block';
+                                            }}
+                                        />
+                                    ) : null}
+                                    <i className={`fa-solid ${getIcon(notif.type)}`} style={{ display: notif.type === 'message' && notif.sender_picture ? 'none' : 'block' }}></i>
                                 </div>
 
                                 {/* Content */}
                                 <div className="notif-page-content">
                                     <div className="notif-page-row">
-                                        <p className="notif-page-title">{notif.title}</p>
+                                        <p className="notif-page-title">
+                                            {notif.type === 'message' && notif.sender_name
+                                                ? `Message de ${notif.sender_name}`
+                                                : notif.title
+                                            }
+                                        </p>
                                         {!notif.is_read && <span className="notif-dot"></span>}
                                     </div>
                                     <p className="notif-page-message">{notif.message}</p>
@@ -148,20 +145,44 @@ const Notifications = () => {
                                             <i className="fa-regular fa-clock"></i>
                                             {formatDate(notif.created_at)}
                                         </span>
-                                        {(notif.room_id || notif.hotel_id) && (
-                                            <div className="notif-page-links" onClick={e => e.stopPropagation()}>
-                                                {notif.room_id && (
-                                                    <Link to={`/room/${notif.room_id}`} className="notif-page-link">
-                                                        <i className="fa-solid fa-door-open"></i> Voir la chambre
-                                                    </Link>
-                                                )}
-                                                {notif.hotel_id && (
-                                                    <Link to={`/hotel/${notif.hotel_id}`} className="notif-page-link">
-                                                        <i className="fa-solid fa-hotel"></i> Voir l'hôtel
-                                                    </Link>
-                                                )}
-                                            </div>
-                                        )}
+                                        <div className="notif-page-links" onClick={e => e.stopPropagation()}>
+                                            {(notif.booking_id || notif.type === 'payment') && (
+                                                <button
+                                                    onClick={() => navigate('/dashboard', {
+                                                        state: {
+                                                            activeTab: 'reservations',
+                                                            bookingId: notif.booking_id,
+                                                            targetTab: notif.type === 'payment' ? 'payments' : 'bookings'
+                                                        }
+                                                    })}
+                                                    className="notif-page-link-btn"
+                                                >
+                                                    <i className={`fa-solid ${notif.type === 'payment' ? 'fa-credit-card' : 'fa-calendar-check'}`}></i>
+                                                    {notif.type === 'payment' ? 'Voir le paiement' : 'Voir la réservation'}
+                                                </button>
+                                            )}
+                                            {notif.type === 'message' && (
+                                                <button
+                                                    onClick={() => navigate('/messages', {
+                                                        state: { senderId: notif.sender_id }
+                                                    })}
+                                                    className="notif-page-link-btn"
+                                                >
+                                                    <i className="fa-solid fa-comment-dots"></i>
+                                                    Voir le message
+                                                </button>
+                                            )}
+                                            {notif.room_id && (
+                                                <Link to={`/room/${notif.room_id}`} className="notif-page-link">
+                                                    <i className="fa-solid fa-door-open"></i> Voir la chambre
+                                                </Link>
+                                            )}
+                                            {notif.hotel_id && (
+                                                <Link to={`/hotel/${notif.hotel_id}`} className="notif-page-link">
+                                                    <i className="fa-solid fa-hotel"></i> Voir l'hôtel
+                                                </Link>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

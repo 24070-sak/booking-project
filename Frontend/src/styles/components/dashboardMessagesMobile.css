@@ -1,0 +1,72 @@
+@media (max-width: 768px) {
+    .messages-container {
+        width: 100% !important;
+        height: calc(100vh - 160px) !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
+        display: block !important;
+        box-shadow: none !important;
+        position: relative !important;
+    }
+
+    .messages-list {
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+        display: block !important;
+        background: white !important;
+    }
+
+    .chat-area {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 5000 !important;
+        background: white !important;
+        display: none !important;
+    }
+
+    .chatbot-integrated-view .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 20px;
+    }
+
+    .chatbot-integrated-view .chatbot-avatar {
+        width: 45px;
+        height: 45px;
+        background: #006233;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+    }
+
+    .show-chat .chat-area {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* Hide conversation list when chat is open on mobile */
+    .show-chat .messages-list {
+        display: none !important;
+    }
+
+    /* Message items on mobile */
+    .message-item {
+        padding: 15px 20px !important;
+    }
+
+    .message-avatar-wrapper {
+        width: 50px !important;
+        height: 50px !important;
+    }
+}

@@ -1,0 +1,439 @@
+.floating-chatbot-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+}
+
+/* Base floating button */
+.fc-fab {
+    background: #006233;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 98, 51, 0.4);
+    transition: transform 0.3s ease, background 0.3s;
+}
+
+.fc-fab:hover {
+    transform: scale(1.1);
+    background: #004d28;
+}
+
+/* Chat window */
+.fc-window {
+    width: 350px;
+    height: 500px;
+    max-height: calc(100vh - 100px);
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Header */
+.fc-header {
+    background: #006233;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.fc-header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fc-avatar {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.fc-title h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.fc-status {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.9;
+}
+
+.fc-status-dot.online {
+    width: 8px;
+    height: 8px;
+    background: #2ecc71;
+    border-radius: 50%;
+}
+
+.fc-close {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.fc-close:hover {
+    opacity: 1;
+}
+
+/* Body */
+.fc-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: #f8faf9;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Message styling */
+.fc-msg-wrapper {
+    display: flex;
+    margin-bottom: 16px;
+    max-width: 95%;
+}
+
+.fc-msg-wrapper.bot {
+    align-self: flex-start;
+}
+
+.fc-msg-wrapper.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.fc-msg-avatar-small {
+    width: 28px;
+    height: 28px;
+    background: #006233;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-right: 8px;
+    margin-top: 4px;
+    flex-shrink: 0;
+}
+
+.fc-msg-wrapper.user .fc-msg-avatar-small {
+    display: none;
+}
+
+.fc-msg-bubble {
+    padding: 12px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.fc-msg-bubble.bot {
+    background: white;
+    color: #1a1a1a;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.fc-msg-bubble.user {
+    background: #006233;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+/* Typing indicator */
+.typing-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #abc3b5;
+    border-radius: 50%;
+    margin-right: 4px;
+    animation: fc-typing 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; margin-right: 0;}
+
+@keyframes fc-typing {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+/* Suggestions */
+.fc-suggestions {
+    margin-top: auto;
+    padding-top: 10px;
+}
+.fc-suggestions p {
+    font-size: 13px;
+    color: #6b8c7a;
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+
+.fc-suggestions-scroll {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.fc-suggestion-pill {
+    background: white;
+    border: 1px solid #d0dfd7;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #006233;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fc-suggestion-pill:hover {
+    background: #f0f7f3;
+    border-color: #006233;
+}
+
+/* Input Area */
+.fc-input-area {
+    padding: 16px;
+    background: white;
+    border-top: 1px solid #edf2f7;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.fc-input-area input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 24px;
+    border: 1px solid #d0dfd7;
+    outline: none;
+    font-size: 14px;
+    background: #f8faf9;
+    color: #1a1a1a;
+}
+
+.fc-input-area input:focus {
+    border-color: #006233;
+    background: white;
+}
+
+.fc-send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #006233;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.fc-send-btn:hover:not(:disabled) {
+    background: #004d28;
+}
+
+.fc-send-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Rich hotel listings */
+.fc-hotels-compact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.fc-hotel-mini-card {
+    display: flex;
+    gap: 10px;
+    background: #f0f7f3;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.fc-hotel-mini-card:hover {
+    background: #e3ece7;
+}
+
+.fc-hotel-mini-card img {
+    width: 60px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.fc-mini-card-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.fc-mini-card-text strong {
+    font-size: 13px;
+    color: #1a1a1a;
+    display: block;
+}
+
+.fc-mini-card-text span {
+    font-size: 11px;
+    color: #006233;
+    display: block;
+}
+
+/* Hotel Details */
+.fc-hotel-details-view {
+    margin-top: 12px;
+}
+
+.fc-hotel-details-img-wrapper {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.fc-hotel-details-img-wrapper img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+}
+
+.fc-hotel-details-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+}
+
+.fc-hotel-details-overlay strong {
+    display: block;
+    font-size: 14px;
+}
+
+.fc-hotel-details-overlay span {
+    font-size: 11px;
+}
+
+.fc-rooms-list {
+    margin-top: 10px;
+}
+
+.fc-rooms-title {
+    font-size: 12px;
+    color: #6b8c7a;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.fc-room-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: #f0f7f3;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 6px;
+}
+
+.fc-room-item:hover {
+    background: #e3ece7;
+}
+
+.fc-room-item img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.fc-room-info strong {
+    font-size: 12px;
+    color: #006233;
+    display: block;
+}
+
+.fc-room-info span {
+    font-size: 11px;
+    color: #1a1a1a;
+    display: block;
+}
+
+/* Animations */
+.slide-up-animation {
+    animation: fc-slide-up 0.3s ease-out;
+}
+
+@keyframes fc-slide-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pulse-animation {
+    animation: fc-pulse 2s infinite;
+}
+
+@keyframes fc-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 98, 51, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 98, 51, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 98, 51, 0); }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .floating-chatbot-container {
+        bottom: 80px; /* Above mobile navbar */
+        right: 16px;
+    }
+    
+    .fc-window {
+        width: calc(100vw - 32px);
+        max-height: calc(100vh - 120px);
+    }
+}

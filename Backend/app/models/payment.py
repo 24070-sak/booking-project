@@ -34,5 +34,6 @@ class Payment(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'booking_reference': self.booking.booking_reference if self.booking else None,
             'guest_name': f"{self.booking.user.first_name} {self.booking.user.last_name}" if self.booking and self.booking.user else "Inconnu",
+            'guest_picture': self.booking.user.profile_picture if self.booking and self.booking.user else None,
             'hotel_name': self.booking.room.hotel.name if self.booking and self.booking.room and self.booking.room.hotel else "Hôtel inconnu"
         }

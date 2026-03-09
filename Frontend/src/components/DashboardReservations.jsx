@@ -2,17 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { getOwnerBookings, getAllBookings, confirmBooking, rejectBooking, verifyPayment } from '../services/bookingService';
 import { getPayments } from '../services/dashboardService';
 import { showError, showSuccess, showConfirm } from '../utils/alerts';
+import { useNotification } from '../context/NotificationContext';
+import { resolveImageUrl } from '../utils/urlHelper';
 import '../styles/components/dashboardReservations.css';
 
-const DashboardReservations = () => {
+const DashboardReservations = ({ targetBookingId, targetPaymentId, initialTab }) => {
+    const { notifications, markByTypeAsRead } = useNotification();
     const [bookings, setBookings] = useState([]);
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('bookings');
+    const [activeTab, setActiveTab] = useState(initialTab || 'bookings');
     const [selectedPayment, setSelectedPayment] = useState(null);
     const [selectedBooking, setSelectedBooking] = useState(null);
+
+    useEffect(() => {
+        if (activeTab === 'payments') {
+            markByTypeAsRead('payment');
+        } else if (activeTab === 'bookings') {
+            markByTypeAsRead('booking');
+        }
+    }, [activeTab]);
 
     useEffect(() => {
         fetchAll(true);
@@ -43,6 +54,25 @@ const DashboardReservations = () => {
         }
     }
 
+    // Auto-select booking or payment if ID is provided
+    useEffect(() => {
+        if (!loading && bookings.length > 0) {
+            if (targetBookingId) {
+                const booking = bookings.find(b => b.id === Number(targetBookingId));
+                if (booking) {
+                    setSelectedBooking(booking);
+                    setActiveTab('bookings');
+                }
+            } else if (targetPaymentId) {
+                const payment = payments.find(p => p.id === Number(targetPaymentId) || p.transaction_id === targetPaymentId);
+                if (payment) {
+                    setSelectedPayment(payment);
+                    setActiveTab('payments');
+                }
+            }
+        }
+    }, [loading, bookings, payments, targetBookingId, targetPaymentId]);
+
     const getStatusClass = (status) => {
         switch (status?.toLowerCase()) {
             case 'confirmed': return 'status-confirmed';
@@ -65,10 +95,10 @@ const DashboardReservations = () => {
 
     const translatePaymentStatus = (status) => {
         switch (status?.toLowerCase()) {
-            case 'completed': return 'Terminé';
+            case 'completed': return 'Accepté';
             case 'pending': return 'En attente';
             case 'refunded': return 'Remboursé';
-            case 'failed': return 'Échoué';
+            case 'failed': return 'Refusé';
             default: return status;
         }
     };
@@ -191,7 +221,11 @@ const DashboardReservations = () => {
                 >
                     <i className="fa-solid fa-book"></i>
                     Réservations
-                    {pendingBookings > 0 && <span className="tab-badge">{pendingBookings}</span>}
+                    {notifications.filter(n => !n.is_read && n.type === 'booking').length > 0 && (
+                        <span className="tab-badge">
+                            {notifications.filter(n => !n.is_read && n.type === 'booking').length}
+                        </span>
+                    )}
                 </button>
                 <button
                     className={`reservations-tab ${activeTab === 'payments' ? 'active' : ''}`}
@@ -199,13 +233,17 @@ const DashboardReservations = () => {
                 >
                     <i className="fa-solid fa-credit-card"></i>
                     Paiements
-                    {pendingPayments > 0 && <span className="tab-badge">{pendingPayments}</span>}
+                    {notifications.filter(n => !n.is_read && n.type === 'payment').length > 0 && (
+                        <span className="tab-badge">
+                            {notifications.filter(n => !n.is_read && n.type === 'payment').length}
+                        </span>
+                    )}
                 </button>
             </div>
 
             {/* Bookings Tab */}
             {activeTab === 'bookings' && (
-                <div className="reservations-table-wrap">
+                <div className="reservations-table-wrap table-responsive">
                     {bookings.length > 0 ? (
                         <table>
                             <thead>
@@ -228,8 +266,21 @@ const DashboardReservations = () => {
                                         </td>
                                         <td data-label="Client">
                                             <div className="client-cell">
-                                                <div className="client-avatar">
-                                                    {res.user?.first_name?.[0]}{res.user?.last_name?.[0]}
+                                                <div className="client-avatar-wrap">
+                                                    {res.user?.profile_picture ? (
+                                                        <img 
+                                                            src={resolveImageUrl(res.user.profile_picture)} 
+                                                            alt={`${res.user?.first_name} ${res.user?.last_name}`}
+                                                            className="client-avatar-img"
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none';
+                                                                e.target.nextSibling.style.display = 'flex';
+                                                            }}
+                                                        />
+                                                    ) : null}
+                                                    <div className="client-avatar" style={{ display: res.user?.profile_picture ? 'none' : 'flex' }}>
+                                                        {res.user?.first_name?.[0]}{res.user?.last_name?.[0]}
+                                                    </div>
                                                 </div>
                                                 <div>
                                                     <div className="client-name">{res.user?.first_name} {res.user?.last_name}</div>
@@ -468,18 +519,28 @@ const DashboardReservations = () => {
                         </div>
                         <div className="modal-body">
                             {/* User Info */}
-                            <h4 style={{ color: 'var(--primary-green, #006233)', margin: '0 0 12px 0', fontSize: '14px' }}>
-                                <i className="fa-solid fa-user"></i> Informations Client
-                            </h4>
+                            <div className="modal-user-header" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '16px' }}>
+                                <div className="modal-user-avatar" style={{ width: '60px', height: '60px', borderRadius: '50%', overflow: 'hidden', border: '3px solid rgba(0, 98, 51, 0.15)', flexShrink: 0 }}>
+                                    {selectedBooking.user?.profile_picture ? (
+                                        <img src={resolveImageUrl(selectedBooking.user.profile_picture)} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <div className="client-avatar" style={{ width: '100%', height: '100%', borderRadius: '0', fontSize: '20px' }}>
+                                            {selectedBooking.user?.first_name?.[0]}{selectedBooking.user?.last_name?.[0]}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="modal-info-grid" style={{ marginBottom: '0', flex: 1 }}>
+                                    <div className="modal-field">
+                                        <label>Nom</label>
+                                        <span>{selectedBooking.user?.first_name} {selectedBooking.user?.last_name}</span>
+                                    </div>
+                                    <div className="modal-field">
+                                        <label>Email</label>
+                                        <span>{selectedBooking.user?.email}</span>
+                                    </div>
+                                </div>
+                            </div>
                             <div className="modal-info-grid">
-                                <div className="modal-field">
-                                    <label>Nom</label>
-                                    <span>{selectedBooking.user?.first_name} {selectedBooking.user?.last_name}</span>
-                                </div>
-                                <div className="modal-field">
-                                    <label>Email</label>
-                                    <span>{selectedBooking.user?.email}</span>
-                                </div>
                                 <div className="modal-field">
                                     <label>Nb de personnes</label>
                                     <span>{selectedBooking.num_guests}</span>

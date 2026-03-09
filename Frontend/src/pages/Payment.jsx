@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
 import { getBooking, processPayment, submitLocalPayment } from "../services/bookingService";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { resolveImageUrl } from "../utils/urlHelper";
 import '../styles/pages/payment.css';
 
 function Payment() {
@@ -256,7 +257,9 @@ function Payment() {
                             <div className="summary-content">
                                 {booking.room && (
                                     <div className="hotel-mini-info">
-                                        <img src={booking.room.image_url} alt="Room" className="hotel-thumb" />
+                                        <div className="room-thumbnail">
+                                            <img src={resolveImageUrl(booking.room.image_url)} alt="Room" className="hotel-thumb" />
+                                        </div>
                                         <div className="hotel-text">
                                             <h4>{booking.room.name}</h4>
                                             <div className="hotel-loc">
