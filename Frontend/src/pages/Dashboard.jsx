@@ -23,7 +23,8 @@ import {
   PaymentsIcon,
   AnalyticsIcon,
   SettingsIcon,
-  LogoutIcon
+  LogoutIcon,
+  HomeIcon
 } from '../components/DashboardIcons';
 
 function Dashboard() {
@@ -140,6 +141,11 @@ function Dashboard() {
               <span>Centre de Contrôle</span>
             </Link>
           )}
+
+          <Link to="/" className="label">
+            <HomeIcon className="icon" />
+            <span>Aller à l'accueil</span>
+          </Link>
         </div>
         <div>
           <Link to="/connexion" id="logout" onClick={() => {
@@ -162,7 +168,9 @@ function Dashboard() {
             </div>
           )}
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#1f2937' }}>{user.first_name} {user.last_name}</h2>
+            <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#1f2937' }}>
+              {user.role === 'manager' || user.role === 'admin' ? user.first_name : `${user.first_name} ${user.last_name}`}
+            </h2>
             <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem' }}>{user.email}</p>
           </div>
         </div>

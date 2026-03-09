@@ -139,6 +139,36 @@ body {
   z-index: 1;
 }
 
+/* ══ "Aller à l'accueil" — gold pill CTA ══ */
+.dashboard-labels a.label[href="/"] {
+  margin-top: auto;
+  padding: 11px 18px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 215, 0, 0.5);
+  border-radius: 100px;
+  color: #FFD700 !important;
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: 0.4px;
+  gap: 10px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.dashboard-labels a.label[href="/"]:hover {
+  background: rgba(255, 215, 0, 0.08);
+  border-color: rgba(255, 215, 0, 0.8);
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.dashboard-labels a.label[href="/"] .icon {
+  color: #FFD700;
+  fill: #FFD700;
+  stroke: #FFD700;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.4));
+}
+
 .dashboard-labels .label {
   cursor: pointer;
   padding: 12px 18px;

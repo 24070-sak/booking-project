@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
-import { auth } from "../services/firebase";
-import { sendPasswordResetEmail } from "firebase/auth";
+import { forgotPassword } from "../services/authService";
 import logo from '../assets/logos/logo.svg';
 import '../styles/pages/login.css';
 
@@ -12,6 +11,7 @@ function ForgotPassword() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const navigate = useNavigate();
 
     // Send reset link to email
     const handleSendLink = async (e) => {
@@ -26,10 +26,12 @@ function ForgotPassword() {
 
         setLoading(true);
         try {
-            await sendPasswordResetEmail(auth, email);
-            setSuccess("Un e-mail de réinitialisation a été envoyé par Firebase ! Veuillez vérifier vos emails.");
+            await forgotPassword(email);
+            setSuccess("Un code de réinitialisation a été envoyé ! Veuillez vérifier vos emails.");
+            setTimeout(() => {
+                navigate(`/reset-password?email=${encodeURIComponent(email)}`);
+            }, 2000);
         } catch (err) {
-            // Check for specific firebase error codes if needed, using general message for now
             setError(err.message || "Erreur lors de l'envoi de l'email.");
         } finally {
             setLoading(false);
@@ -48,7 +50,7 @@ function ForgotPassword() {
 
                 <form className="login-form" onSubmit={handleSendLink}>
                     <p style={{ textAlign: 'center', color: '#4b5563', fontSize: '14px', marginTop: '-10px', marginBottom: '20px' }}>
-                        Entrez votre adresse email pour recevoir un lien sécurisé permettant de réinitialiser votre mot de passe.
+                        Entrez votre adresse email pour recevoir un code à 6 chiffres permettant de réinitialiser votre mot de passe.
                     </p>
 
                     {success && (
@@ -82,7 +84,7 @@ function ForgotPassword() {
                             </div>
 
                             <button type="submit" className="login-button" disabled={loading}>
-                                {loading ? "Envoi en cours..." : "Envoyer le lien"}
+                                {loading ? "Envoi en cours..." : "Envoyer le code"}
                             </button>
                         </>
                     )}

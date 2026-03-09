@@ -6,8 +6,7 @@ function ControlCenter() {
     const navigate = useNavigate();
     const [currentUser, setCurrentUser] = useState(null);
     const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
+        hotelName: "",
         email: "",
         password: "",
         phone: "",
@@ -55,8 +54,8 @@ function ControlCenter() {
                 body: JSON.stringify({
                     email: formData.email,
                     password: formData.password,
-                    first_name: formData.firstName,
-                    last_name: formData.lastName,
+                    first_name: formData.hotelName, // Envoi du nom de l'hôtel en tant que 'first_name'
+                    last_name: "",                  // 'last_name' laissé vide
                     phone: formData.phone,
                     access_control_center: formData.access_control_center
                 })
@@ -67,8 +66,7 @@ function ControlCenter() {
             if (response.ok) {
                 setMessage({ type: 'success', text: 'Utilisateur créé avec succès !' });
                 setFormData({
-                    firstName: "",
-                    lastName: "",
+                    hotelName: "",
                     email: "",
                     password: "",
                     phone: "",
@@ -115,22 +113,13 @@ function ControlCenter() {
 
                     <form onSubmit={handleSubmit} className="control-center-form">
                         <div className="form-row">
-                            <div className="form-field">
-                                <label>Prénom</label>
+                            <div className="form-field" style={{ width: '100%' }}>
+                                <label>Nom de l'hôtel</label>
                                 <input
                                     type="text"
-                                    name="firstName"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className="form-field">
-                                <label>Nom</label>
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={formData.lastName}
+                                    name="hotelName"
+                                    placeholder="Ex: Hôtel de la Paix"
+                                    value={formData.hotelName}
                                     onChange={handleChange}
                                     required
                                 />
@@ -142,6 +131,7 @@ function ControlCenter() {
                             <input
                                 type="email"
                                 name="email"
+                                placeholder="hotel@exemple.com"
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
@@ -154,6 +144,7 @@ function ControlCenter() {
                                 <input
                                     type="text"
                                     name="phone"
+                                    placeholder="+222 12 34 56 78"
                                     value={formData.phone}
                                     onChange={handleChange}
                                 />
@@ -163,6 +154,7 @@ function ControlCenter() {
                                 <input
                                     type="password"
                                     name="password"
+                                    placeholder="Mot de passe sécurisé"
                                     value={formData.password}
                                     onChange={handleChange}
                                     required

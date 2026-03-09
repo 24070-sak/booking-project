@@ -174,7 +174,7 @@ function HotelDetails() {
             <div className="max-w-container">
                 {/* Navigation */}
                 <Link to="/" className="nav-back">
-                    <i className="fa-solid fa-chevron-left"></i> Retour aux hôtels
+                    <i className="fa-solid fa-arrow-left"></i> Retour
                 </Link>
 
                 {/* Hotel Header */}
@@ -406,6 +406,7 @@ function HotelDetails() {
                             <div className="form-group">
                                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Message</label>
                                 <textarea
+                                    placeholder="Écrivez votre message ici..."
                                     required rows="5"
                                     className="form-textarea"
                                     value={messageData.content}

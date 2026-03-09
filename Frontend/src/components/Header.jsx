@@ -160,7 +160,9 @@ function Header() {
                                                 </div>
                                             )}
                                             <div className="nav-dropdown-user-info">
-                                                <span className="nav-dropdown-fullname">{user.first_name} {user.last_name}</span>
+                                                <span className="nav-dropdown-fullname">
+                                                    {user.role === 'manager' || user.role === 'admin' ? user.first_name : `${user.first_name} ${user.last_name}`}
+                                                </span>
                                                 <span className="nav-dropdown-role">
                                                     {user.access_dashboard ? 'Administrateur' : 'Membre'}
                                                 </span>

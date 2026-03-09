@@ -20,12 +20,16 @@
     transition: all 0.3s ease;
 }
 
-.beautiful-filter-btn:active {
-    transform: translateY(1px);
-}
+
 
 .beautiful-filter-btn i {
     font-size: 18px;
+    color: white;
+}
+
+.beautiful-filter-btn:hover,
+.beautiful-filter-btn:hover i {
+    color: white !important;
 }
 
 .filter-modal-overlay {

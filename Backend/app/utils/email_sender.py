@@ -3,7 +3,7 @@ from app.extensions import mail
 import os
 
 
-def _base_email_html(title, icon, icon_color, body_html, button_href, button_label, link_label="Ou copiez ce lien"):
+def _base_email_html(title, icon, icon_color, body_html):
     """Template HTML de base pour tous les emails transactionnels."""
     return f"""
     <!DOCTYPE html>
@@ -46,29 +46,11 @@ def _base_email_html(title, icon, icon_color, body_html, button_href, button_lab
                 </td>
               </tr>
 
-              <!-- CTA Button -->
-              <tr>
-                <td style="padding:0 40px 24px;text-align:center;">
-                  <a href="{button_href}"
-                     style="display:inline-block;background:linear-gradient(135deg,#006233,#00843d);color:#ffffff;font-size:16px;font-weight:700;padding:15px 40px;border-radius:10px;text-decoration:none;letter-spacing:0.5px;box-shadow:0 6px 18px rgba(0,98,51,0.25);">
-                    {button_label}
-                  </a>
-                </td>
-              </tr>
-
-              <!-- Raw link fallback -->
-              <tr>
-                <td style="padding:0 40px 28px;text-align:center;">
-                  <p style="color:#94a3b8;font-size:12px;margin:0 0 6px;">{link_label} :</p>
-                  <a href="{button_href}" style="color:#006233;font-size:12px;word-break:break-all;">{button_href}</a>
-                </td>
-              </tr>
-
               <!-- Expire notice -->
               <tr>
                 <td style="padding:0 40px 20px;text-align:center;">
                   <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:10px 16px;display:inline-block;">
-                    <span style="color:#92400e;font-size:12px;font-weight:600;">⏱ Ce lien expire dans <strong>15 minutes</strong></span>
+                    <span style="color:#92400e;font-size:12px;font-weight:600;">⏱ Ce code expire dans <strong>15 minutes</strong></span>
                   </div>
                 </td>
               </tr>
@@ -85,6 +67,7 @@ def _base_email_html(title, icon, icon_color, body_html, button_href, button_lab
                 </td>
               </tr>
 
+
             </table>
           </td>
         </tr>
@@ -94,66 +77,62 @@ def _base_email_html(title, icon, icon_color, body_html, button_href, button_lab
     """
 
 
-def send_verification_email(to_email: str, verification_link: str):
-    """Envoie un lien de vérification d'adresse email."""
+def send_verification_email(to_email: str, code: str):
+    """Envoie un code de vérification d'adresse email."""
     subject = "Vérifiez votre adresse email — Stayin"
 
     print(f"\n╔══════════════════════════════════════════════════════════╗")
     print(f"║  📧 EMAIL VÉRIFICATION → {to_email}")
-    print(f"║  🔗 {verification_link}")
+    print(f"║  🔑 {code}")
     print(f"╚══════════════════════════════════════════════════════════╝\n")
 
-    body_html = """
+    body_html = f"""
         <p>Merci de vous être inscrit sur <strong>Stayin</strong> !</p>
-        <p>Cliquez sur le bouton ci-dessous pour vérifier votre adresse email et activer votre compte.</p>
+        <p>Entrez le code ci-dessous pour vérifier votre adresse email et activer votre compte.</p>
+        <div style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#006233;margin:24px 0;">{code}</div>
     """
     html = _base_email_html(
         title="Vérification de votre email",
         icon="✉️",
         icon_color="#ecfdf5",
-        body_html=body_html,
-        button_href=verification_link,
-        button_label="Vérifier mon email",
-        link_label="Ou copiez ce lien"
+        body_html=body_html
     )
 
     return _send_mail(to_email, subject, html)
 
 
-def send_password_reset_email(to_email: str, reset_link: str):
-    """Envoie un lien de réinitialisation de mot de passe."""
+def send_password_reset_email(to_email: str, code: str):
+    """Envoie un code de réinitialisation de mot de passe."""
     subject = "Réinitialisation de votre mot de passe — Stayin"
 
     print(f"\n╔══════════════════════════════════════════════════════════╗")
     print(f"║  🔐 EMAIL RESET MDP → {to_email}")
-    print(f"║  🔗 {reset_link}")
+    print(f"║  🔑 {code}")
     print(f"╚══════════════════════════════════════════════════════════╝\n")
 
-    body_html = """
+    body_html = f"""
         <p>Nous avons reçu une demande de réinitialisation du mot de passe pour votre compte <strong>Stayin</strong>.</p>
-        <p>Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.</p>
+        <p>Entrez le code de vérification ci-dessous pour choisir un nouveau mot de passe.</p>
+        <div style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#006233;margin:24px 0;">{code}</div>
     """
     html = _base_email_html(
         title="Réinitialisation du mot de passe",
         icon="🔐",
         icon_color="#fef3c7",
-        body_html=body_html,
-        button_href=reset_link,
-        button_label="Réinitialiser mon mot de passe",
-        link_label="Ou copiez ce lien"
+        body_html=body_html
     )
 
     return _send_mail(to_email, subject, html)
 
 
-def send_verification_link_email(to_email: str, verification_link: str, subject: str = "Vérification de votre compte"):
+def send_verification_link_email(to_email: str, code: str, subject: str = "Vérification de votre compte"):
     """
     Fonction de compatibilité (ancienne signature).
     Redirige vers la bonne fonction selon le sujet.
     """
     if "passe" in subject.lower() or "reset" in subject.lower() or "réinitialisation" in subject.lower():
-        return send_password_reset_email(to_email, verification_link)
-    return send_verification_email(to_email, verification_link)
+        return send_password_reset_email(to_email, code)
+    return send_verification_email(to_email, code)
 
 
 def _send_mail(to_email: str, subject: str, html: str) -> bool:

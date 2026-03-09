@@ -14,7 +14,8 @@ const DashboardSettings = () => {
         first_name: '',
         last_name: '',
         email: '',
-        phone: ''
+        phone: '',
+        role: ''
     });
 
     const [selectedFile, setSelectedFile] = useState(null);
@@ -29,7 +30,8 @@ const DashboardSettings = () => {
                 first_name: user.first_name || '',
                 last_name: user.last_name || '',
                 email: user.email || '',
-                phone: user.phone || ''
+                phone: user.phone || '',
+                role: user.role || ''
             });
             setPreview(user.profile_picture);
         }
@@ -61,6 +63,7 @@ const DashboardSettings = () => {
             const data = new FormData();
             data.append('first_name', profile.first_name);
             data.append('last_name', profile.last_name);
+            data.append('email', profile.email);
             data.append('phone', profile.phone);
             if (selectedFile) {
                 data.append('profile_picture', selectedFile);
@@ -119,37 +122,58 @@ const DashboardSettings = () => {
                             />
                         </div>
 
+                        {profile.role === 'manager' || profile.role === 'admin' ? (
+                            <div className="form-group">
+                                <label>{profile.role === 'manager' ? "Nom de l'hôtel" : "Nom de l'administration"}</label>
+                                <input
+                                    type="text"
+                                    name="first_name"
+                                    value={profile.first_name}
+                                    onChange={handleProfileChange}
+                                    className="form-input"
+                                    required
+                                />
+                                <input type="hidden" name="last_name" value="" />
+                            </div>
+                        ) : (
+                            <>
+                                <div className="form-group">
+                                    <label>Prénom</label>
+                                    <input
+                                        type="text"
+                                        name="first_name"
+                                        value={profile.first_name}
+                                        onChange={handleProfileChange}
+                                        className="form-input"
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Nom</label>
+                                    <input
+                                        type="text"
+                                        name="last_name"
+                                        value={profile.last_name}
+                                        onChange={handleProfileChange}
+                                        className="form-input"
+                                        required
+                                    />
+                                </div>
+                            </>
+                        )}
                         <div className="form-group">
-                            <label>Prénom</label>
-                            <input
-                                type="text"
-                                name="first_name"
-                                value={profile.first_name}
-                                onChange={handleProfileChange}
-                                className="form-input"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Nom</label>
-                            <input
-                                type="text"
-                                name="last_name"
-                                value={profile.last_name}
-                                onChange={handleProfileChange}
-                                className="form-input"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Email (lecture seule)</label>
+                            <label>Email</label>
                             <input
                                 type="email"
                                 name="email"
                                 value={profile.email}
-                                disabled
+                                onChange={handleProfileChange}
+                                disabled={profile.role !== 'admin' && profile.role !== 'manager'}
                                 className="form-input"
-                                style={{ backgroundColor: '#f7fafc', color: '#718096' }}
+                                style={{ 
+                                    backgroundColor: profile.role === 'admin' || profile.role === 'manager' ? '#fff' : '#f7fafc', 
+                                    color: profile.role === 'admin' || profile.role === 'manager' ? '#333' : '#718096' 
+                                }}
                             />
                         </div>
                         <div className="form-group">

@@ -103,9 +103,14 @@ const DashboardReviews = () => {
                                     <div className="current-reply">
                                         <strong>Votre réponse :</strong>
                                         <p>{review.reply}</p>
-                                        <button className="btn-reply-small" onClick={() => { setReplyingTo(review.id); setReplyText(review.reply); }}>
-                                            Modifier la réponse
-                                        </button>
+                                        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                                            <button className="btn-reply-small" onClick={() => { setReplyingTo(review.id); setReplyText(""); }}>
+                                                Nouvelle réponse
+                                            </button>
+                                            <button className="btn-reply-small" onClick={() => { setReplyingTo(review.id); setReplyText(review.reply); }}>
+                                                Modifier la réponse
+                                            </button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <button className="btn-reply" onClick={() => setReplyingTo(review.id)}>

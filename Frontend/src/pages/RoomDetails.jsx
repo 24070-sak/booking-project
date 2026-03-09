@@ -141,7 +141,7 @@ function RoomDetails() {
     if (!room) return null;
 
     return (
-        <div className="home-body">
+        <div className="room-details-page">
             <Header />
             <div className="room-detail-container">
                 <Link to="#" onClick={() => window.history.back()} className="room-back-link">

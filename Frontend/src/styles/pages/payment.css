@@ -29,6 +29,8 @@
     border: 1px solid rgba(0, 98, 51, 0.15);
     border-radius: 100px;
     transition: all 0.25s ease;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .payment-back-link i {
