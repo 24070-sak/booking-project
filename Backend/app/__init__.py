@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from app.extensions import db, migrate, bcrypt, jwt, oauth # , mail
+from app.extensions import db, migrate, bcrypt, jwt, oauth, mail
 from app.config import config
 
 def create_app(config_name='development'):
@@ -19,7 +19,7 @@ def create_app(config_name='development'):
     bcrypt.init_app(app)
     jwt.init_app(app)
     oauth.init_app(app)
-    # mail.init_app(app)
+    mail.init_app(app)
     
     # Configuration OAuth Providers
     oauth.register(

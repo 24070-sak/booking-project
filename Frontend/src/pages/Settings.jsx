@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 
 export default function Settings() {
-  const [fullName, setFullName] = useState('John Doe');
-  const [email, setEmail] = useState('john.doe@example.com');
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  });
+
+  const [fullName, setFullName] = useState(user?.first_name + (user?.last_name ? ' ' + user.last_name : '') || 'John Doe');
+  const [email, setEmail] = useState(user?.email || 'john.doe@example.com');
   const [language, setLanguage] = useState('English');
   const [timezone, setTimezone] = useState('(GMT+00:00) UTC');
   const [oldPassword, setOldPassword] = useState('');
@@ -10,6 +15,12 @@ export default function Settings() {
 
   const handleSave = () => {
     alert('Changes saved successfully!');
+  };
+
+  const getLabel = () => {
+    if (user?.role === 'manager') return "Nom de l'hôtel";
+    if (user?.role === 'admin') return "Nom de l'administration";
+    return 'Full Name';
   };
 
   const styles = {
@@ -137,7 +148,7 @@ export default function Settings() {
 
             <div style={styles.formSection}>
               <div style={styles.inputGroup}>
-                <label style={styles.label}>Full Name</label>
+                <label style={styles.label}>{getLabel()}</label>
                 <input
                   type="text"
                   value={fullName}
@@ -151,8 +162,13 @@ export default function Settings() {
                 <input
                   type="email"
                   value={email}
+                  disabled={user?.role !== 'admin' && user?.role !== 'manager'}
                   onChange={(e) => setEmail(e.target.value)}
-                  style={styles.input}
+                  style={{ 
+                    ...styles.input, 
+                    backgroundColor: user?.role === 'admin' || user?.role === 'manager' ? 'white' : '#f3f4f6', 
+                    cursor: user?.role === 'admin' || user?.role === 'manager' ? 'text' : 'not-allowed' 
+                  }}
                 />
               </div>
             </div>

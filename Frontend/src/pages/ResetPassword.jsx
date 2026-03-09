@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
-import { auth } from "../services/firebase";
-import { confirmPasswordReset } from "firebase/auth";
+import { resetPassword } from "../services/authService";
 import "../styles/pages/login.css";
 import logo from "../assets/logos/logo.svg";
 
@@ -11,31 +10,30 @@ function ResetPassword() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    // Firebase envoie un oobCode pour la réinitialisation du mot de passe
-    const oobCode = searchParams.get("oobCode");
-
+    const [email, setEmail] = useState(searchParams.get("email") || "");
+    const [code, setCode] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const [linkValid, setLinkValid] = useState(true);
-
-    useEffect(() => {
-        // Validation basique: vérifier si le oobCode existe
-        if (!oobCode) {
-            setLinkValid(false);
-            setError("Le lien de réinitialisation est invalide ou a expiré.");
-        }
-    }, [oobCode]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
         setMessage("");
 
+        if (!email) {
+            setError("Veuillez entrer votre email.");
+            return;
+        }
+        if (!code) {
+            setError("Veuillez entrer le code de vérification.");
+            return;
+        }
         if (password.length < 8) {
             setError("Le mot de passe doit contenir au moins 8 caractères.");
             return;
@@ -47,25 +45,15 @@ function ResetPassword() {
 
         setLoading(true);
         try {
-            await confirmPasswordReset(auth, oobCode, password);
+            await resetPassword(email, code, password);
             setMessage(t("password_changed_success") || "Mot de passe modifié avec succès !");
             setTimeout(() => navigate("/connexion"), 3000);
         } catch (err) {
-            // Identifier l'erreur Firebase: expiré, etc.
-            if (err.code === "auth/expired-action-code" || err.code === "auth/invalid-action-code") {
-                setError("Le lien est invalide ou a expiré. Veuillez demander un nouveau lien.");
-                setLinkValid(false);
-            } else {
-                setError(err.message || "Une erreur est survenue lors de la réinitialisation.");
-            }
+            setError(err.message || "Le code est invalide ou a expiré. Veuillez demander un nouveau code.");
         } finally {
             setLoading(false);
         }
     };
-
-    if (!linkValid && !message && !error) {
-        // Rendu en cas de lien initialement invalide sans même soumettre
-    }
 
     return (
         <div className="body">
@@ -84,11 +72,50 @@ function ResetPassword() {
                     </div>
                 )}
 
-                {linkValid && !message && (
+                {!message && (
                     <form className="login-form" onSubmit={handleSubmit}>
                         <p style={{ textAlign: 'center', color: '#4b5563', fontSize: '14px', marginTop: '-10px', marginBottom: '20px' }}>
-                            Veuillez entrer votre nouveau mot de passe.
+                            Veuillez entrer le code reçu par email ainsi que votre nouveau mot de passe.
                         </p>
+
+                        {!searchParams.get("email") && (
+                            <div>
+                                <label className="form-label" htmlFor="email">Email</label>
+                                <div className="input-container">
+                                    <i className="fa-solid fa-envelope"></i>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        className="form-input"
+                                        placeholder="Votre email"
+                                        name="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Code OTP */}
+                        <div>
+                            <label className="form-label" htmlFor="code">Code de vérification (6 chiffres)</label>
+                            <div className="input-container">
+                                <i className="fa-solid fa-key"></i>
+                                <input
+                                    id="code"
+                                    type="text"
+                                    className="form-input"
+                                    placeholder="Ex: 123456"
+                                    name="code"
+                                    value={code}
+                                    onChange={(e) => setCode(e.target.value)}
+                                    maxLength={6}
+                                    style={{ letterSpacing: '2px', fontWeight: 'bold' }}
+                                    required
+                                />
+                            </div>
+                        </div>
 
                         {/* Nouveau mot de passe */}
                         <div>
@@ -145,17 +172,13 @@ function ResetPassword() {
                         >
                             {loading ? "Enregistrement..." : "Enregistrer le mot de passe"}
                         </button>
-                    </form>
-                )}
 
-                {!linkValid && !message && (
-                    <div style={{ textAlign: "center", marginTop: "10px" }}>
-                        <Link to="/mot-de-passe-oublie">
-                            <button className="login-button" style={{ marginTop: "10px" }}>
-                                Demander un nouveau lien
-                            </button>
-                        </Link>
-                    </div>
+                        <div style={{ textAlign: "center", marginTop: "15px" }}>
+                            <Link to="/mot-de-passe-oublie" style={{ color: "#006233", fontSize: "14px", textDecoration: "none", fontWeight: "500" }}>
+                                Renvoyer le code
+                            </Link>
+                        </div>
+                    </form>
                 )}
             </div>
         </div>

@@ -8,6 +8,7 @@ function Profile() {
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
+        email: '',
         phone: ''
     });
     const [selectedFile, setSelectedFile] = useState(null);
@@ -23,6 +24,7 @@ function Profile() {
             setFormData({
                 first_name: u.first_name || '',
                 last_name: u.last_name || '',
+                email: u.email || '',
                 phone: u.phone || ''
             });
             setPreview(u.profile_picture);
@@ -52,6 +54,7 @@ function Profile() {
             const data = new FormData();
             data.append('first_name', formData.first_name);
             data.append('last_name', formData.last_name);
+            data.append('email', formData.email);
             data.append('phone', formData.phone);
             if (selectedFile) {
                 data.append('profile_picture', selectedFile);
@@ -208,28 +211,45 @@ function Profile() {
                     </div>
 
                     <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Prénom</label>
+                        {user.role === 'manager' || user.role === 'admin' ? (
+                            <div style={{ marginBottom: '20px' }}>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                                    {user.role === 'manager' ? "Nom de l'hôtel" : "Nom de l'administration"}
+                                </label>
                                 <input
                                     type="text"
                                     name="first_name"
                                     value={formData.first_name}
                                     onChange={handleChange}
-                                    style={{ width: '95%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                    style={{ width: '97%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
                                 />
+                                {/* last_name hidden but kept for consistency */}
+                                <input type="hidden" name="last_name" value="" />
                             </div>
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Nom</label>
-                                <input
-                                    type="text"
-                                    name="last_name"
-                                    value={formData.last_name}
-                                    onChange={handleChange}
-                                    style={{ width: '95%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
-                                />
+                        ) : (
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Prénom</label>
+                                    <input
+                                        type="text"
+                                        name="first_name"
+                                        value={formData.first_name}
+                                        onChange={handleChange}
+                                        style={{ width: '95%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Nom</label>
+                                    <input
+                                        type="text"
+                                        name="last_name"
+                                        value={formData.last_name}
+                                        onChange={handleChange}
+                                        style={{ width: '95%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         <div style={{ marginBottom: '30px' }}>
                             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Téléphone</label>
@@ -243,8 +263,22 @@ function Profile() {
                         </div>
 
                         <div style={{ marginBottom: '20px' }}>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Email (non modifiable via profil)</label>
-                            <input type="text" value={user.email} disabled style={{ width: '97%', padding: '12px', borderRadius: '8px', border: '1px solid #eee', color: '#666', background: '#f9f9f9' }} />
+                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Email</label>
+                            <input 
+                                type="email" 
+                                name="email"
+                                value={formData.email} 
+                                onChange={handleChange}
+                                disabled={user.role !== 'admin' && user.role !== 'manager'} 
+                                style={{ 
+                                    width: '97%', 
+                                    padding: '12px', 
+                                    borderRadius: '8px', 
+                                    border: user.role === 'admin' || user.role === 'manager' ? '1px solid #ddd' : '1px solid #eee',
+                                    color: user.role === 'admin' || user.role === 'manager' ? '#333' : '#666', 
+                                    background: user.role === 'admin' || user.role === 'manager' ? '#fff' : '#f9f9f9' 
+                                }} 
+                            />
                         </div>
 
                         <button

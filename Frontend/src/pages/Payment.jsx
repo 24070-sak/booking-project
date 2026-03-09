@@ -90,9 +90,9 @@ function Payment() {
                 <div className="payment-wrapper">
 
                     <div className="payment-main">
-                        <Link to="/" className="payment-back-link">
-                            <i className="fa-solid fa-arrow-left"></i> Retour à l'accueil
-                        </Link>
+                        <button onClick={() => navigate(-1)} className="payment-back-link">
+                            <i className="fa-solid fa-arrow-left"></i> Retour
+                        </button>
 
                         <div className="payment-card">
                             <h3>Méthode de paiement</h3>

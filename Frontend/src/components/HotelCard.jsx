@@ -19,7 +19,7 @@ function HotelCard({ id, title, location, price, imageUrl, rating, dateAvailable
             <div className="card-content">
                 <h3 className="card-title">{title}</h3>
                 <p className="card-location"><i className="fa-solid fa-location-dot"></i> {location}</p>
-                <p className="card-price">{price} €</p>
+                <p className="card-price">{price}</p>
                 <Link to={`/hotel/${id}`} className="card-button-link">
                     <button className="card-button">
                         Voir plus
