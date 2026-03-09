@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getMyHotels, createHotel, updateHotel, deleteHotel, getHotelRooms } from '../services/hotelService';
 import { createRoom, updateRoom, deleteRoom, getRoomTypes, getAmenities } from '../services/roomService';
 import { showError, showSuccess, showConfirm } from '../utils/alerts';
+import { resolveImageUrl } from '../utils/urlHelper';
 import '../styles/components/dashboardProperties.css';
 
 // Import hotel images
@@ -33,6 +34,8 @@ const DashboardProperties = () => {
     const [location, setLocation] = useState('');
     const [description, setDescription] = useState('');
     const [imageUrl, setImageUrl] = useState('');
+    const [imageSource, setImageSource] = useState('url'); // 'url' or 'upload'
+    const [uploading, setUploading] = useState(false);
 
     // Room Form State
     const [roomForm, setRoomForm] = useState({
@@ -46,6 +49,7 @@ const DashboardProperties = () => {
         image_url: '',
         amenities: []
     });
+    const [roomImageSource, setRoomImageSource] = useState('url');
 
     const hotelImages = [hot1, hot2, hot3, hot4, hot5, hotel1, hotel2];
 
@@ -134,6 +138,37 @@ const DashboardProperties = () => {
         setViewingRoomsHotelId(null);
         setIsAddingRoom(false);
         setEditingRoomId(null);
+    };
+
+    const handleFileUpload = async (file, type) => {
+        const formData = new FormData();
+        formData.append('image', file);
+        setUploading(true);
+        try {
+            const endpoint = type === 'hotel' ? '/hotels/upload' : '/rooms/upload';
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: formData
+            });
+            const data = await response.json();
+            if (response.ok) {
+                if (type === 'hotel') {
+                    setImageUrl(data.image_url);
+                } else {
+                    setRoomForm(prev => ({ ...prev, image_url: data.image_url }));
+                }
+                showSuccess("Image téléchargée avec succès");
+            } else {
+                showError(data.error || "Erreur lors de l'upload");
+            }
+        } catch (error) {
+            showError("Erreur réseau lors de l'upload");
+        } finally {
+            setUploading(false);
+        }
     };
 
     const handleDeleteClick = async (id) => {
@@ -246,20 +281,36 @@ const DashboardProperties = () => {
                     <div className="row">
                         <div className="col">
                             <label>Nom de la propriété</label>
-                            <input type="text" value={propertyName} onChange={(e) => setPropertyName(e.target.value)} />
+                            <input type="text" value={propertyName} onChange={(e) => setPropertyName(e.target.value)} placeholder="Ex: Hôtel Majestic Alger" />
                         </div>
                         <div className="col">
                             <label>Location</label>
-                            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
+                            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Ex: Alger, Algérie" />
                         </div>
                     </div>
                     <div className="form-section">
-                        <label>URL de l'image</label>
-                        <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+                        <label>Source de l'image</label>
+                        <div style={{ display: 'flex', gap: '20px', marginBottom: '10px' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
+                                <input type="radio" name="imageSource" checked={imageSource === 'url'} onChange={() => setImageSource('url')} /> URL
+                            </label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
+                                <input type="radio" name="imageSource" checked={imageSource === 'upload'} onChange={() => setImageSource('upload')} /> Upload
+                            </label>
+                        </div>
+                        {imageSource === 'url' ? (
+                            <input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://exemple.com/image-hotel.jpg" />
+                        ) : (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e.target.files[0], 'hotel')} disabled={uploading} />
+                                {uploading && <span style={{ fontSize: '0.9em', color: '#666' }}>Téléchargement...</span>}
+                            </div>
+                        )}
+                        {imageUrl && <div style={{ marginTop: '10px' }}><img src={resolveImageUrl(imageUrl)} alt="Preview" style={{ width: '100px', height: '60px', borderRadius: '4px', objectFit: 'cover' }} /></div>}
                     </div>
                     <div className="form-section">
                         <label>Description</label>
-                        <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+                        <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Décrivez votre hôtel : services, ambiance, points forts..." />
                     </div>
                     <div style={{ marginTop: '20px' }}>
                         <button className="btn-primary" onClick={handleSubmit}>Enregistrer</button>
@@ -287,11 +338,11 @@ const DashboardProperties = () => {
                         <div className="row">
                             <div className="col">
                                 <label>Numéro</label>
-                                <input type="text" value={roomForm.room_number} onChange={e => setRoomForm({ ...roomForm, room_number: e.target.value })} />
+                                <input type="text" value={roomForm.room_number} onChange={e => setRoomForm({ ...roomForm, room_number: e.target.value })} placeholder="Ex: 101, A-203" />
                             </div>
                             <div className="col">
                                 <label>Nom</label>
-                                <input type="text" value={roomForm.name} onChange={e => setRoomForm({ ...roomForm, name: e.target.value })} />
+                                <input type="text" value={roomForm.name} onChange={e => setRoomForm({ ...roomForm, name: e.target.value })} placeholder="Ex: Suite Deluxe, Chambre Standard" />
                             </div>
                         </div>
                         <div className="row">
@@ -302,14 +353,14 @@ const DashboardProperties = () => {
                                 </select>
                             </div>
                             <div className="col">
-                                <label>Prix / Nuit</label>
-                                <input type="number" value={roomForm.price_per_night} onChange={e => setRoomForm({ ...roomForm, price_per_night: e.target.value })} />
+                                <label>Prix / Nuit (€)</label>
+                                <input type="number" value={roomForm.price_per_night} onChange={e => setRoomForm({ ...roomForm, price_per_night: e.target.value })} placeholder="Ex: 120" />
                             </div>
                         </div>
                         <div className="row">
                             <div className="col">
-                                <label>Capacité Max</label>
-                                <input type="number" value={roomForm.max_guests} onChange={e => setRoomForm({ ...roomForm, max_guests: e.target.value })} />
+                                <label>Capacité Max (personnes)</label>
+                                <input type="number" value={roomForm.max_guests} onChange={e => setRoomForm({ ...roomForm, max_guests: e.target.value })} placeholder="Ex: 2" />
                             </div>
                             <div className="col">
                                 <label>Taille (m²)</label>
@@ -317,8 +368,28 @@ const DashboardProperties = () => {
                             </div>
                         </div>
                         <div className="form-section">
-                            <label>Image URL</label>
-                            <input type="text" value={roomForm.image_url} onChange={e => setRoomForm({ ...roomForm, image_url: e.target.value })} />
+                            <label>Description de la chambre</label>
+                            <textarea value={roomForm.description} onChange={e => setRoomForm({ ...roomForm, description: e.target.value })} placeholder="Décrivez la chambre : vue, style, équipements spéciaux..." style={{ width: '100%', minHeight: '80px', resize: 'vertical' }} />
+                        </div>
+                        <div className="form-section">
+                            <label>Source de l'image</label>
+                            <div style={{ display: 'flex', gap: '20px', marginBottom: '10px' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
+                                    <input type="radio" name="roomImageSource" checked={roomImageSource === 'url'} onChange={() => setRoomImageSource('url')} /> URL
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
+                                    <input type="radio" name="roomImageSource" checked={roomImageSource === 'upload'} onChange={() => setRoomImageSource('upload')} /> Upload
+                                </label>
+                            </div>
+                            {roomImageSource === 'url' ? (
+                                <input type="text" value={roomForm.image_url} onChange={e => setRoomForm({ ...roomForm, image_url: e.target.value })} placeholder="https://exemple.com/image-chambre.jpg" />
+                            ) : (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e.target.files[0], 'room')} disabled={uploading} />
+                                    {uploading && <span style={{ fontSize: '0.9em', color: '#666' }}>Téléchargement...</span>}
+                                </div>
+                            )}
+                            {roomForm.image_url && <div style={{ marginTop: '10px' }}><img src={resolveImageUrl(roomForm.image_url)} alt="Preview" style={{ width: '100px', height: '60px', borderRadius: '4px', objectFit: 'cover' }} /></div>}
                         </div>
                         <div className="form-section">
                             <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>Équipements</label>
@@ -380,8 +451,10 @@ const DashboardProperties = () => {
                                         ) : '-'}
                                     </td>
                                     <td data-label="Actions">
-                                        <button onClick={() => handleEditRoomClick(room)} className="btn-edit">Modifier</button>
-                                        <button onClick={() => handleDeleteRoomClick(room.id)} className="btn-danger">Supprimer</button>
+                                        <div className="actions-cell">
+                                            <button onClick={() => handleEditRoomClick(room)} className="btn-edit">Modifier</button>
+                                            <button onClick={() => handleDeleteRoomClick(room.id)} className="btn-danger">Supprimer</button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -414,14 +487,16 @@ const DashboardProperties = () => {
                         {properties.map((property, index) => (
                             <tr key={property.id}>
                                 <td data-label="Nom">
-                                    <img src={property.image_url || hotelImages[index % hotelImages.length]} alt={property.name} />
+                                    <img src={resolveImageUrl(property.image_url) || hotelImages[index % hotelImages.length]} alt={property.name} />
                                     <span>{property.name}</span>
                                 </td>
                                 <td data-label="Localisation">{property.location}</td>
                                 <td data-label="Actions">
-                                    <button onClick={() => handleViewRoomsClick(property.id)} className="btn-secondary">Chambres</button>
-                                    <button onClick={() => handleEditClick(property.id)} className="btn-edit">Modifier</button>
-                                    <button onClick={() => handleDeleteClick(property.id)} className="btn-danger">Supprimer</button>
+                                    <div className="actions-cell">
+                                        <button onClick={() => handleViewRoomsClick(property.id)} className="btn-secondary">Chambres</button>
+                                        <button onClick={() => handleEditClick(property.id)} className="btn-edit">Modifier</button>
+                                        <button onClick={() => handleDeleteClick(property.id)} className="btn-danger">Supprimer</button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { resolveImageUrl } from "../utils/urlHelper";
 const API = import.meta.env.VITE_API_URL || "";
 import { useState, useEffect } from "react";
 import logo from '../assets/logos/logo.svg'
@@ -11,27 +12,44 @@ import DashboardReviews from "../components/DashboardReviews";
 import DashboardMessages from "../components/DashboardMessages";
 import DashboardAnalytics from "../components/DashboardAnalytics";
 import DashboardSettings from "../components/DashboardSettings";
+import { useNotification } from "../context/NotificationContext";
 
 // Import SVG icons
 import {
+  SettingsIcon,
+  LogoutIcon,
+  HomeIcon,
+  MenuIcon,
   DashboardIcon,
   PropertiesIcon,
   ReservationsIcon,
-  CalendarIcon,
-  ReviewsIcon,
-  MessagesIcon,
-  PaymentsIcon,
   AnalyticsIcon,
-  SettingsIcon,
-  LogoutIcon,
-  HomeIcon
+  MessagesIcon,
+  ReviewsIcon
 } from '../components/DashboardIcons';
 
 function Dashboard() {
+  const { notifications, markByTypeAsRead } = useNotification();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'dashboard');
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState(location.state?.message || null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Helper to get initials
+  const getInitials = (firstName, lastName) => {
+    if (!firstName) return "U";
+    if (!lastName) return firstName.charAt(0).toUpperCase();
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+
+  useEffect(() => {
+    if (activeTab === 'reservations') {
+      markByTypeAsRead('booking');
+    } else if (activeTab === 'messages') {
+      markByTypeAsRead('message');
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     if (location.state?.message) {
@@ -63,8 +81,17 @@ function Dashboard() {
     const label = e.target.closest('.label');
     if (label && label.id) {
       setActiveTab(label.id);
+      setIsSidebarOpen(false); // Close sidebar on mobile after selection
     }
   };
+
+  // Set default tab for admin to messages if it's dashboard
+  // NOTE: This must be BEFORE any conditional returns (Rules of Hooks)
+  useEffect(() => {
+    if (isAdmin && activeTab === 'dashboard') {
+      setActiveTab('messages');
+    }
+  }, [isAdmin, activeTab]);
 
   if (!user || (!user.access_dashboard && user.role !== 'admin')) {
     return <div className="dashboard-loading">Chargement ou Accès refusé...</div>;
@@ -77,7 +104,11 @@ function Dashboard() {
       case 'properties':
         return <DashboardProperties />;
       case 'reservations':
-        return <DashboardReservations />;
+        return <DashboardReservations
+          targetBookingId={location.state?.bookingId}
+          targetPaymentId={location.state?.paymentId}
+          initialTab={location.state?.targetTab}
+        />;
       case 'calendar':
         return <DashboardCalendar />;
       case 'reviews':
@@ -94,41 +125,71 @@ function Dashboard() {
   };
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
+    <div className="dashboard-wrapper">
+      <div className="mobile-header">
+        <button className="hamburger-menu" onClick={() => setIsSidebarOpen(true)}>
+          <MenuIcon className="icon" />
+        </button>
+        <img src={logo} alt="Logo" className="mobile-logo" />
+        <div style={{ width: '40px' }}></div> {/* Spacer */}
+      </div>
+
+      <div className={`sidebar-overlay ${isSidebarOpen ? 'visible' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+
+      <div className="dashboard">
+        <div className={`dashboard-header ${isSidebarOpen ? 'open' : ''}`}>
+          <button className="mobile-close-btn" onClick={() => setIsSidebarOpen(false)}>
+            &times;
+          </button>
         <div className="logo-container">
           <img src={logo} alt="Logo" className="logo" />
         </div>
         <div className="dashboard-labels">
-          <span className={`label ${activeTab === 'dashboard' ? 'selected' : ''}`} id="dashboard" onClick={handleLabelClick}>
-            <DashboardIcon className="icon" />
-            <span>Dashboard</span>
-          </span>
+          {!isAdmin && (
+            <>
+              <span className={`label ${activeTab === 'dashboard' ? 'selected' : ''}`} id="dashboard" onClick={handleLabelClick}>
+                <DashboardIcon className="icon" />
+                <span>Dashboard</span>
+              </span>
 
-          <span className={`label ${activeTab === 'properties' ? 'selected' : ''}`} id="properties" onClick={handleLabelClick}>
-            <PropertiesIcon className="icon" />
-            <span>Propriétés</span>
-          </span>
+              <span className={`label ${activeTab === 'properties' ? 'selected' : ''}`} id="properties" onClick={handleLabelClick}>
+                <PropertiesIcon className="icon" />
+                <span>Propriétés</span>
+              </span>
 
-          <span className={`label ${activeTab === 'reservations' ? 'selected' : ''}`} id="reservations" onClick={handleLabelClick}>
-            <ReservationsIcon className="icon" />
-            <span>Réservations</span>
-          </span>
+              <span className={`label ${activeTab === 'reservations' ? 'selected' : ''}`} id="reservations" onClick={handleLabelClick}>
+                <ReservationsIcon className="icon" />
+                <span>Réservations</span>
+                {notifications.filter(n => !n.is_read && n.type === 'booking').length > 0 && (
+                  <span className="label-badge">
+                    {notifications.filter(n => !n.is_read && n.type === 'booking').length}
+                  </span>
+                )}
+              </span>
 
-          <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
-            <AnalyticsIcon className="icon" />
-            <span>Analytique</span>
-          </span>
+              <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
+                <AnalyticsIcon className="icon" />
+                <span>Analytique</span>
+              </span>
+            </>
+          )}
 
           <span className={`label ${activeTab === 'messages' ? 'selected' : ''}`} id="messages" onClick={handleLabelClick}>
             <MessagesIcon className="icon" />
             <span>Messages</span>
+            {!isAdmin && notifications.filter(n => !n.is_read && n.type === 'message').length > 0 && (
+              <span className="label-badge">
+                {notifications.filter(n => !n.is_read && n.type === 'message').length}
+              </span>
+            )}
           </span>
 
-          <span className={`label ${activeTab === 'reviews' ? 'selected' : ''}`} id="reviews" onClick={handleLabelClick}>
-            <ReviewsIcon className="icon" />
-            <span>Avis</span>
-          </span>
+          {!isAdmin && (
+            <span className={`label ${activeTab === 'reviews' ? 'selected' : ''}`} id="reviews" onClick={handleLabelClick}>
+              <ReviewsIcon className="icon" />
+              <span>Avis</span>
+            </span>
+          )}
 
           <span className={`label ${activeTab === 'settings' ? 'selected' : ''}`} id="settings" onClick={handleLabelClick}>
             <SettingsIcon className="icon" />
@@ -159,19 +220,21 @@ function Dashboard() {
 
       </div>
       <div className="dashboard-body">
-        <div className="dashboard-user-profile" style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', padding: '15px', backgroundColor: '#f9fafb', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-          {user.profile_picture ? (
-            <img src={user.profile_picture} alt="Profile" style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', marginRight: '15px' }} />
-          ) : (
-            <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', marginRight: '15px' }}>
-              <i className="fa-solid fa-user"></i>
-            </div>
-          )}
+        <div className="dashboard-user-profile">
+          <div className="profile-img-container">
+            {user.profile_picture ? (
+              <img src={resolveImageUrl(user.profile_picture)} alt="Profile" />
+            ) : (
+              <div className="initials-fallback">
+                {getInitials(user.first_name, user.last_name)}
+              </div>
+            )}
+          </div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#1f2937' }}>
-              {user.role === 'manager' || user.role === 'admin' ? user.first_name : `${user.first_name} ${user.last_name}`}
+            <h2>
+              {user.role === 'admin' ? user.first_name : (user.role === 'manager' ? (user.first_name?.replace(/Hôtel Manager/gi, "Hôtel") || "Hôtel") : `${user.first_name} ${user.last_name}`)}
             </h2>
-            <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem' }}>{user.email}</p>
+            <p>{user.email}</p>
           </div>
         </div>
 
@@ -192,6 +255,7 @@ function Dashboard() {
           </div>
         )}
         {renderContent()}
+      </div>
       </div>
     </div>
   )

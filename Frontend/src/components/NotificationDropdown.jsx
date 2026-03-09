@@ -1,24 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaBell } from 'react-icons/fa';
-import { getNotifications } from '../services/notificationService';
+import { useNotification } from '../context/NotificationContext';
 
 const NotificationDropdown = () => {
-    const [unreadCount, setUnreadCount] = useState(0);
+    const { unreadCount } = useNotification();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const fetchCount = async () => {
-            try {
-                const data = await getNotifications();
-                const unread = (data.notifications || []).filter(n => !n.is_read).length;
-                setUnreadCount(unread);
-            } catch (err) {
-                console.error("Impossible de récupérer les notifications:", err);
-            }
-        };
-        fetchCount();
-    }, []);
 
     return (
         <span

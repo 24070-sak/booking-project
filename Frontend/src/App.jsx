@@ -17,6 +17,8 @@ import Payment from "./pages/Payment";
 import Notifications from "./pages/Notifications";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import MobileNavbar from "./components/MobileNavbar";
+import FloatingChatbot from "./components/FloatingChatbot";
 
 function App() {
   return (
@@ -65,6 +67,8 @@ function App() {
         {/* Payment page */}
         <Route path="/payment/:bookingId" element={<Payment />} />
       </Routes>
+      <MobileNavbar />
+      <FloatingChatbot />
     </>
   );
 }

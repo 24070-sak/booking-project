@@ -31,6 +31,8 @@ class Message(db.Model):
             'receiver_name': f"{self.receiver.first_name} {self.receiver.last_name}" if self.receiver else "Système",
             'receiver_email': self.receiver.email if self.receiver else None,
             'receiver_picture': self.receiver.profile_picture if self.receiver else None,
+            'sender_role': self.sender.role if self.sender else None,
+            'receiver_role': self.receiver.role if self.receiver else None,
             'subject': self.subject,
             'content': self.content,
             'is_read': self.is_read,
