@@ -77,8 +77,6 @@ const DashboardAnalytics = () => {
                                     cy="50%"
                                     innerRadius={70}
                                     outerRadius={90}
-                                    startAngle={90}
-                                    endAngle={-270}
                                     dataKey="value"
                                     stroke="none"
                                 >

@@ -196,7 +196,7 @@ const DashboardPayments = () => {
                                 <div className="screenshot-preview">
                                     <h4>Capture d'écran / Reçu</h4>
                                     <img
-                                        src={`http://localhost:5000${selectedPayment.screenshot_url}`}
+                                        src={resolveImageUrl(selectedPayment.screenshot_url)}
                                         alt="Preuve de paiement"
                                         style={{ maxWidth: '100%', borderRadius: '8px', border: '1px solid #e2e8f0' }}
                                     />

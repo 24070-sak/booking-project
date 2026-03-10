@@ -71,7 +71,7 @@ function ControlCenter() {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/auth/admin/create-user', {
+            const response = await fetch(`${API_URL}/auth/admin/create-user`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

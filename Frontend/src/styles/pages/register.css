@@ -211,9 +211,29 @@ i:hover {
 
 /* Responsive */
 @media (max-width: 500px) {
+    .body {
+        padding: 0 !important;
+        align-items: flex-start;
+    }
+
     .register-container {
-        width: 90%;
-        padding: 30px 20px;
+        width: 100% !important;
+        min-height: 100vh;
+        border-radius: 0 !important;
+        padding: 28px 20px 30px;
+        border-top: none;
+        box-shadow: none;
+        margin: 0;
+        gap: 20px;
+    }
+
+    .social-login {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .social-login div {
+        justify-content: center;
     }
 }
 

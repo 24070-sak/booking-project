@@ -11,6 +11,7 @@ flask-mail
 sqlalchemy
 pymysql
 cryptography
+psycopg2-binary
 
 # Serveur de production
 gunicorn
