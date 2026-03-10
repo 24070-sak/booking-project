@@ -23,7 +23,7 @@ def allowed_file(filename):
 @jwt_required()
 def get_payments():
     """Liste les paiements de l'utilisateur actuel"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if not user:
@@ -53,7 +53,7 @@ def get_payments():
 @jwt_required()
 def submit_local_payment():
     """Soumettre un paiement local (Bankily/Sedad/Masrivi)"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     if 'screenshot' not in request.files:
         return jsonify({'error': 'Capture d\'écran requise'}), 400
@@ -128,7 +128,7 @@ def submit_local_payment():
 @jwt_required()
 def get_pending_payments():
     """Liste les paiements en attente (Admin seulement)"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if user.role not in ['admin', 'manager'] and not user.access_dashboard:
@@ -151,7 +151,7 @@ def get_pending_payments():
 @jwt_required()
 def verify_payment(payment_id):
     """Confirmer ou refuser un paiement (Admin seulement)"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if user.role not in ['admin', 'manager'] and not user.access_dashboard:

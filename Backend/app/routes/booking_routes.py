@@ -16,7 +16,7 @@ booking_bp = Blueprint('bookings', __name__, url_prefix='/api/bookings')
 @jwt_required()
 def create_booking():
     """Créer une nouvelle réservation"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     # Validation
@@ -129,7 +129,7 @@ def create_booking():
 @jwt_required()
 def get_user_bookings():
     """Obtenir les réservations de l'utilisateur connecté"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     status = request.args.get('status')
     
     query = Booking.query.filter_by(user_id=user_id)
@@ -149,7 +149,7 @@ def get_user_bookings():
 @jwt_required()
 def get_booking(booking_id):
     """Obtenir les détails d'une réservation"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     booking = Booking.query.get(booking_id)
@@ -168,7 +168,7 @@ def get_booking(booking_id):
 @jwt_required()
 def cancel_booking(booking_id):
     """Annuler une réservation"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     booking = Booking.query.get(booking_id)
     
@@ -210,7 +210,7 @@ def cancel_booking(booking_id):
 @jwt_required()
 def confirm_booking(booking_id):
     """Confirmer une réservation (admin/manager)"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if user.role not in ['admin', 'manager'] and not user.access_dashboard:
@@ -279,7 +279,7 @@ def confirm_booking(booking_id):
 @jwt_required()
 def reject_booking(booking_id):
     """Refuser une réservation (admin/manager/owner)"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if user.role not in ['admin', 'manager'] and not user.access_dashboard:
@@ -332,7 +332,7 @@ def reject_booking(booking_id):
 @jwt_required()
 def process_payment(booking_id):
     """Traiter le paiement d'une réservation"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     booking = Booking.query.get(booking_id)
     
@@ -417,7 +417,7 @@ def process_payment(booking_id):
 @jwt_required()
 def get_all_bookings():
     """Obtenir toutes les réservations (admin/manager)"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if user.role not in ['admin', 'manager']:
@@ -444,7 +444,7 @@ def get_all_bookings():
 @jwt_required()
 def get_owner_bookings():
     """Obtenir les réservations pour les hôtels de l'owner connecté"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if not user.access_dashboard:

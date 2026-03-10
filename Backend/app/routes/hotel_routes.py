@@ -98,7 +98,7 @@ def get_hotels():
 @jwt_required()
 def get_my_hotels():
     """Liste les hôtels possédés par l'utilisateur connecté"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     hotels = Hotel.query.filter_by(user_id=user_id).all()
     return jsonify({
         'hotels': [h.to_dict() for h in hotels],
@@ -109,7 +109,7 @@ def get_my_hotels():
 @jwt_required()
 def create_hotel():
     """Créer un nouvel hôtel (Nécessite access_dashboard)"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     from app.models.user import User
     user = User.query.get(user_id)
     
@@ -166,7 +166,7 @@ def get_hotel_details(hotel_id):
 @jwt_required()
 def update_hotel(hotel_id):
     """Mettre à jour un hôtel (Seulement si propriétaire)"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     hotel = Hotel.query.get(hotel_id)
     
     if not hotel:
@@ -197,7 +197,7 @@ def update_hotel(hotel_id):
 @jwt_required()
 def delete_hotel(hotel_id):
     """Supprimer un hôtel (Seulement si propriétaire)"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     hotel = Hotel.query.get(hotel_id)
     
     if not hotel:
@@ -216,7 +216,7 @@ def delete_hotel(hotel_id):
 @jwt_required()
 def upload_hotel_image():
     """Upload an image for a hotel"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     from app.models.user import User
     user = User.query.get(user_id)
     
@@ -250,7 +250,7 @@ def get_hotel_rooms(hotel_id):
     if not hotel:
         return jsonify({'error': 'Hôtel non trouvé'}), 404
     
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity()) if get_jwt_identity() else None
     
     if user_id and str(hotel.user_id) == str(user_id):
         rooms = Room.query.filter_by(hotel_id=hotel_id).all()

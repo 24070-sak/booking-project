@@ -9,7 +9,7 @@ notification_bp = Blueprint('notifications', __name__, url_prefix='/api/notifica
 @jwt_required()
 def get_notifications():
     """Fetch recent notifications and unread count for the current user."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     limit = request.args.get('limit', 50, type=int)
     
     notifications = Notification.query.filter_by(user_id=user_id).order_by(Notification.created_at.desc()).limit(limit).all()
@@ -24,7 +24,7 @@ def get_notifications():
 @jwt_required()
 def mark_as_read(notification_id):
     """Mark a specific notification as read."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     notification = Notification.query.filter_by(id=notification_id, user_id=user_id).first()
     
     if not notification:
@@ -39,7 +39,7 @@ def mark_as_read(notification_id):
 @jwt_required()
 def mark_all_as_read():
     """Mark all notifications as read for the current user."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     Notification.query.filter_by(user_id=user_id, is_read=False).update({'is_read': True})
     db.session.commit()
     
@@ -49,7 +49,7 @@ def mark_all_as_read():
 @jwt_required()
 def mark_by_type_as_read():
     """Mark all notifications of a specific type as read for the current user."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     notif_type = data.get('type')
     
@@ -65,7 +65,7 @@ def mark_by_type_as_read():
 @jwt_required()
 def get_settings():
     """Fetch notification settings for the user."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     settings = NotificationSetting.query.get(user_id)
     
     if not settings:
@@ -79,7 +79,7 @@ def get_settings():
 @jwt_required()
 def update_settings():
     """Update notification settings."""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     settings = NotificationSetting.query.get(user_id)

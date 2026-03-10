@@ -19,7 +19,7 @@ dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/api/dashboard')
 @jwt_required()
 def get_dashboard_stats():
     """Récupère les statistiques pour le dashboard"""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
     
     if not user:
@@ -226,7 +226,7 @@ def get_dashboard_stats():
 @jwt_required()
 def get_detailed_analytics():
     """Récupère des analytics détaillées"""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
     
     if not user or not user.access_dashboard:
@@ -305,7 +305,7 @@ def get_detailed_analytics():
 @jwt_required()
 def get_reviews_summary():
     """Récupère un résumé des avis pour les propriétés de l'owner"""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
     
     if not user or not user.access_dashboard:
@@ -347,7 +347,7 @@ def get_reviews_summary():
 @jwt_required()
 def get_messages_summary():
     """Récupère un résumé des messages"""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
     
     if not user or not user.access_dashboard:

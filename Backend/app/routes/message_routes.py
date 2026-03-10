@@ -14,7 +14,7 @@ message_bp = Blueprint('messages', __name__, url_prefix='/api/messages')
 @jwt_required()
 def get_messages():
     """Récupère les messages de l'utilisateur ou tous les messages si admin"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if not user:
@@ -60,7 +60,7 @@ def get_messages():
 @jwt_required()
 def add_message():
     """Envoyer un nouveau message"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     if not data.get('content'):
@@ -141,7 +141,7 @@ def mark_read(message_id):
 @jwt_required()
 def search_users():
     """Rechercher des utilisateurs par nom ou email pour démarrer une conversation"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     query = request.args.get('q', '').strip()
     
     if len(query) < 2:

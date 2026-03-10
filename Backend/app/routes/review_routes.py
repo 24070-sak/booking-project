@@ -25,7 +25,7 @@ def _update_hotel_rating(hotel):
 @jwt_required(optional=True)
 def get_reviews():
     """Liste tous les avis ou filtre par propriétaire"""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity()) if get_jwt_identity() else None
     
     if current_user_id:
         user = User.query.get(current_user_id)
@@ -54,7 +54,7 @@ def get_reviews():
 @jwt_required()
 def create_review():
     """Créer un nouvel avis"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     # Validation
@@ -104,7 +104,7 @@ def get_review(review_id):
 @jwt_required()
 def update_review(review_id):
     """Mettre à jour un avis"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     review = Review.query.get(review_id)
@@ -146,7 +146,7 @@ def update_review(review_id):
 @jwt_required()
 def delete_review(review_id):
     """Supprimer un avis"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     review = Review.query.get(review_id)
@@ -209,7 +209,7 @@ def get_hotel_reviews(hotel_id):
 @jwt_required()
 def reply_to_review(review_id):
     """Permet au propriétaire de l'hôtel de répondre à un avis"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     review = Review.query.get(review_id)
