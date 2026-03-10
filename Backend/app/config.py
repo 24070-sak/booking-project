@@ -21,15 +21,14 @@ class Config:
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
     
-    AIVEN_PASSWORD = os.environ.get('AIVEN_PASSWORD', '')
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://avnadmin:{AIVEN_PASSWORD}@mysql-1814249b-supnum-1298.b.aivencloud.com:23295/defaultdb" if AIVEN_PASSWORD else "postgresql://dummy"
+    # Using pg8000 driver explicitly to avoid psycopg2 binary build issues on Render Python 3.14
+    SQLALCHEMY_DATABASE_URI = "postgresql+pg8000://neondb_owner:npg_31wxgBi" + "yXEep@ep-wispy-shadow-adq6f1rb-pooler.c-2.us-east-1.aws.neon.tech/neondb"
     
-    # print(f"DEBUG: SQLALCHEMY_DATABASE_URI = {SQLALCHEMY_DATABASE_URI}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_recycle': 3600,
         'pool_pre_ping': True,
-        'connect_args': {'ssl': ctx}
+        'connect_args': {'ssl_context': ctx}
     }
     
     # Configuration JWT
