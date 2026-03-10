@@ -16,7 +16,14 @@ class Config:
     MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', '12345678')
     MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', 'booking_system')
     
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+    _db_url = os.environ.get('DATABASE_URL')
+    if _db_url:
+        if _db_url.startswith("postgres://"):
+            _db_url = _db_url.replace("postgres://", "postgresql+pg8000://", 1)
+        elif _db_url.startswith("postgresql://"):
+            _db_url = _db_url.replace("postgresql://", "postgresql+pg8000://", 1)
+            
+    SQLALCHEMY_DATABASE_URI = _db_url or \
         f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}'
     print(f"DEBUG: SQLALCHEMY_DATABASE_URI = {SQLALCHEMY_DATABASE_URI}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -50,8 +57,7 @@ class DevelopmentConfig(Config):
     """Configuration pour le développement"""
     DEBUG = True
     # MYSQL_DATABASE = 'booking_system'
-    # Use DATABASE_URL from env if set, otherwise fallback to mysql (not good if env is sqlite)
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or f'mysql+pymysql://{Config.MYSQL_USER}:{Config.MYSQL_PASSWORD}@{Config.MYSQL_HOST}:{Config.MYSQL_PORT}/{Config.MYSQL_DATABASE}'
+    SQLALCHEMY_DATABASE_URI = Config.SQLALCHEMY_DATABASE_URI
 
 
 class ProductionConfig(Config):
