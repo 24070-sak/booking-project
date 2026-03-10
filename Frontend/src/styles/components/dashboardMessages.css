@@ -1049,10 +1049,6 @@
         display: none;
     }
 
-    /* Also hide the wrapper div that holds the h2 */
-    .dashboard-messages-content>div:first-child {
-        display: none !important;
-    }
 
     /* Container stacks full-screen */
     .messages-container {
@@ -2311,38 +2307,5 @@
     .chat-header {
         padding: 10px 15px !important;
         border-bottom: 1px solid #e0ede7 !important;
-    }
-}
-
-/* Ensure full screen on mobile for dashboard messages component */
-@media (max-width: 768px) {
-    .messages-container {
-        height: 100% !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-    }
-
-    .messages-list {
-        width: 100% !important;
-        height: 100% !important;
-    }
-
-    .chat-area {
-        width: 100% !important;
-        height: 100% !important;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 65px !important;
-        /* MobileNavbar spacer */
-        background: white !important;
-        z-index: 1000 !important;
-        display: none;
-    }
-
-    .show-chat .chat-area {
-        display: flex !important;
-        flex-direction: column !important;
     }
 }
