@@ -71,3 +71,7 @@ def create_app(config_name='development'):
         return {'status': 'ok', 'message': 'API is running'}
     
     return app
+
+import os
+# Si DATABASE_URL n'existe pas, il prend SQLite par défaut pour le local
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///booking.db')
