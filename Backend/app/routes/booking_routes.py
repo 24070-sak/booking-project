@@ -6,6 +6,7 @@ from app.models.payment import Payment
 from app.models.room import Room
 from app.models.user import User
 from app.utils.helpers import update_db_dump
+from app.utils.security import is_owner_of_booking, get_owned_hotel_ids
 from datetime import datetime
 
 booking_bp = Blueprint('bookings', __name__, url_prefix='/api/bookings')
@@ -80,17 +81,38 @@ def create_booking():
     
     db.session.add(booking)
     
-    from app.models.notification import Notification
+    from app.models.notification import Notification, NotificationSetting
     hotel = room.hotel
-    notif = Notification(
-        user_id=user_id,
-        title='Réservation en attente',
-        message=f'Vous avez réservé la chambre {room.name} à {hotel.name} pour le {check_in.strftime("%d/%m/%Y")}. La réservation est en attente.',
-        type='booking_created',
-        room_id=room.id,
-        hotel_id=hotel.id
-    )
-    db.session.add(notif)
+    
+    # Check if guest wants notification
+    guest_settings = NotificationSetting.query.get(user_id)
+    if not guest_settings or guest_settings.notify_bookings:
+        notif_guest = Notification(
+            user_id=user_id,
+            title='Réservation en attente',
+            message=f'Vous avez réservé la chambre {room.name} à {hotel.name} pour le {check_in.strftime("%d/%m/%Y")}. La réservation est en attente.',
+            type='booking',
+            room_id=room.id,
+            hotel_id=hotel.id
+        )
+        db.session.add(notif_guest)
+        
+    # Check if manager wants notification
+    manager_settings = NotificationSetting.query.get(hotel.user_id)
+    if not manager_settings or manager_settings.notify_bookings:
+        user_guest = User.query.get(user_id)
+        guest_name = f"{user_guest.first_name} {user_guest.last_name}" if user_guest else "Un client"
+        
+        notif_manager = Notification(
+            user_id=hotel.user_id,
+            title='Nouvelle réservation',
+            message=f'Vous avez reçu une nouvelle réservation de {guest_name} pour {room.name} à {hotel.name}. Veuillez l\'examiner.',
+            type='booking',
+            room_id=room.id,
+            hotel_id=hotel.id,
+            booking_id=booking.id
+        )
+        db.session.add(notif_manager)
     
     db.session.commit()
     
@@ -202,6 +224,10 @@ def confirm_booking(booking_id):
     if booking.status != 'pending':
         return jsonify({'error': 'Seules les réservations en attente peuvent être confirmées'}), 400
     
+    # SECURITY FIX: Ensure manager owns the hotel
+    if not is_owner_of_booking(user, booking):
+        return jsonify({'error': 'Accès non autorisé à cette réservation'}), 403
+    
     booking.status = 'confirmed'
     
     # Auto-create a payment record if none exists for this booking
@@ -225,18 +251,21 @@ def confirm_booking(booking_id):
             existing_payment.status = 'completed'
             existing_payment.paid_at = datetime.utcnow()
     
-    from app.models.notification import Notification
+    from app.models.notification import Notification, NotificationSetting
     room = booking.room
     hotel = room.hotel
-    notif = Notification(
-        user_id=booking.user_id,
-        title='Réservation acceptée',
-        message=f'Votre réservation pour {room.name} à {hotel.name} a été acceptée par l\'établissement.',
-        type='booking_accepted',
-        room_id=room.id,
-        hotel_id=hotel.id
-    )
-    db.session.add(notif)
+    
+    guest_settings = NotificationSetting.query.get(booking.user_id)
+    if not guest_settings or guest_settings.notify_bookings:
+        notif = Notification(
+            user_id=booking.user_id,
+            title='Réservation acceptée',
+            message=f'Votre réservation pour {room.name} à {hotel.name} a été acceptée par l\'établissement.',
+            type='booking',
+            room_id=room.id,
+            hotel_id=hotel.id
+        )
+        db.session.add(notif)
     
     db.session.commit()
     
@@ -262,6 +291,10 @@ def reject_booking(booking_id):
         
     if booking.status != 'pending':
         return jsonify({'error': 'Seules les réservations en attente peuvent être refusées'}), 400
+    
+    # SECURITY FIX: Ensure manager owns the hotel
+    if not is_owner_of_booking(user, booking):
+        return jsonify({'error': 'Accès non autorisé à cette réservation'}), 403
         
     booking.status = 'cancelled'
     
@@ -269,21 +302,25 @@ def reject_booking(booking_id):
     if room:
         room.is_available = True
         
-    from app.models.notification import Notification
+    from app.models.notification import Notification, NotificationSetting
     hotel = room.hotel if room else None
     hotel_name = hotel.name if hotel else 'l\'hôtel'
     hotel_id = hotel.id if hotel else None
     room_name = room.name if room else 'la chambre'
     
-    notif = Notification(
-        user_id=booking.user_id,
-        title='Réservation refusée',
-        message=f'Désolé, votre réservation pour {room_name} à {hotel_name} a été refusée.',
-        type='booking_rejected',
-        room_id=booking.room_id,
-        hotel_id=hotel_id
-    )
-    db.session.add(notif)
+    guest_settings = NotificationSetting.query.get(booking.user_id)
+    if not guest_settings or guest_settings.notify_bookings:
+        notif = Notification(
+            user_id=booking.user_id,
+            title='Réservation refusée',
+            message=f'Désolé, votre réservation pour {room_name} à {hotel_name} a été refusée.',
+            type='booking',
+            room_id=booking.room_id,
+            hotel_id=hotel_id,
+            booking_id=booking.id
+        )
+        db.session.add(notif)
+        
     db.session.commit()
     
     update_db_dump()
@@ -331,18 +368,37 @@ def process_payment(booking_id):
     # Confirmer la réservation
     booking.status = 'confirmed'
     
-    from app.models.notification import Notification
+    from app.models.notification import Notification, NotificationSetting
     room = booking.room
     hotel = room.hotel
-    notif = Notification(
-        user_id=booking.user_id,
-        title='Paiement & Réservation confirmée',
-        message=f'Votre paiement a été reçu. Votre réservation pour {room.name} à {hotel.name} est confirmée automatiquement.',
-        type='booking_accepted',
-        room_id=room.id,
-        hotel_id=hotel.id
-    )
-    db.session.add(notif)
+    
+    guest_settings = NotificationSetting.query.get(booking.user_id)
+    if not guest_settings or guest_settings.notify_payments:
+        notif_guest = Notification(
+            user_id=booking.user_id,
+            title='Paiement & Réservation confirmée',
+            message=f'Votre paiement a été reçu. Votre réservation pour {room.name} à {hotel.name} est confirmée.',
+            type='payment',
+            transaction_id=payment.transaction_id,
+            room_id=room.id,
+            hotel_id=hotel.id
+        )
+        db.session.add(notif_guest)
+        
+    manager_settings = NotificationSetting.query.get(hotel.user_id)
+    if not manager_settings or manager_settings.notify_payments:
+        user_guest = User.query.get(user_id)
+        guest_name = f"{user_guest.first_name} {user_guest.last_name}" if user_guest else "Un client"
+        
+        notif_manager = Notification(
+            user_id=hotel.user_id,
+            title='Nouveau Paiement Reçu',
+            message=f'Vous avez reçu un paiement de {guest_name} pour la réservation de {room.name}. Transaction ID: {payment.transaction_id}',
+            type='payment',
+            room_id=room.id,
+            hotel_id=hotel.id
+        )
+        db.session.add(notif_manager)
     
     db.session.commit()
     
@@ -370,8 +426,13 @@ def get_all_bookings():
     status = request.args.get('status')
     query = Booking.query
     
+    # SECURITY FIX: Managers only see their own hotels' bookings
+    owned_hotel_ids = get_owned_hotel_ids(user)
+    if owned_hotel_ids is not None:
+        query = query.join(Room).filter(Room.hotel_id.in_(owned_hotel_ids))
+    
     if status:
-        query = query.filter_by(status=status)
+        query = query.filter(Booking.status == status)
     
     bookings = query.order_by(Booking.created_at.desc()).all()
     

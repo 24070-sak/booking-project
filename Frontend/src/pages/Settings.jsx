@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNotification } from '../context/NotificationContext';
 
 export default function Settings() {
   const [user, setUser] = useState(() => {
     const stored = localStorage.getItem('user');
     return stored ? JSON.parse(stored) : null;
   });
+  
+  const { settings, updateSettings } = useNotification();
 
   const [fullName, setFullName] = useState(user?.first_name + (user?.last_name ? ' ' + user.last_name : '') || 'John Doe');
   const [email, setEmail] = useState(user?.email || 'john.doe@example.com');
@@ -13,7 +16,22 @@ export default function Settings() {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  const handleSave = () => {
+  const [notifState, setNotifState] = useState({
+    notify_messages: true,
+    notify_bookings: true,
+    notify_payments: true,
+    sound_enabled: true
+  });
+
+  useEffect(() => {
+    if (settings) {
+      setNotifState(settings);
+    }
+  }, [settings]);
+
+  const handleSave = async () => {
+    // Save notification settings to backend
+    await updateSettings(notifState);
     alert('Changes saved successfully!');
   };
 
@@ -126,6 +144,53 @@ export default function Settings() {
       cursor: 'pointer',
       fontSize: '16px',
     },
+    toggleContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '12px 16px',
+      backgroundColor: '#f9fafb',
+      borderRadius: '8px',
+      marginBottom: '12px',
+      border: '1px solid #e5e7eb'
+    },
+    toggleLabel: {
+      fontSize: '15px',
+      fontWeight: '500',
+      color: '#374151'
+    },
+    switch: {
+      position: 'relative',
+      display: 'inline-block',
+      width: '44px',
+      height: '24px',
+    },
+    slider: {
+      position: 'absolute',
+      cursor: 'pointer',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: '#ccc',
+      transition: '.4s',
+      borderRadius: '24px',
+    },
+    sliderBefore: {
+      position: 'absolute',
+      content: '""',
+      height: '18px',
+      width: '18px',
+      left: '3px',
+      bottom: '3px',
+      backgroundColor: 'white',
+      transition: '.4s',
+      borderRadius: '50%',
+    }
+  };
+
+  const handleToggle = (key) => {
+    setNotifState(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
@@ -235,6 +300,51 @@ export default function Settings() {
                 placeholder="••••••••"
                 style={styles.input}
               />
+            </div>
+          </div>
+        </div>
+
+        {/* Notifications Section */}
+        <div style={styles.section}>
+          <h2 style={styles.sectionTitle}>Notifications</h2>
+
+          <div style={styles.toggleContainer}>
+            <span style={styles.toggleLabel}>Messages notifications</span>
+            <div 
+              style={{...styles.switch, backgroundColor: notifState.notify_messages ? '#006233' : '#ccc', borderRadius: '24px', cursor: 'pointer', transition: '.4s'}} 
+              onClick={() => handleToggle('notify_messages')}
+            >
+              <div style={{...styles.sliderBefore, transform: notifState.notify_messages ? 'translateX(20px)' : 'translateX(0)'}} />
+            </div>
+          </div>
+
+          <div style={styles.toggleContainer}>
+            <span style={styles.toggleLabel}>Reservations notifications</span>
+            <div 
+              style={{...styles.switch, backgroundColor: notifState.notify_bookings ? '#006233' : '#ccc', borderRadius: '24px', cursor: 'pointer', transition: '.4s'}} 
+              onClick={() => handleToggle('notify_bookings')}
+            >
+              <div style={{...styles.sliderBefore, transform: notifState.notify_bookings ? 'translateX(20px)' : 'translateX(0)'}} />
+            </div>
+          </div>
+
+          <div style={styles.toggleContainer}>
+            <span style={styles.toggleLabel}>Payments notifications</span>
+            <div 
+              style={{...styles.switch, backgroundColor: notifState.notify_payments ? '#006233' : '#ccc', borderRadius: '24px', cursor: 'pointer', transition: '.4s'}} 
+              onClick={() => handleToggle('notify_payments')}
+            >
+              <div style={{...styles.sliderBefore, transform: notifState.notify_payments ? 'translateX(20px)' : 'translateX(0)'}} />
+            </div>
+          </div>
+
+          <div style={styles.toggleContainer}>
+            <span style={styles.toggleLabel}>Sound alerts</span>
+            <div 
+              style={{...styles.switch, backgroundColor: notifState.sound_enabled ? '#006233' : '#ccc', borderRadius: '24px', cursor: 'pointer', transition: '.4s'}} 
+              onClick={() => handleToggle('sound_enabled')}
+            >
+              <div style={{...styles.sliderBefore, transform: notifState.sound_enabled ? 'translateX(20px)' : 'translateX(0)'}} />
             </div>
           </div>
         </div>

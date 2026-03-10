@@ -5,6 +5,8 @@ from app.models.message import Message
 from app.models.user import User
 from app.models.booking import Booking
 from app.models.room import Room
+from app.utils.security import get_owned_hotel_ids
+from sqlalchemy import or_
 
 message_bp = Blueprint('messages', __name__, url_prefix='/api/messages')
 
@@ -18,34 +20,36 @@ def get_messages():
     if not user:
         return jsonify({'error': 'Utilisateur non trouvé'}), 404
         
-    if user.role in ['admin', 'manager']:
+    if user.role == 'admin':
         # Admin voit tout
         messages = Message.query.order_by(Message.created_at.desc()).all()
-    elif user.access_dashboard and user.hotels.count() > 0:
-        # Owner voit les messages des clients qui ont réservé ses hôtels
-        owned_hotel_ids = [h.id for h in user.hotels]
-        
-        # Get all users who booked the owner's hotels
-        guest_ids = db.session.query(Booking.user_id.distinct())\
-            .join(Room, Booking.room_id == Room.id)\
-            .filter(Room.hotel_id.in_(owned_hotel_ids))\
-            .all()
-        guest_ids = [gid[0] for gid in guest_ids]
-        
-        # Owner sees messages from/to these guests and their own messages
-        messages = Message.query.filter(
-            db.or_(
-                Message.sender_id.in_(guest_ids),
-                Message.receiver_id.in_(guest_ids),
-                Message.sender_id == user_id,
-                Message.receiver_id == user_id
-            )
-        ).order_by(Message.created_at.desc()).all()
     else:
-        # Client voit ses messages (envoyés ou reçus)
-        messages = Message.query.filter(
-            (Message.sender_id == user_id) | (Message.receiver_id == user_id)
-        ).order_by(Message.created_at.desc()).all()
+        owned_hotel_ids = get_owned_hotel_ids(user)
+        
+        if owned_hotel_ids:
+            # Owner voit les messages des clients qui ont réservé ses hôtels
+            # AND messages they sent/received directly
+            
+            # Get all users who booked the owner's hotels
+            guest_ids_query = db.session.query(Booking.user_id.distinct())\
+                .join(Room, Booking.room_id == Room.id)\
+                .filter(Room.hotel_id.in_(owned_hotel_ids))
+            
+            guest_ids = [gid[0] for gid in guest_ids_query.all()]
+            
+            messages = Message.query.filter(
+                or_(
+                    Message.sender_id.in_(guest_ids),
+                    Message.receiver_id.in_(guest_ids),
+                    Message.sender_id == user_id,
+                    Message.receiver_id == user_id
+                )
+            ).order_by(Message.created_at.desc()).all()
+        else:
+            # Client voit ses messages (envoyés ou reçus)
+            messages = Message.query.filter(
+                (Message.sender_id == user_id) | (Message.receiver_id == user_id)
+            ).order_by(Message.created_at.desc()).all()
         
     return jsonify({
         'messages': [m.to_dict() for m in messages],
@@ -80,6 +84,39 @@ def add_message():
     )
     
     db.session.add(new_message)
+    db.session.commit()
+    
+    # Notify Receiver(s)
+    from app.models.notification import Notification, NotificationSetting
+    
+    receivers_to_notify = []
+    if receiver_id:
+        receivers_to_notify.append(receiver_id)
+    else:
+        # If no receiver_id, it's for admins
+        # SECURITY FIX: Only notify real admins, managers shouldn't see blind admin messages
+        # unless they are explicitly involved. For now, notifying only users with 'admin' role.
+        admins = User.query.filter(User.role == 'admin').all()
+        receivers_to_notify = [a.id for a in admins]
+
+    sender = User.query.get(user_id)
+    sender_name = f"{sender.first_name} {sender.last_name}" if sender else "Un utilisateur"
+
+    for r_id in receivers_to_notify:
+        # Check if receiver has message notifications enabled
+        settings = NotificationSetting.query.get(r_id)
+        wants_notification = settings.notify_messages if settings else True
+        
+        if wants_notification:
+            notification = Notification(
+                user_id=r_id,
+                title="Nouveau message",
+                message=f"Vous avez reçu un nouveau message de {sender_name}.",
+                type="message",
+                sender_id=user_id
+            )
+            db.session.add(notification)
+    
     db.session.commit()
     
     return jsonify({

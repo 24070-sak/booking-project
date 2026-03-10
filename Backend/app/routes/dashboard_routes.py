@@ -11,6 +11,7 @@ from datetime import timedelta, date
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.user import User
+from app.utils.security import get_owned_hotel_ids
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/api/dashboard')
 
@@ -34,7 +35,7 @@ def get_dashboard_stats():
         return jsonify({
             'stats': {'totalBookings': 0, 'totalRevenue': 0, 'activeProperties': 0, 'occupancyRate': 0},
             'recentActivity': [],
-            'analytics': {'revenueByDay': [], 'topProperties': []}
+            'analytics': {'revenueByDay': [], 'topRooms': []}
         }), 200
 
     # Helper to apply ownership filter
@@ -146,39 +147,43 @@ def get_dashboard_stats():
             'amount': float(day_revenue) if day_revenue else 0
         })
     
-    # Top 3 Properties by Reservations
-    top_properties = []
+    # Top 3 Rooms by Revenue
+    top_rooms = []
     
-    hotels_to_check = Hotel.query.all() if is_admin else user.hotels
-    
-    for h in hotels_to_check:
-        # Count bookings for this hotel
-        booking_count_query = db.session.query(func.count(Booking.id))\
-            .join(Room, Booking.room_id == Room.id)\
-            .filter(Room.hotel_id == h.id)\
-            .filter(Booking.status != 'cancelled')
-            
-        booking_count = booking_count_query.scalar() or 0
+    # Get all rooms belonging to the user's hotels
+    rooms_query = Room.query
+    if not is_admin:
+        rooms_query = rooms_query.filter(Room.hotel_id.in_(owned_hotel_ids))
         
-        # Calculate revenue for this hotel
-        revenue_query = db.session.query(func.sum(Payment.amount))\
+    all_rooms = rooms_query.all()
+    
+    for r in all_rooms:
+        # Calculate revenue for this specific room
+        room_revenue_query = db.session.query(func.sum(Payment.amount))\
             .join(Booking, Payment.booking_id == Booking.id)\
-            .join(Room, Booking.room_id == Room.id)\
-            .filter(Room.hotel_id == h.id)\
+            .filter(Booking.room_id == r.id)\
             .filter(Payment.status == 'completed')
             
-        revenue = revenue_query.scalar() or 0
+        room_revenue = room_revenue_query.scalar() or 0
+        
+        # Count bookings for this room just as a supplementary stat
+        room_bookings_query = db.session.query(func.count(Booking.id))\
+            .filter(Booking.room_id == r.id)\
+            .filter(Booking.status != 'cancelled')
+            
+        room_bookings = room_bookings_query.scalar() or 0
 
-        if booking_count > 0:
-            top_properties.append({
-                'name': h.name,
-                'bookings': booking_count,
-                'revenue': float(revenue)
+        if room_revenue > 0 or room_bookings > 0:
+            top_rooms.append({
+                'name': r.name,
+                'hotel_name': r.hotel.name if r.hotel else 'Inconnu',
+                'bookings': room_bookings,
+                'revenue': float(room_revenue)
             })
             
-    # Sort by bookings count
-    top_properties.sort(key=lambda x: x['bookings'], reverse=True)
-    top_properties = top_properties[:3] # Top 3
+    # Sort by revenue (descending)
+    top_rooms.sort(key=lambda x: x['revenue'], reverse=True)
+    top_rooms = top_rooms[:3] # Top 3
 
     # 7. Visitor Stats
     hotels_query = Hotel.query
@@ -190,8 +195,11 @@ def get_dashboard_stats():
     total_views = sum(h.views for h in all_hotels)
     total_unique = sum(h.unique_visitors for h in all_hotels)
     
-    if all_hotels and len(all_hotels) > 0:
-        avg_bounce = sum(h.bounce_rate for h in all_hotels) / len(all_hotels)
+    # Real Data calculations for Bounce Rate
+    # Bounce rate = percentage of views that did not result in a booking
+    if total_views > 0:
+        actual_bounce = max(0.0, min(100.0, float(((total_views - total_bookings) / total_views) * 100)))
+        avg_bounce = int(actual_bounce)
     else:
         avg_bounce = 0
 
@@ -205,7 +213,7 @@ def get_dashboard_stats():
         'recentActivity': recent_activity,
         'analytics': {
             'revenueByDay': revenue_by_day,
-            'topProperties': top_properties,
+            'topRooms': top_rooms,
             'visitorStats': {
                 'pageViews': total_views,
                 'uniqueVisitors': total_unique,
@@ -313,10 +321,13 @@ def get_reviews_summary():
         }), 200
     
     # Get all reviews for owned hotels
-    reviews = Review.query\
-        .join(Room, Review.room_id == Room.id)\
-        .filter(Room.hotel_id.in_(owned_hotel_ids))\
-        .all()
+    query = Review.query\
+        .join(Room, Review.room_id == Room.id)
+    
+    if user.role != 'admin':
+        query = query.filter(Room.hotel_id.in_(owned_hotel_ids))
+    
+    reviews = query.all()
     
     total_reviews = len(reviews)
     avg_rating = sum(r.rating for r in reviews) / total_reviews if total_reviews > 0 else 0
@@ -351,11 +362,13 @@ def get_messages_summary():
         }), 200
     
     # Get all users who booked the owner's hotels
-    guest_ids = db.session.query(Booking.user_id.distinct())\
-        .join(Room, Booking.room_id == Room.id)\
-        .filter(Room.hotel_id.in_(owned_hotel_ids))\
-        .all()
-    guest_ids = [gid[0] for gid in guest_ids]
+    guest_ids_query = db.session.query(Booking.user_id.distinct())\
+        .join(Room, Booking.room_id == Room.id)
+    
+    if user.role != 'admin':
+        guest_ids_query = guest_ids_query.filter(Room.hotel_id.in_(owned_hotel_ids))
+        
+    guest_ids = [gid[0] for gid in guest_ids_query.all()]
     
     # Count messages
     total_messages = Message.query.filter(

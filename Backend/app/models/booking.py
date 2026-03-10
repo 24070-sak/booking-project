@@ -55,7 +55,8 @@ class Booking(db.Model):
                 'id': self.user.id,
                 'first_name': self.user.first_name,
                 'last_name': self.user.last_name,
-                'email': self.user.email
+                'email': self.user.email,
+                'profile_picture': self.user.profile_picture
             }
         return data
     

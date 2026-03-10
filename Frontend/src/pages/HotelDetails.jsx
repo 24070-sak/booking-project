@@ -6,6 +6,7 @@ import { getUserBookings } from "../services/bookingService";
 import { sendMessage } from "../services/messageService";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { resolveImageUrl } from "../utils/urlHelper";
 import "../styles/pages/hotelDetails.css"; // New Premium Styles
 
 function HotelDetails() {
@@ -198,7 +199,7 @@ function HotelDetails() {
 
                 {/* Hero Image */}
                 <div className="hero-section">
-                    <img src={hotel.image_url} alt={hotel.name} className="hero-image" />
+                    <img src={resolveImageUrl(hotel.image_url)} alt={hotel.name} className="hero-image" />
                 </div>
 
                 {/* Content Grid */}
@@ -210,12 +211,12 @@ function HotelDetails() {
                         {/* Host Info */}
                         <div className="host-info-row">
                             <div className="host-text">
-                                <h2>Hébergé par {hotel.owner_name || `Hôte ${hotel.owner_id || ''}`}</h2>
+                                <h2>Hébergé par {(hotel.owner_name || `Hôte ${hotel.owner_id || ''}`).replace(/Manager/gi, '').trim()}</h2>
                                 <p>Superhôte · Réponse rapide</p>
                             </div>
                             <div className="host-avatar">
                                 {hotel.owner_picture ? (
-                                    <img src={hotel.owner_picture} alt={hotel.owner_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                                    <img src={resolveImageUrl(hotel.owner_picture)} alt={hotel.owner_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                                 ) : (
                                     <i className="fa-solid fa-user"></i>
                                 )}
@@ -233,7 +234,7 @@ function HotelDetails() {
                             <div className="rooms-grid">
                                 {rooms.map(room => (
                                     <div key={room.id} className="room-card">
-                                        <img src={room.image_url} alt={room.name} className="room-img" />
+                                        <img src={resolveImageUrl(room.image_url)} alt={room.name} className="room-img" />
                                         <div className="room-info">
                                             <h3 className="room-name">{room.name}</h3>
                                             <p className="room-desc">{room.description}</p>
@@ -347,7 +348,7 @@ function HotelDetails() {
                                     <div className="review-user">
                                         <div className="user-pic">
                                             {review.user_picture ? (
-                                                <img src={review.user_picture} alt={review.user_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                                                <img src={resolveImageUrl(review.user_picture)} alt={review.user_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                                             ) : (
                                                 <i className="fa-solid fa-user"></i>
                                             )}

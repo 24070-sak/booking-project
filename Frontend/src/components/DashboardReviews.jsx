@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getReviews } from '../services/dashboardService';
 import { replyToReview } from '../services/reviewService';
+import { resolveImageUrl } from '../utils/urlHelper';
+import { showSuccess, showError } from '../utils/alerts';
 import '../styles/components/dashboardReviews.css';
 
 const DashboardReviews = () => {
@@ -29,12 +31,12 @@ const DashboardReviews = () => {
         if (!replyText.trim()) return;
         try {
             await replyToReview(reviewId, replyText);
-            alert("Réponse envoyée !");
+            showSuccess('Réponse envoyée avec succès !');
             setReplyingTo(null);
             setReplyText("");
             fetchReviews();
         } catch (error) {
-            alert("Erreur: " + error.message);
+            showError(`Erreur: ${error.message}`);
         }
     };
 
@@ -64,7 +66,7 @@ const DashboardReviews = () => {
                                 <div className="review-user-info">
                                     <div className="user-avatar">
                                         {review.user_picture ? (
-                                            <img src={review.user_picture} alt={review.user_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+                                            <img src={resolveImageUrl(review.user_picture)} alt={review.user_name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                                         ) : (
                                             <i className="fa-solid fa-user"></i>
                                         )}
@@ -82,7 +84,7 @@ const DashboardReviews = () => {
                                 <span className="rating-number">{review.rating}.0</span>
                             </div>
 
-                            <p className="review-comment">"{review.comment}"</p>
+                            <p className="review-comment">{review.comment}</p>
 
                             <div className="review-actions">
 
