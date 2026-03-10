@@ -1,0 +1,2607 @@
+{
+    "room_images": [],
+    "payments": [
+        {
+            "id": 1,
+            "booking_id": 1,
+            "amount": 139.0,
+            "currency": "MRU",
+            "payment_method": "local_app",
+            "transaction_id": null,
+            "transaction_phone": "42000101",
+            "screenshot_url": "/static/uploads/3286d4a4796a4abab8b30d6967705879_Screenshot_From_2025-12-06_12-56-37.png",
+            "bank_app": "bankily",
+            "status": "completed",
+            "paid_at": "2026-03-09T03:31:03.749421",
+            "created_at": "2026-03-09T03:30:11.080341"
+        },
+        {
+            "id": 2,
+            "booking_id": 2,
+            "amount": 149.0,
+            "currency": "MRU",
+            "payment_method": "credit_card",
+            "transaction_id": "TXN_4B2B40E8C71A",
+            "transaction_phone": null,
+            "screenshot_url": null,
+            "bank_app": null,
+            "status": "completed",
+            "paid_at": "2026-03-09T03:51:16.022223",
+            "created_at": "2026-03-09T03:51:16.024450"
+        },
+        {
+            "id": 3,
+            "booking_id": 4,
+            "amount": 372.0,
+            "currency": "MRU",
+            "payment_method": "local_app",
+            "transaction_id": null,
+            "transaction_phone": "48090172",
+            "screenshot_url": "/static/uploads/24b7cc3ba6e349e781e1a585085dfd46_Screenshot_From_2025-12-06_12-56-55.png",
+            "bank_app": "bankily",
+            "status": "completed",
+            "paid_at": "2026-03-09T04:25:09.548072",
+            "created_at": "2026-03-09T04:23:13.128004"
+        },
+        {
+            "id": 4,
+            "booking_id": 5,
+            "amount": 167.0,
+            "currency": "MRU",
+            "payment_method": "credit_card",
+            "transaction_id": "TXN_F02B1C968E27",
+            "transaction_phone": null,
+            "screenshot_url": null,
+            "bank_app": null,
+            "status": "completed",
+            "paid_at": "2026-03-09T04:24:54.512633",
+            "created_at": "2026-03-09T04:24:54.515843"
+        },
+        {
+            "id": 5,
+            "booking_id": 3,
+            "amount": 100.0,
+            "currency": "MRU",
+            "payment_method": "credit_card",
+            "transaction_id": "TXN_40AF88A44D2D",
+            "transaction_phone": null,
+            "screenshot_url": null,
+            "bank_app": null,
+            "status": "completed",
+            "paid_at": "2026-03-09T04:32:09.917657",
+            "created_at": "2026-03-09T04:32:09.918768"
+        },
+        {
+            "id": 6,
+            "booking_id": 6,
+            "amount": 550.0,
+            "currency": "MRU",
+            "payment_method": "local_app",
+            "transaction_id": null,
+            "transaction_phone": "45454545",
+            "screenshot_url": "/static/uploads/d6a23a71e7774fe2abd77f492e30a3d8_Screenshot_From_2025-12-06_18-26-07.png",
+            "bank_app": "bankily",
+            "status": "completed",
+            "paid_at": "2026-03-09T13:50:46.219685",
+            "created_at": "2026-03-09T13:49:26.597104"
+        },
+        {
+            "id": 7,
+            "booking_id": 7,
+            "amount": 85.0,
+            "currency": "MRU",
+            "payment_method": "local_app",
+            "transaction_id": null,
+            "transaction_phone": "32160126",
+            "screenshot_url": "/static/uploads/bbb01b748bfe443e89f0987298566139_WhatsApp_Image_2026-03-09_at_5.10.02_PM.jpeg",
+            "bank_app": "bankily",
+            "status": "failed",
+            "paid_at": null,
+            "created_at": "2026-03-09T17:11:18.476124"
+        },
+        {
+            "id": 8,
+            "booking_id": 8,
+            "amount": 195.0,
+            "currency": "MRU",
+            "payment_method": "local_app",
+            "transaction_id": null,
+            "transaction_phone": "48090172",
+            "screenshot_url": "/static/uploads/c0fb072c0f0b4ce1b7fd87a2294c3c00_WhatsApp_Image_2026-03-09_at_5.10.02_PM.jpeg",
+            "bank_app": "bankily",
+            "status": "completed",
+            "paid_at": "2026-03-09T17:15:35.888535",
+            "created_at": "2026-03-09T17:12:02.533763"
+        }
+    ],
+    "notifications": [
+        {
+            "id": 1,
+            "user_id": 2,
+            "title": "R\u00e9servation en attente",
+            "message": "Vous avez r\u00e9serv\u00e9 la chambre Deluxe - Monotel Dar El Barka \u00e0 Monotel Dar El Barka pour le 09/03/2026. La r\u00e9servation est en attente.",
+            "type": "booking",
+            "room_id": 7,
+            "hotel_id": 3,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T03:29:34.252290"
+        },
+        {
+            "id": 2,
+            "user_id": 5,
+            "title": "Nouvelle r\u00e9servation",
+            "message": "Vous avez re\u00e7u une nouvelle r\u00e9servation de John America pour Deluxe - Monotel Dar El Barka \u00e0 Monotel Dar El Barka. Veuillez l'examiner.",
+            "type": "booking",
+            "room_id": 7,
+            "hotel_id": 3,
+            "booking_id": 1,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T03:29:34.257022"
+        },
+        {
+            "id": 3,
+            "user_id": 5,
+            "title": "Nouveau paiement \u00e0 v\u00e9rifier",
+            "message": "John America a soumis un justificatif de paiement local pour Deluxe - Monotel Dar El Barka via bankily. Veuillez le v\u00e9rifier.",
+            "type": "payment",
+            "room_id": 7,
+            "hotel_id": 3,
+            "booking_id": 1,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T03:30:11.088254"
+        },
+        {
+            "id": 4,
+            "user_id": 2,
+            "title": "Paiement v\u00e9rifi\u00e9 et approuv\u00e9",
+            "message": "Votre paiement pour Deluxe - Monotel Dar El Barka \u00e0 Monotel Dar El Barka a \u00e9t\u00e9 valid\u00e9. Votre r\u00e9servation est maintenant confirm\u00e9e.",
+            "type": "payment",
+            "room_id": 7,
+            "hotel_id": 3,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T03:31:03.755300"
+        },
+        {
+            "id": 5,
+            "user_id": 2,
+            "title": "R\u00e9servation en attente",
+            "message": "Vous avez r\u00e9serv\u00e9 la chambre Deluxe - Monotel Dar El Barka \u00e0 Monotel Dar El Barka pour le 09/03/2026. La r\u00e9servation est en attente.",
+            "type": "booking",
+            "room_id": 8,
+            "hotel_id": 3,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T03:38:53.827059"
+        },
+        {
+            "id": 6,
+            "user_id": 5,
+            "title": "Nouvelle r\u00e9servation",
+            "message": "Vous avez re\u00e7u une nouvelle r\u00e9servation de John America pour Deluxe - Monotel Dar El Barka \u00e0 Monotel Dar El Barka. Veuillez l'examiner.",
+            "type": "booking",
+            "room_id": 8,
+            "hotel_id": 3,
+            "booking_id": 2,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T03:38:53.830368"
+        },
+        {
+            "id": 7,
+            "user_id": 2,
+            "title": "R\u00e9servation accept\u00e9e",
+            "message": "Votre r\u00e9servation pour Deluxe - Monotel Dar El Barka \u00e0 Monotel Dar El Barka a \u00e9t\u00e9 accept\u00e9e par l'\u00e9tablissement.",
+            "type": "booking",
+            "room_id": 8,
+            "hotel_id": 3,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T03:51:16.031088"
+        },
+        {
+            "id": 8,
+            "user_id": 3,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Sak Client.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 11,
+            "is_read": true,
+            "created_at": "2026-03-09T03:59:35.978076"
+        },
+        {
+            "id": 9,
+            "user_id": 11,
+            "title": "R\u00e9servation en attente",
+            "message": "Vous avez r\u00e9serv\u00e9 la chambre Suite Royale - H\u00f4tel Tfeila \u00e0 H\u00f4tel Tfeila pour le 09/03/2026. La r\u00e9servation est en attente.",
+            "type": "booking",
+            "room_id": 3,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T04:22:06.739838"
+        },
+        {
+            "id": 10,
+            "user_id": 3,
+            "title": "Nouvelle r\u00e9servation",
+            "message": "Vous avez re\u00e7u une nouvelle r\u00e9servation de Sak Client pour Suite Royale - H\u00f4tel Tfeila \u00e0 H\u00f4tel Tfeila. Veuillez l'examiner.",
+            "type": "booking",
+            "room_id": 3,
+            "hotel_id": 1,
+            "booking_id": 4,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T04:22:06.743349"
+        },
+        {
+            "id": 11,
+            "user_id": 3,
+            "title": "Nouveau paiement \u00e0 v\u00e9rifier",
+            "message": "Sak Client a soumis un justificatif de paiement local pour Suite Royale - H\u00f4tel Tfeila via bankily. Veuillez le v\u00e9rifier.",
+            "type": "payment",
+            "room_id": 3,
+            "hotel_id": 1,
+            "booking_id": 4,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T04:23:13.136769"
+        },
+        {
+            "id": 12,
+            "user_id": 10,
+            "title": "R\u00e9servation en attente",
+            "message": "Vous avez r\u00e9serv\u00e9 la chambre Deluxe - H\u00f4tel Tfeila \u00e0 H\u00f4tel Tfeila pour le 09/03/2026. La r\u00e9servation est en attente.",
+            "type": "booking",
+            "room_id": 1,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T04:24:34.180563"
+        },
+        {
+            "id": 13,
+            "user_id": 3,
+            "title": "Nouvelle r\u00e9servation",
+            "message": "Vous avez re\u00e7u une nouvelle r\u00e9servation de John America pour Deluxe - H\u00f4tel Tfeila \u00e0 H\u00f4tel Tfeila. Veuillez l'examiner.",
+            "type": "booking",
+            "room_id": 1,
+            "hotel_id": 1,
+            "booking_id": 5,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T04:24:34.183448"
+        },
+        {
+            "id": 14,
+            "user_id": 10,
+            "title": "Paiement & R\u00e9servation confirm\u00e9e",
+            "message": "Votre paiement a \u00e9t\u00e9 re\u00e7u. Votre r\u00e9servation pour Deluxe - H\u00f4tel Tfeila \u00e0 H\u00f4tel Tfeila est confirm\u00e9e.",
+            "type": "payment",
+            "room_id": 1,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": "TXN_F02B1C968E27",
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T04:24:54.520653"
+        },
+        {
+            "id": 15,
+            "user_id": 3,
+            "title": "Nouveau Paiement Re\u00e7u",
+            "message": "Vous avez re\u00e7u un paiement de John America pour la r\u00e9servation de Deluxe - H\u00f4tel Tfeila. Transaction ID: TXN_F02B1C968E27",
+            "type": "payment",
+            "room_id": 1,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T04:24:54.523800"
+        },
+        {
+            "id": 16,
+            "user_id": 11,
+            "title": "R\u00e9servation accept\u00e9e",
+            "message": "Votre r\u00e9servation pour Suite Royale - H\u00f4tel Tfeila \u00e0 H\u00f4tel Tfeila a \u00e9t\u00e9 accept\u00e9e par l'\u00e9tablissement.",
+            "type": "booking",
+            "room_id": 3,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T04:25:09.512612"
+        },
+        {
+            "id": 17,
+            "user_id": 11,
+            "title": "Paiement v\u00e9rifi\u00e9 et approuv\u00e9",
+            "message": "Votre paiement pour Suite Royale - H\u00f4tel Tfeila \u00e0 H\u00f4tel Tfeila a \u00e9t\u00e9 valid\u00e9. Votre r\u00e9servation est maintenant confirm\u00e9e.",
+            "type": "payment",
+            "room_id": 3,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T04:25:09.553400"
+        },
+        {
+            "id": 18,
+            "user_id": 11,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de H\u00f4tel Manager.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 3,
+            "is_read": true,
+            "created_at": "2026-03-09T04:25:44.733140"
+        },
+        {
+            "id": 19,
+            "user_id": 11,
+            "title": "R\u00e9servation accept\u00e9e",
+            "message": "Votre r\u00e9servation pour Deluxe Suite \u00e0 Sak's Luxury Resort a \u00e9t\u00e9 accept\u00e9e par l'\u00e9tablissement.",
+            "type": "booking",
+            "room_id": 22,
+            "hotel_id": 8,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T04:32:09.922149"
+        },
+        {
+            "id": 20,
+            "user_id": 12,
+            "title": "R\u00e9servation en attente",
+            "message": "Vous avez r\u00e9serv\u00e9 la chambre Pr\u00e9sidentielle \u00e0 Tfeila pour le 09/03/2026. La r\u00e9servation est en attente.",
+            "type": "booking",
+            "room_id": 26,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T13:48:55.694510"
+        },
+        {
+            "id": 21,
+            "user_id": 3,
+            "title": "Nouvelle r\u00e9servation",
+            "message": "Vous avez re\u00e7u une nouvelle r\u00e9servation de Rahim Ouss pour Pr\u00e9sidentielle \u00e0 Tfeila. Veuillez l'examiner.",
+            "type": "booking",
+            "room_id": 26,
+            "hotel_id": 1,
+            "booking_id": 6,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T13:48:55.699251"
+        },
+        {
+            "id": 22,
+            "user_id": 3,
+            "title": "Nouveau paiement \u00e0 v\u00e9rifier",
+            "message": "Rahim Ouss a soumis un justificatif de paiement local pour Pr\u00e9sidentielle via bankily. Veuillez le v\u00e9rifier.",
+            "type": "payment",
+            "room_id": 26,
+            "hotel_id": 1,
+            "booking_id": 6,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T13:49:26.602839"
+        },
+        {
+            "id": 23,
+            "user_id": 12,
+            "title": "Paiement v\u00e9rifi\u00e9 et approuv\u00e9",
+            "message": "Votre paiement pour Pr\u00e9sidentielle \u00e0 Tfeila a \u00e9t\u00e9 valid\u00e9. Votre r\u00e9servation est maintenant confirm\u00e9e.",
+            "type": "payment",
+            "room_id": 26,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T13:50:46.224227"
+        },
+        {
+            "id": 24,
+            "user_id": 13,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Tfeila Manager.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 3,
+            "is_read": false,
+            "created_at": "2026-03-09T14:18:33.033925"
+        },
+        {
+            "id": 25,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Tfeila Manager.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 3,
+            "is_read": true,
+            "created_at": "2026-03-09T14:18:54.938671"
+        },
+        {
+            "id": 26,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Tfeila Manager.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 3,
+            "is_read": true,
+            "created_at": "2026-03-09T14:40:12.317223"
+        },
+        {
+            "id": 27,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Rahim Ouss.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 12,
+            "is_read": true,
+            "created_at": "2026-03-09T14:40:33.776955"
+        },
+        {
+            "id": 28,
+            "user_id": 11,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Admin Hotely.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 1,
+            "is_read": true,
+            "created_at": "2026-03-09T14:46:39.129096"
+        },
+        {
+            "id": 29,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Rahim Ouss.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 12,
+            "is_read": true,
+            "created_at": "2026-03-09T14:46:57.958166"
+        },
+        {
+            "id": 30,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Muhammad Mahmud SAK.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 14,
+            "is_read": true,
+            "created_at": "2026-03-09T14:48:18.155606"
+        },
+        {
+            "id": 31,
+            "user_id": 11,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Admin Hotely.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 1,
+            "is_read": true,
+            "created_at": "2026-03-09T15:18:14.437884"
+        },
+        {
+            "id": 32,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Admin Hotely.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 1,
+            "is_read": true,
+            "created_at": "2026-03-09T15:18:25.514427"
+        },
+        {
+            "id": 33,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Admin Hotely.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 1,
+            "is_read": true,
+            "created_at": "2026-03-09T15:18:48.320905"
+        },
+        {
+            "id": 34,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Admin Hotely.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 1,
+            "is_read": true,
+            "created_at": "2026-03-09T15:18:58.923819"
+        },
+        {
+            "id": 35,
+            "user_id": 3,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Sak Client.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 11,
+            "is_read": true,
+            "created_at": "2026-03-09T15:20:38.569481"
+        },
+        {
+            "id": 36,
+            "user_id": 12,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Admin Hotely.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 1,
+            "is_read": true,
+            "created_at": "2026-03-09T16:10:24.269152"
+        },
+        {
+            "id": 37,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Rahim Ouss.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 12,
+            "is_read": true,
+            "created_at": "2026-03-09T16:11:00.267722"
+        },
+        {
+            "id": 38,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Tfeila Manager.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 3,
+            "is_read": true,
+            "created_at": "2026-03-09T16:13:52.772349"
+        },
+        {
+            "id": 39,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Rahim Ouss.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 12,
+            "is_read": true,
+            "created_at": "2026-03-09T16:25:30.890191"
+        },
+        {
+            "id": 40,
+            "user_id": 1,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Tfeila Manager.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 3,
+            "is_read": true,
+            "created_at": "2026-03-09T16:25:44.833252"
+        },
+        {
+            "id": 41,
+            "user_id": 12,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Tfeila Manager.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 3,
+            "is_read": true,
+            "created_at": "2026-03-09T16:25:53.881924"
+        },
+        {
+            "id": 42,
+            "user_id": 1,
+            "title": "R\u00e9servation en attente",
+            "message": "Vous avez r\u00e9serv\u00e9 la chambre Standard \u00e0 Tfeila pour le 09/03/2026. La r\u00e9servation est en attente.",
+            "type": "booking",
+            "room_id": 24,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T17:06:09.614253"
+        },
+        {
+            "id": 43,
+            "user_id": 3,
+            "title": "Nouvelle r\u00e9servation",
+            "message": "Vous avez re\u00e7u une nouvelle r\u00e9servation de Admin Hotely pour Standard \u00e0 Tfeila. Veuillez l'examiner.",
+            "type": "booking",
+            "room_id": 24,
+            "hotel_id": 1,
+            "booking_id": 7,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T17:06:09.615150"
+        },
+        {
+            "id": 44,
+            "user_id": 3,
+            "title": "Nouveau paiement \u00e0 v\u00e9rifier",
+            "message": "Admin Hotely a soumis un justificatif de paiement local pour Standard via bankily. Veuillez le v\u00e9rifier.",
+            "type": "payment",
+            "room_id": 24,
+            "hotel_id": 1,
+            "booking_id": 7,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T17:11:18.489825"
+        },
+        {
+            "id": 45,
+            "user_id": 12,
+            "title": "R\u00e9servation en attente",
+            "message": "Vous avez r\u00e9serv\u00e9 la chambre Suite Junior \u00e0 Tfeila pour le 09/03/2026. La r\u00e9servation est en attente.",
+            "type": "booking",
+            "room_id": 25,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T17:11:46.739134"
+        },
+        {
+            "id": 46,
+            "user_id": 3,
+            "title": "Nouvelle r\u00e9servation",
+            "message": "Vous avez re\u00e7u une nouvelle r\u00e9servation de Rahim Ouss pour Suite Junior \u00e0 Tfeila. Veuillez l'examiner.",
+            "type": "booking",
+            "room_id": 25,
+            "hotel_id": 1,
+            "booking_id": 8,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T17:11:46.741630"
+        },
+        {
+            "id": 47,
+            "user_id": 3,
+            "title": "Nouveau paiement \u00e0 v\u00e9rifier",
+            "message": "Rahim Ouss a soumis un justificatif de paiement local pour Suite Junior via bankily. Veuillez le v\u00e9rifier.",
+            "type": "payment",
+            "room_id": 25,
+            "hotel_id": 1,
+            "booking_id": 8,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T17:12:02.539684"
+        },
+        {
+            "id": 48,
+            "user_id": 12,
+            "title": "R\u00e9servation accept\u00e9e",
+            "message": "Votre r\u00e9servation pour Suite Junior \u00e0 Tfeila a \u00e9t\u00e9 accept\u00e9e par l'\u00e9tablissement.",
+            "type": "booking",
+            "room_id": 25,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T17:15:35.858966"
+        },
+        {
+            "id": 49,
+            "user_id": 12,
+            "title": "Paiement v\u00e9rifi\u00e9 et approuv\u00e9",
+            "message": "Votre paiement pour Suite Junior \u00e0 Tfeila a \u00e9t\u00e9 valid\u00e9. Votre r\u00e9servation est maintenant confirm\u00e9e.",
+            "type": "payment",
+            "room_id": 25,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": true,
+            "created_at": "2026-03-09T17:15:35.894406"
+        },
+        {
+            "id": 50,
+            "user_id": 1,
+            "title": "R\u00e9servation refus\u00e9e",
+            "message": "D\u00e9sol\u00e9, votre r\u00e9servation pour Standard \u00e0 Tfeila a \u00e9t\u00e9 refus\u00e9e.",
+            "type": "booking",
+            "room_id": 24,
+            "hotel_id": 1,
+            "booking_id": 7,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T17:15:40.160362"
+        },
+        {
+            "id": 51,
+            "user_id": 1,
+            "title": "Paiement refus\u00e9",
+            "message": "Votre justificatif de paiement pour Standard \u00e0 Tfeila a \u00e9t\u00e9 refus\u00e9 par l'\u00e9tablissement. La r\u00e9servation est annul\u00e9e.",
+            "type": "payment",
+            "room_id": 24,
+            "hotel_id": 1,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": null,
+            "is_read": false,
+            "created_at": "2026-03-09T17:15:40.249253"
+        },
+        {
+            "id": 52,
+            "user_id": 3,
+            "title": "Nouveau message",
+            "message": "Vous avez re\u00e7u un nouveau message de Admin Hotely.",
+            "type": "message",
+            "room_id": null,
+            "hotel_id": null,
+            "booking_id": null,
+            "transaction_id": null,
+            "sender_id": 1,
+            "is_read": true,
+            "created_at": "2026-03-10T12:28:08.326187"
+        }
+    ],
+    "room_types": [
+        {
+            "id": 1,
+            "name": "Standard",
+            "description": null,
+            "base_price": 60.0,
+            "max_occupancy": 2
+        },
+        {
+            "id": 2,
+            "name": "Deluxe",
+            "description": null,
+            "base_price": 120.0,
+            "max_occupancy": 2
+        },
+        {
+            "id": 3,
+            "name": "Suite Royale",
+            "description": null,
+            "base_price": 350.0,
+            "max_occupancy": 4
+        }
+    ],
+    "reviews": [
+        {
+            "id": 1,
+            "user_id": 10,
+            "room_id": 1,
+            "rating": 3,
+            "comment": "bien",
+            "reply": "you're welcome\n:)",
+            "is_verified": false,
+            "created_at": "2026-03-09T04:24:24.303945",
+            "updated_at": "2026-03-09T04:46:13.030225"
+        }
+    ],
+    "notification_settings": [
+        {
+            "user_id": 1,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 2,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 3,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 4,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 5,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 6,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 9,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 10,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 11,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 12,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        },
+        {
+            "user_id": 14,
+            "notify_messages": true,
+            "notify_bookings": true,
+            "notify_payments": true,
+            "sound_enabled": true
+        }
+    ],
+    "hotels": [
+        {
+            "id": 1,
+            "name": "Tfeila",
+            "location": "Nouakchott",
+            "description": "L'un des h\u00f4tels les plus prestigieux de Nouakchott, alliant luxe moderne et hospitalit\u00e9 mauritanienne traditionnelle.",
+            "image_url": "/static/uploads/hotel_tfeila.png",
+            "rating": 3.0,
+            "created_at": "2026-03-09T02:50:48.155004",
+            "user_id": 3,
+            "views": 32,
+            "unique_visitors": 1,
+            "bounce_rate": 55
+        },
+        {
+            "id": 2,
+            "name": "Azala\u00ef H\u00f4tel",
+            "location": "Centre-ville, Nouakchott",
+            "description": "Un havre de paix au coeur de la capitale, offrant des services haut de gamme pour les voyageurs d'affaires et de loisirs.",
+            "image_url": "/static/uploads/hotel_azalai.png",
+            "rating": 4.9,
+            "created_at": "2026-03-09T02:50:48.247814",
+            "user_id": 4,
+            "views": 11,
+            "unique_visitors": 1,
+            "bounce_rate": 45
+        },
+        {
+            "id": 3,
+            "name": "Monotel Dar El Barka",
+            "location": "Quartier Tevragh Zeina, Nouakchott",
+            "description": "Connu pour son \u00e9l\u00e9gance discr\u00e8te et son jardin magnifique, le Monotel est une r\u00e9f\u00e9rence en Mauritanie.",
+            "image_url": "/static/uploads/hotel_monotel.png",
+            "rating": 4.7,
+            "created_at": "2026-03-09T02:50:48.327789",
+            "user_id": 5,
+            "views": 16,
+            "unique_visitors": 1,
+            "bounce_rate": 57
+        },
+        {
+            "id": 4,
+            "name": "H\u00f4tel Semiramis",
+            "location": "Tevragh Zeina, Nouakchott",
+            "description": "Un h\u00f4tel moderne et chaleureux, id\u00e9alement situ\u00e9 pour explorer la ville.",
+            "image_url": "/static/uploads/hotel_semiramis.png",
+            "rating": 4.6,
+            "created_at": "2026-03-09T02:50:48.409745",
+            "user_id": 6,
+            "views": 2,
+            "unique_visitors": 0,
+            "bounce_rate": 0
+        },
+        {
+            "id": 5,
+            "name": "Mauricenter H\u00f4tel",
+            "location": "Avenue Moktar Ould Daddah, Nouakchott",
+            "description": "Complexe moderne offrant des chambres spacieuses et un centre d'affaires de pointe.",
+            "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800",
+            "rating": 4.5,
+            "created_at": "2026-03-09T02:50:48.500751",
+            "user_id": 7,
+            "views": 6,
+            "unique_visitors": 0,
+            "bounce_rate": 0
+        },
+        {
+            "id": 6,
+            "name": "H\u00f4tel Halima",
+            "location": "Pr\u00e8s du Palais des Congr\u00e8s, Nouakchott",
+            "description": "Une hospitalit\u00e9 l\u00e9gendaire dans un cadre calme et s\u00e9curis\u00e9.",
+            "image_url": "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800",
+            "rating": 4.4,
+            "created_at": "2026-03-09T02:50:48.567793",
+            "user_id": 8,
+            "views": 0,
+            "unique_visitors": 0,
+            "bounce_rate": 0
+        },
+        {
+            "id": 7,
+            "name": "H\u00f4tel Sahel",
+            "location": "Route de la Plage, Nouakchott",
+            "description": "Vivez l'exp\u00e9rience du d\u00e9sert avec tout le confort moderne, proche de l'Oc\u00e9an Atlantique.",
+            "image_url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800",
+            "rating": 4.3,
+            "created_at": "2026-03-09T02:50:48.632493",
+            "user_id": 9,
+            "views": 0,
+            "unique_visitors": 0,
+            "bounce_rate": 0
+        },
+        {
+            "id": 8,
+            "name": "Kiffa Sands",
+            "location": "Kiffa",
+            "description": "Un luxueux complexe au milieu des dunes de Kiffa, offrant une vue imprenable sur le d\u00e9sert et un confort moderne au coeur de la tradition Saharienne.",
+            "image_url": "/static/uploads/hotel_kiffa.png",
+            "rating": 0.0,
+            "created_at": "2026-03-09T04:09:37.434657",
+            "user_id": 3,
+            "views": 3,
+            "unique_visitors": 1,
+            "bounce_rate": 52
+        },
+        {
+            "id": 9,
+            "name": "Rosso Lodge",
+            "location": "Rosso",
+            "description": "Situ\u00e9 sur les rives paisibles du fleuve S\u00e9n\u00e9gal, notre lodge \u00e0 Rosso offre une exp\u00e9rience unique de nature et de s\u00e9r\u00e9nit\u00e9 au bord de l eau.",
+            "image_url": "/static/uploads/hotel_rosso.png",
+            "rating": 0.0,
+            "created_at": "2026-03-09T04:09:37.441491",
+            "user_id": 3,
+            "views": 3,
+            "unique_visitors": 1,
+            "bounce_rate": 50
+        }
+    ],
+    "amenities": [
+        {
+            "id": 1,
+            "name": "WiFi Haut D\u00e9bit",
+            "icon": "fa-wifi",
+            "description": null
+        },
+        {
+            "id": 2,
+            "name": "Climatisation",
+            "icon": "fa-snowflake",
+            "description": null
+        },
+        {
+            "id": 3,
+            "name": "Smart TV",
+            "icon": "fa-tv",
+            "description": null
+        },
+        {
+            "id": 4,
+            "name": "Petit-d\u00e9jeuner Gourmet",
+            "icon": "fa-mug-hot",
+            "description": null
+        },
+        {
+            "id": 5,
+            "name": "Vue Panoramique",
+            "icon": "fa-water",
+            "description": null
+        },
+        {
+            "id": 6,
+            "name": "Service Conciergerie 24/7",
+            "icon": "fa-bell-concierge",
+            "description": null
+        },
+        {
+            "id": 7,
+            "name": "Piscine Priv\u00e9e",
+            "icon": "fa-person-swimming",
+            "description": null
+        }
+    ],
+    "messages": [
+        {
+            "id": 1,
+            "sender_id": 11,
+            "receiver_id": 3,
+            "subject": "Question",
+            "content": "hey\n",
+            "is_read": true,
+            "created_at": "2026-03-09T03:59:35.963944"
+        },
+        {
+            "id": 2,
+            "sender_id": 3,
+            "receiver_id": 11,
+            "subject": "Re: Question ",
+            "content": "bonjour",
+            "is_read": true,
+            "created_at": "2026-03-09T04:25:44.720869"
+        },
+        {
+            "id": 3,
+            "sender_id": 3,
+            "receiver_id": 13,
+            "subject": "Message",
+            "content": "hey",
+            "is_read": true,
+            "created_at": "2026-03-09T14:18:33.017730"
+        },
+        {
+            "id": 4,
+            "sender_id": 3,
+            "receiver_id": null,
+            "subject": "Re: Support Client ",
+            "content": "bonjou l'administration hotely",
+            "is_read": true,
+            "created_at": "2026-03-09T14:18:54.925574"
+        },
+        {
+            "id": 5,
+            "sender_id": 3,
+            "receiver_id": null,
+            "subject": "Re: Support Client ",
+            "content": "hey",
+            "is_read": true,
+            "created_at": "2026-03-09T14:40:12.306206"
+        },
+        {
+            "id": 6,
+            "sender_id": 12,
+            "receiver_id": null,
+            "subject": "Re: Support Client ",
+            "content": "hey",
+            "is_read": true,
+            "created_at": "2026-03-09T14:40:33.765555"
+        },
+        {
+            "id": 7,
+            "sender_id": 1,
+            "receiver_id": 11,
+            "subject": "Re: Question ",
+            "content": "hey",
+            "is_read": true,
+            "created_at": "2026-03-09T14:46:39.118624"
+        },
+        {
+            "id": 8,
+            "sender_id": 12,
+            "receiver_id": null,
+            "subject": "Re: Support Client ",
+            "content": "hi",
+            "is_read": true,
+            "created_at": "2026-03-09T14:46:57.947345"
+        },
+        {
+            "id": 9,
+            "sender_id": 14,
+            "receiver_id": null,
+            "subject": "Re: Support Client ",
+            "content": "hey",
+            "is_read": true,
+            "created_at": "2026-03-09T14:48:18.141175"
+        },
+        {
+            "id": 10,
+            "sender_id": 1,
+            "receiver_id": 11,
+            "subject": "Re: Question ",
+            "content": "whats going on?",
+            "is_read": true,
+            "created_at": "2026-03-09T15:18:14.429893"
+        },
+        {
+            "id": 11,
+            "sender_id": 1,
+            "receiver_id": null,
+            "subject": "Re: Support Client ",
+            "content": "yeah",
+            "is_read": true,
+            "created_at": "2026-03-09T15:18:25.505534"
+        },
+        {
+            "id": 12,
+            "sender_id": 1,
+            "receiver_id": null,
+            "subject": "Re: Support Client ",
+            "content": "yeah",
+            "is_read": false,
+            "created_at": "2026-03-09T15:18:48.310635"
+        },
+        {
+            "id": 13,
+            "sender_id": 1,
+            "receiver_id": null,
+            "subject": "Re: Support Client ",
+            "content": "yeah",
+            "is_read": true,
+            "created_at": "2026-03-09T15:18:58.912225"
+        },
+        {
+            "id": 14,
+            "sender_id": 11,
+            "receiver_id": 3,
+            "subject": "Re: Question ",
+            "content": "its work",
+            "is_read": true,
+            "created_at": "2026-03-09T15:20:38.559665"
+        },
+        {
+            "id": 15,
+            "sender_id": 1,
+            "receiver_id": 12,
+            "subject": "Re: Support Client ",
+            "content": "hey",
+            "is_read": true,
+            "created_at": "2026-03-09T16:10:24.255295"
+        },
+        {
+            "id": 16,
+            "sender_id": 12,
+            "receiver_id": 1,
+            "subject": "Re: Support Client ",
+            "content": "its work!",
+            "is_read": true,
+            "created_at": "2026-03-09T16:11:00.258691"
+        },
+        {
+            "id": 17,
+            "sender_id": 3,
+            "receiver_id": 1,
+            "subject": "Re: Support Client ",
+            "content": "hey",
+            "is_read": true,
+            "created_at": "2026-03-09T16:13:52.764567"
+        },
+        {
+            "id": 18,
+            "sender_id": 12,
+            "receiver_id": 1,
+            "subject": "Re: Support Client ",
+            "content": "hey",
+            "is_read": true,
+            "created_at": "2026-03-09T16:25:30.883857"
+        },
+        {
+            "id": 19,
+            "sender_id": 3,
+            "receiver_id": 1,
+            "subject": "Re: Support Client ",
+            "content": "hey",
+            "is_read": false,
+            "created_at": "2026-03-09T16:25:44.825907"
+        },
+        {
+            "id": 20,
+            "sender_id": 3,
+            "receiver_id": 12,
+            "subject": "Re: Support Client ",
+            "content": "hey",
+            "is_read": true,
+            "created_at": "2026-03-09T16:25:53.873991"
+        },
+        {
+            "id": 21,
+            "sender_id": 1,
+            "receiver_id": 3,
+            "subject": "Re: Support Client ",
+            "content": "Je vous contacte bient\u00f4t.",
+            "is_read": true,
+            "created_at": "2026-03-10T12:28:08.314162"
+        }
+    ],
+    "users": [
+        {
+            "id": 1,
+            "email": "admin@hotely.mr",
+            "password_hash": "scrypt:32768:8:1$x88AyrSwPAaD8nbZ$a33005c0bae894c4339bf6eee61c37232d40468913e7f855cc15e6d68633d406f6e0874fef1016d45fda6f989ba5ffbecdf6775f59fdd7f73013b50ba0411743",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "Admin",
+            "last_name": "Hotely",
+            "phone": "+222 20000000",
+            "username": "admin",
+            "access_dashboard": true,
+            "access_control_center": true,
+            "role": "admin",
+            "is_active": true,
+            "profile_picture": "http://localhost:5000/static/uploads/profiles/user_1_hotely_admin_logo.png",
+            "created_at": "2026-03-09T02:50:48.152146",
+            "updated_at": "2026-03-09T16:29:36.144039",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 2,
+            "email": "john@america.com",
+            "password_hash": "scrypt:32768:8:1$mW7i6ENURDsKMsj7$cc250f5de35c40303d8fffae42d012f20e1dba778f84eee17878c599dea5667190f658ca4bfc291cb2afe93c5e726d0029bcace569088af2258fe79960091220",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "John",
+            "last_name": "America",
+            "phone": "+1 555 123456",
+            "username": "john_america",
+            "access_dashboard": false,
+            "access_control_center": false,
+            "role": "client",
+            "is_active": true,
+            "profile_picture": "/static/uploads/john_america.png",
+            "created_at": "2026-03-09T02:50:48.153613",
+            "updated_at": "2026-03-09T02:50:48.153617",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 3,
+            "email": "tfeila@hotely.mr",
+            "password_hash": "scrypt:32768:8:1$ArZRzVTfaXGaiQwf$dbabde199d014e2727899bb7b354e42ddb043ce3d9ac50709618c71b68745f04189084d333e68e677cec3377a3b1154f0c02a967338ea3d7aba47f550a95878e",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "Tfeila",
+            "last_name": "Manager",
+            "phone": null,
+            "username": "tfeila",
+            "access_dashboard": true,
+            "access_control_center": false,
+            "role": "manager",
+            "is_active": true,
+            "profile_picture": "https://ui-avatars.com/api/?name=Tfeila&background=006233&color=fff&size=256&bold=true&font-size=0.4",
+            "created_at": "2026-03-09T02:50:48.153618",
+            "updated_at": "2026-03-09T13:44:53.395875",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 4,
+            "email": "azalai@hotely.mr",
+            "password_hash": "scrypt:32768:8:1$OzbrD93Pc3tXppMC$a1a6d04cc7ddc9b2605c054e1d772a4c984fbf2b89cfc8bf1f39619f531874a7e686944e5239835da0ec6280a0411d302f1ad650ab662fa9a897b7be3bcae1be",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "Azala\u00ef",
+            "last_name": "Manager",
+            "phone": null,
+            "username": "azalai",
+            "access_dashboard": true,
+            "access_control_center": false,
+            "role": "manager",
+            "is_active": true,
+            "profile_picture": "https://ui-avatars.com/api/?name=Azalai&background=C1272D&color=fff&size=256&bold=true&font-size=0.4",
+            "created_at": "2026-03-09T02:50:48.244796",
+            "updated_at": "2026-03-09T03:45:49.897101",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 5,
+            "email": "monotel@hotely.mr",
+            "password_hash": "scrypt:32768:8:1$caioqdx956IWqPFr$dc0753be161b9db3b9e55807791762b8648a36f0f77ee07f00c86c75584c9d31a0926f670ebb9f6759b7d0793dda2c4a57756f3d08479b8058206ed179c9dde8",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "Monotel",
+            "last_name": "Manager",
+            "phone": null,
+            "username": "monotel",
+            "access_dashboard": true,
+            "access_control_center": false,
+            "role": "manager",
+            "is_active": true,
+            "profile_picture": "https://ui-avatars.com/api/?name=Monotel&background=f59e0b&color=fff&size=256&bold=true&font-size=0.4",
+            "created_at": "2026-03-09T02:50:48.326911",
+            "updated_at": "2026-03-09T03:45:49.897102",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 6,
+            "email": "semiramis@hotely.mr",
+            "password_hash": "scrypt:32768:8:1$wbGpYwS10DoKqrh3$05dd90e79c56b6ac407d44a4c094204bd2cf244d8cea6b365cfac2b9ef94ba287660f12ee0e0521744f82703a6f554f6f0b50560f962ad07b1ab0c86e6e8fa1d",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "H\u00f4tel",
+            "last_name": "Manager",
+            "phone": null,
+            "username": "semiramis",
+            "access_dashboard": true,
+            "access_control_center": false,
+            "role": "manager",
+            "is_active": true,
+            "profile_picture": "https://ui-avatars.com/api/?name=Semiramis&background=3b82f6&color=fff&size=256&bold=true&font-size=0.4",
+            "created_at": "2026-03-09T02:50:48.408783",
+            "updated_at": "2026-03-09T03:45:49.897103",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 7,
+            "email": "mauricenter@hotely.mr",
+            "password_hash": "scrypt:32768:8:1$2UgbVGf9kxPRzEtv$f3f82d3fe3534e7c5fe1ba5a714942a5b75b1c47fc53b5bf2e2e57f1b5a4879ea7c3218f370338bb966d6aa847b511af4ab2dad59118528baa3417989fe8975b",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "Mauricenter",
+            "last_name": "Manager",
+            "phone": null,
+            "username": "mauricenter",
+            "access_dashboard": true,
+            "access_control_center": false,
+            "role": "manager",
+            "is_active": true,
+            "profile_picture": "https://ui-avatars.com/api/?name=Mauricenter&background=8b5cf6&color=fff&size=256&bold=true&font-size=0.4",
+            "created_at": "2026-03-09T02:50:48.499191",
+            "updated_at": "2026-03-09T03:45:49.897103",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 8,
+            "email": "halima@hotely.mr",
+            "password_hash": "scrypt:32768:8:1$4tBcVSk1l3QYIZmG$570c7dceda0a122600b42473138a7980690c9e2e635dadd92bf2ef1253f39cc6a18b91f8e05ba843b1d39cfd93768257304280821f0854b02b297526540207cd",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "H\u00f4tel",
+            "last_name": "Manager",
+            "phone": null,
+            "username": "halima",
+            "access_dashboard": true,
+            "access_control_center": false,
+            "role": "manager",
+            "is_active": true,
+            "profile_picture": "https://ui-avatars.com/api/?name=Halima&background=ec4899&color=fff&size=256&bold=true&font-size=0.4",
+            "created_at": "2026-03-09T02:50:48.566960",
+            "updated_at": "2026-03-09T03:45:49.897104",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 9,
+            "email": "sahel@hotely.mr",
+            "password_hash": "scrypt:32768:8:1$P2q8ADPx0lBexu59$9c23735fa59a30787b36024cab2b917afa2987fc4401d7f16d9057b0245f5e63c906553674622dfc03627fab9434e0ed2b982bd9ad1728580b1137a726f5772d",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "H\u00f4tel",
+            "last_name": "Manager",
+            "phone": null,
+            "username": "sahel",
+            "access_dashboard": true,
+            "access_control_center": false,
+            "role": "manager",
+            "is_active": true,
+            "profile_picture": "https://ui-avatars.com/api/?name=Sahel&background=14b8a6&color=fff&size=256&bold=true&font-size=0.4",
+            "created_at": "2026-03-09T02:50:48.631000",
+            "updated_at": "2026-03-09T03:45:49.897105",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 10,
+            "email": "abaas@america.com",
+            "password_hash": "scrypt:32768:8:1$C1a6MosdIWzUx4GE$4cb96a17d8c4cc29c6ce4ea6b92a2b42f7bba789a6da79312fa32a78fc026d8ea69ef9d525a0e38c4ce9bfd5887f498f6c7813380eb8a0f78dc3cbdb064d2771",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "John",
+            "last_name": "America",
+            "phone": null,
+            "username": "abaas_america",
+            "access_dashboard": false,
+            "access_control_center": false,
+            "role": "client",
+            "is_active": true,
+            "profile_picture": "https://api.dicebear.com/7.x/pixel-art/svg?seed=John&hair=short02&skinColor=f8d2b2",
+            "created_at": "2026-03-09T03:37:23.122782",
+            "updated_at": "2026-03-09T03:49:49.635766",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 11,
+            "email": "sak@client.com",
+            "password_hash": "scrypt:32768:8:1$xmSbwhudmNEJe4a1$560013e92da90f28541b0f88b91519a18512c7ad7c0aadc3a16639cabc6643b2ffdeaf1cdbb3b2a8476ea9590a86d4e5423f8e8f52d762721cfe1b2535743cc6",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "Sak",
+            "last_name": "Client",
+            "phone": null,
+            "username": "sak_client",
+            "access_dashboard": false,
+            "access_control_center": false,
+            "role": "client",
+            "is_active": true,
+            "profile_picture": "https://api.dicebear.com/7.x/avataaars/svg?seed=sak",
+            "created_at": "2026-03-09T03:37:23.187722",
+            "updated_at": "2026-03-09T03:49:49.635770",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 12,
+            "email": "rahim@gmail.com",
+            "password_hash": "scrypt:32768:8:1$zdq2Ws6tdQLHuG2b$5aef241693daa17d4df872e8d008cb73e1dbdef322af3ed27dc9ecb6dd2930fee13cd4273d16c1e06fe4d2b2ae731f4f03eb6367ffc8e34b7ca1ac92fa9a389b",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "Rahim",
+            "last_name": "Ouss",
+            "phone": null,
+            "username": "rahim_ouss",
+            "access_dashboard": false,
+            "access_control_center": false,
+            "role": "client",
+            "is_active": true,
+            "profile_picture": "https://api.dicebear.com/7.x/avataaars/svg?seed=rahim",
+            "created_at": "2026-03-09T03:37:23.278691",
+            "updated_at": "2026-03-09T03:49:49.635771",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 13,
+            "email": "sandrela@gmail.com",
+            "password_hash": "scrypt:32768:8:1$CDoBlD6psqhfZMgk$2347c782dc7fdebc1638ce7088472f785c1b01c4e0a655a2cc14ae088a0097067a8805cb0052f88e69ad8c3cd2c542896a0e3fd66e24d5ed2ca18b86a48af122",
+            "google_id": null,
+            "facebook_id": null,
+            "first_name": "Sandrela",
+            "last_name": "Rose",
+            "phone": null,
+            "username": "sandrela_rose",
+            "access_dashboard": false,
+            "access_control_center": false,
+            "role": "client",
+            "is_active": true,
+            "profile_picture": "https://api.dicebear.com/7.x/avataaars/svg?seed=sandrela",
+            "created_at": "2026-03-09T03:37:23.351993",
+            "updated_at": "2026-03-09T03:49:49.635772",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        },
+        {
+            "id": 14,
+            "email": "muhamad.mahmud.sak@gmail.com",
+            "password_hash": null,
+            "google_id": "ynob5FRDq5aM2ClqTyVYe9R0LLP2",
+            "facebook_id": null,
+            "first_name": "Muhammad",
+            "last_name": "Mahmud SAK",
+            "phone": null,
+            "username": "muhammad",
+            "access_dashboard": false,
+            "access_control_center": false,
+            "role": "client",
+            "is_active": true,
+            "profile_picture": null,
+            "created_at": "2026-03-09T14:48:08.058577",
+            "updated_at": "2026-03-09T14:48:08.058587",
+            "is_email_verified": true,
+            "verification_token": null,
+            "token_expires_at": null,
+            "reset_token": null,
+            "reset_token_expires_at": null
+        }
+    ],
+    "rooms": [
+        {
+            "id": 1,
+            "room_number": "101",
+            "name": "Deluxe",
+            "description": "Une magnifique chambre deluxe avec tout le confort moderne.",
+            "room_type_id": 2,
+            "hotel_id": 1,
+            "price_per_night": 167.0,
+            "floor": null,
+            "size_sqm": 54.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": false,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.160352",
+            "updated_at": "2026-03-09T04:24:34.174333"
+        },
+        {
+            "id": 2,
+            "room_number": "102",
+            "name": "Suite Royale",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 1,
+            "price_per_night": 394.0,
+            "floor": null,
+            "size_sqm": 60.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.245787",
+            "updated_at": "2026-03-09T02:50:48.245791"
+        },
+        {
+            "id": 3,
+            "room_number": "103",
+            "name": "Suite Royale",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 1,
+            "price_per_night": 372.0,
+            "floor": null,
+            "size_sqm": 50.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": false,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.245793",
+            "updated_at": "2026-03-09T04:22:06.729403"
+        },
+        {
+            "id": 4,
+            "room_number": "201",
+            "name": "Suite Royale - Azala\u00ef H\u00f4tel",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 2,
+            "price_per_night": 368.0,
+            "floor": null,
+            "size_sqm": 47.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.248785",
+            "updated_at": "2026-03-09T02:50:48.248788"
+        },
+        {
+            "id": 5,
+            "room_number": "202",
+            "name": "Standard - Azala\u00ef H\u00f4tel",
+            "description": "Une magnifique chambre standard avec tout le confort moderne.",
+            "room_type_id": 1,
+            "hotel_id": 2,
+            "price_per_night": 106.0,
+            "floor": null,
+            "size_sqm": 42.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.327194",
+            "updated_at": "2026-03-09T02:50:48.327196"
+        },
+        {
+            "id": 6,
+            "room_number": "203",
+            "name": "Deluxe - Azala\u00ef H\u00f4tel",
+            "description": "Une magnifique chambre deluxe avec tout le confort moderne.",
+            "room_type_id": 2,
+            "hotel_id": 2,
+            "price_per_night": 155.0,
+            "floor": null,
+            "size_sqm": 28.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.327197",
+            "updated_at": "2026-03-09T02:50:48.327197"
+        },
+        {
+            "id": 7,
+            "room_number": "301",
+            "name": "Deluxe - Monotel Dar El Barka",
+            "description": "Une magnifique chambre deluxe avec tout le confort moderne.",
+            "room_type_id": 2,
+            "hotel_id": 3,
+            "price_per_night": 139.0,
+            "floor": null,
+            "size_sqm": 56.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": false,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.409109",
+            "updated_at": "2026-03-09T03:29:34.239518"
+        },
+        {
+            "id": 8,
+            "room_number": "302",
+            "name": "Deluxe - Monotel Dar El Barka",
+            "description": "Une magnifique chambre deluxe avec tout le confort moderne.",
+            "room_type_id": 2,
+            "hotel_id": 3,
+            "price_per_night": 149.0,
+            "floor": null,
+            "size_sqm": 33.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": false,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.409111",
+            "updated_at": "2026-03-09T03:38:53.819465"
+        },
+        {
+            "id": 9,
+            "room_number": "303",
+            "name": "Suite Royale - Monotel Dar El Barka",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 3,
+            "price_per_night": 385.0,
+            "floor": null,
+            "size_sqm": 34.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.409112",
+            "updated_at": "2026-03-09T02:50:48.409113"
+        },
+        {
+            "id": 10,
+            "room_number": "401",
+            "name": "Deluxe - H\u00f4tel Semiramis",
+            "description": "Une magnifique chambre deluxe avec tout le confort moderne.",
+            "room_type_id": 2,
+            "hotel_id": 4,
+            "price_per_night": 159.0,
+            "floor": null,
+            "size_sqm": 57.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.499674",
+            "updated_at": "2026-03-09T02:50:48.499679"
+        },
+        {
+            "id": 11,
+            "room_number": "402",
+            "name": "Suite Royale - H\u00f4tel Semiramis",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 4,
+            "price_per_night": 369.0,
+            "floor": null,
+            "size_sqm": 28.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.499681",
+            "updated_at": "2026-03-09T02:50:48.499683"
+        },
+        {
+            "id": 12,
+            "room_number": "403",
+            "name": "Suite Royale - H\u00f4tel Semiramis",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 4,
+            "price_per_night": 365.0,
+            "floor": null,
+            "size_sqm": 50.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.499686",
+            "updated_at": "2026-03-09T02:50:48.499687"
+        },
+        {
+            "id": 13,
+            "room_number": "501",
+            "name": "Standard - Mauricenter H\u00f4tel",
+            "description": "Une magnifique chambre standard avec tout le confort moderne.",
+            "room_type_id": 1,
+            "hotel_id": 5,
+            "price_per_night": 109.0,
+            "floor": null,
+            "size_sqm": 41.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.567216",
+            "updated_at": "2026-03-09T02:50:48.567218"
+        },
+        {
+            "id": 14,
+            "room_number": "502",
+            "name": "Suite Royale - Mauricenter H\u00f4tel",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 5,
+            "price_per_night": 396.0,
+            "floor": null,
+            "size_sqm": 26.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.567219",
+            "updated_at": "2026-03-09T02:50:48.567219"
+        },
+        {
+            "id": 15,
+            "room_number": "503",
+            "name": "Suite Royale - Mauricenter H\u00f4tel",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 5,
+            "price_per_night": 367.0,
+            "floor": null,
+            "size_sqm": 59.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.567220",
+            "updated_at": "2026-03-09T02:50:48.567221"
+        },
+        {
+            "id": 16,
+            "room_number": "601",
+            "name": "Deluxe - H\u00f4tel Halima",
+            "description": "Une magnifique chambre deluxe avec tout le confort moderne.",
+            "room_type_id": 2,
+            "hotel_id": 6,
+            "price_per_night": 161.0,
+            "floor": null,
+            "size_sqm": 30.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.631353",
+            "updated_at": "2026-03-09T02:50:48.631355"
+        },
+        {
+            "id": 17,
+            "room_number": "602",
+            "name": "Deluxe - H\u00f4tel Halima",
+            "description": "Une magnifique chambre deluxe avec tout le confort moderne.",
+            "room_type_id": 2,
+            "hotel_id": 6,
+            "price_per_night": 144.0,
+            "floor": null,
+            "size_sqm": 44.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.631356",
+            "updated_at": "2026-03-09T02:50:48.631357"
+        },
+        {
+            "id": 18,
+            "room_number": "603",
+            "name": "Deluxe - H\u00f4tel Halima",
+            "description": "Une magnifique chambre deluxe avec tout le confort moderne.",
+            "room_type_id": 2,
+            "hotel_id": 6,
+            "price_per_night": 136.0,
+            "floor": null,
+            "size_sqm": 29.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.631358",
+            "updated_at": "2026-03-09T02:50:48.631359"
+        },
+        {
+            "id": 19,
+            "room_number": "701",
+            "name": "Standard - H\u00f4tel Sahel",
+            "description": "Une magnifique chambre standard avec tout le confort moderne.",
+            "room_type_id": 1,
+            "hotel_id": 7,
+            "price_per_night": 84.0,
+            "floor": null,
+            "size_sqm": 30.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.633769",
+            "updated_at": "2026-03-09T02:50:48.633772"
+        },
+        {
+            "id": 20,
+            "room_number": "702",
+            "name": "Suite Royale - H\u00f4tel Sahel",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 7,
+            "price_per_night": 381.0,
+            "floor": null,
+            "size_sqm": 35.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.633774",
+            "updated_at": "2026-03-09T02:50:48.633775"
+        },
+        {
+            "id": 21,
+            "room_number": "703",
+            "name": "Suite Royale - H\u00f4tel Sahel",
+            "description": "Une magnifique chambre suite royale avec tout le confort moderne.",
+            "room_type_id": 3,
+            "hotel_id": 7,
+            "price_per_night": 379.0,
+            "floor": null,
+            "size_sqm": 52.0,
+            "bed_type": null,
+            "max_guests": 4,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800",
+            "created_at": "2026-03-09T02:50:48.633776",
+            "updated_at": "2026-03-09T02:50:48.633777"
+        },
+        {
+            "id": 22,
+            "room_number": "KIF-101",
+            "name": "Suite Dunes",
+            "description": "Une suite somptueuse avec vue sur les dunes dor\u00e9es de Kiffa.",
+            "room_type_id": 1,
+            "hotel_id": 8,
+            "price_per_night": 150.0,
+            "floor": null,
+            "size_sqm": null,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": null,
+            "created_at": "2026-03-09T04:09:37.440503",
+            "updated_at": "2026-03-09T04:09:37.440508"
+        },
+        {
+            "id": 23,
+            "room_number": "ROS-101",
+            "name": "Tropicale",
+            "description": "Nich\u00e9e dans la verdure, cette chambre offre fra\u00eecheur et s\u00e9r\u00e9nit\u00e9.",
+            "room_type_id": 1,
+            "hotel_id": 9,
+            "price_per_night": 50.0,
+            "floor": null,
+            "size_sqm": null,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": null,
+            "created_at": "2026-03-09T04:09:37.443481",
+            "updated_at": "2026-03-09T04:09:37.443487"
+        },
+        {
+            "id": 24,
+            "room_number": "TF-201",
+            "name": "Standard",
+            "description": "Chambre confortable et bien \u00e9quip\u00e9e, id\u00e9ale pour les voyageurs d'affaires ou en solo, avec acc\u00e8s WiFi haut d\u00e9bit et vue sur la ville.",
+            "room_type_id": 1,
+            "hotel_id": 1,
+            "price_per_night": 85.0,
+            "floor": 2,
+            "size_sqm": 30.0,
+            "bed_type": "Double",
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800",
+            "created_at": "2026-03-09T12:55:42.403098+00:00",
+            "updated_at": "2026-03-09T17:15:40.157770"
+        },
+        {
+            "id": 25,
+            "room_number": "TF-202",
+            "name": "Suite Junior",
+            "description": "Spacieuse suite junior avec salon s\u00e9par\u00e9, baignoire jacuzzi et vue panoramique sur Nouakchott. Parfaite pour un s\u00e9jour romantique ou en famille.",
+            "room_type_id": 2,
+            "hotel_id": 1,
+            "price_per_night": 195.0,
+            "floor": 2,
+            "size_sqm": 45.0,
+            "bed_type": "King",
+            "max_guests": 3,
+            "is_available": false,
+            "image_url": "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800",
+            "created_at": "2026-03-09T12:55:42.403098+00:00",
+            "updated_at": "2026-03-09T17:11:46.734762"
+        },
+        {
+            "id": 26,
+            "room_number": "TF-301",
+            "name": "Pr\u00e9sidentielle",
+            "description": "Notre chambre la plus luxueuse : suite pr\u00e9sidentielle avec terrasse priv\u00e9e, bain \u00e0 remous, service personnalis\u00e9 24h/24 et d\u00e9coration haut de gamme.",
+            "room_type_id": 3,
+            "hotel_id": 1,
+            "price_per_night": 550.0,
+            "floor": 3,
+            "size_sqm": 90.0,
+            "bed_type": "King Size",
+            "max_guests": 4,
+            "is_available": false,
+            "image_url": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800",
+            "created_at": "2026-03-09T12:55:42.403098+00:00",
+            "updated_at": "2026-03-09T13:48:55.683328"
+        },
+        {
+            "id": 27,
+            "room_number": "KIF-102",
+            "name": "Oasis",
+            "description": "Confortable avec balcon jardin.",
+            "room_type_id": 1,
+            "hotel_id": 8,
+            "price_per_night": 90.0,
+            "floor": null,
+            "size_sqm": null,
+            "bed_type": null,
+            "max_guests": null,
+            "is_available": true,
+            "image_url": null,
+            "created_at": "2026-03-09T13:13:27.773099+00:00",
+            "updated_at": "2026-03-09T13:13:27.773099+00:00"
+        },
+        {
+            "id": 28,
+            "room_number": "ROS-102",
+            "name": "Suite Fleuve",
+            "description": "Grande terrasse sur l eau.",
+            "room_type_id": 3,
+            "hotel_id": 9,
+            "price_per_night": 210.0,
+            "floor": null,
+            "size_sqm": null,
+            "bed_type": null,
+            "max_guests": null,
+            "is_available": true,
+            "image_url": null,
+            "created_at": "2026-03-09T13:13:27.773099+00:00",
+            "updated_at": "2026-03-09T13:13:27.773099+00:00"
+        },
+        {
+            "id": 29,
+            "room_number": "404",
+            "name": "not found",
+            "description": "belle",
+            "room_type_id": 1,
+            "hotel_id": null,
+            "price_per_night": 120.0,
+            "floor": null,
+            "size_sqm": 25.0,
+            "bed_type": null,
+            "max_guests": 2,
+            "is_available": true,
+            "image_url": "/static/uploads/rooms/room_4_h10.jpeg",
+            "created_at": "2026-03-09T17:23:36.009277",
+            "updated_at": "2026-03-09T17:24:02.396896"
+        }
+    ],
+    "bookings": [
+        {
+            "id": 1,
+            "booking_reference": "BK20260309BC3A92",
+            "user_id": 2,
+            "room_id": 7,
+            "check_in_date": "2026-03-09",
+            "check_out_date": "2026-03-10",
+            "num_guests": 1,
+            "total_price": 139.0,
+            "status": "confirmed",
+            "special_requests": null,
+            "created_at": "2026-03-09T03:29:34.242923",
+            "updated_at": "2026-03-09T03:31:03.751510"
+        },
+        {
+            "id": 2,
+            "booking_reference": "BK20260309378805",
+            "user_id": 2,
+            "room_id": 8,
+            "check_in_date": "2026-03-09",
+            "check_out_date": "2026-03-10",
+            "num_guests": 1,
+            "total_price": 149.0,
+            "status": "confirmed",
+            "special_requests": null,
+            "created_at": "2026-03-09T03:38:53.820701",
+            "updated_at": "2026-03-09T03:51:16.018724"
+        },
+        {
+            "id": 3,
+            "booking_reference": "BK2026030978834A",
+            "user_id": 11,
+            "room_id": 22,
+            "check_in_date": "2026-03-09",
+            "check_out_date": "2026-03-10",
+            "num_guests": 1,
+            "total_price": 100.0,
+            "status": "confirmed",
+            "special_requests": null,
+            "created_at": "2026-03-09T04:09:38.399021",
+            "updated_at": "2026-03-09T04:32:09.916192"
+        },
+        {
+            "id": 4,
+            "booking_reference": "BK20260309603850",
+            "user_id": 11,
+            "room_id": 3,
+            "check_in_date": "2026-03-09",
+            "check_out_date": "2026-03-10",
+            "num_guests": 1,
+            "total_price": 372.0,
+            "status": "confirmed",
+            "special_requests": null,
+            "created_at": "2026-03-09T04:22:06.733521",
+            "updated_at": "2026-03-09T04:25:09.505517"
+        },
+        {
+            "id": 5,
+            "booking_reference": "BK2026030997DA1D",
+            "user_id": 10,
+            "room_id": 1,
+            "check_in_date": "2026-03-09",
+            "check_out_date": "2026-03-10",
+            "num_guests": 1,
+            "total_price": 167.0,
+            "status": "confirmed",
+            "special_requests": null,
+            "created_at": "2026-03-09T04:24:34.175209",
+            "updated_at": "2026-03-09T04:24:54.514620"
+        },
+        {
+            "id": 6,
+            "booking_reference": "BK20260309CD69F9",
+            "user_id": 12,
+            "room_id": 26,
+            "check_in_date": "2026-03-09",
+            "check_out_date": "2026-03-10",
+            "num_guests": 1,
+            "total_price": 550.0,
+            "status": "confirmed",
+            "special_requests": null,
+            "created_at": "2026-03-09T13:48:55.686574",
+            "updated_at": "2026-03-09T13:50:46.221375"
+        },
+        {
+            "id": 7,
+            "booking_reference": "BK20260309EA72E0",
+            "user_id": 1,
+            "room_id": 24,
+            "check_in_date": "2026-03-09",
+            "check_out_date": "2026-03-10",
+            "num_guests": 1,
+            "total_price": 85.0,
+            "status": "cancelled",
+            "special_requests": null,
+            "created_at": "2026-03-09T17:06:09.611532",
+            "updated_at": "2026-03-09T17:15:40.158557"
+        },
+        {
+            "id": 8,
+            "booking_reference": "BK2026030903A733",
+            "user_id": 12,
+            "room_id": 25,
+            "check_in_date": "2026-03-09",
+            "check_out_date": "2026-03-10",
+            "num_guests": 1,
+            "total_price": 195.0,
+            "status": "confirmed",
+            "special_requests": null,
+            "created_at": "2026-03-09T17:11:46.735608",
+            "updated_at": "2026-03-09T17:15:35.851445"
+        }
+    ],
+    "room_amenities": [
+        {
+            "room_id": 1,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 1,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 1,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 1,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 2,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 3,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 2,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 2,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 3,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 3,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 4,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 4,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 4,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 6,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 5,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 6,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 5,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 6,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 5,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 8,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 7,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 8,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 9,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 7,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 9,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 7,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 8,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 7,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 8,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 9,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 11,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 12,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 10,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 12,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 11,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 12,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 10,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 11,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 10,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 11,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 12,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 15,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 14,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 15,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 13,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 15,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 13,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 14,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 14,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 13,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 14,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 15,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 16,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 17,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 18,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 16,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 17,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 18,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 16,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 17,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 18,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 16,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 18,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 17,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 20,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 19,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 19,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 21,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 19,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 19,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 20,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 21,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 20,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 21,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 24,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 24,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 24,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 25,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 25,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 25,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 25,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 26,
+            "amenity_id": 1
+        },
+        {
+            "room_id": 26,
+            "amenity_id": 2
+        },
+        {
+            "room_id": 26,
+            "amenity_id": 3
+        },
+        {
+            "room_id": 26,
+            "amenity_id": 4
+        },
+        {
+            "room_id": 26,
+            "amenity_id": 5
+        },
+        {
+            "room_id": 26,
+            "amenity_id": 6
+        },
+        {
+            "room_id": 26,
+            "amenity_id": 7
+        },
+        {
+            "room_id": 29,
+            "amenity_id": 1
+        }
+    ]
+}
