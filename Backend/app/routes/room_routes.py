@@ -7,6 +7,9 @@ from app.models.booking import Booking
 from app.models.review import Review
 from sqlalchemy import func
 from app.utils.helpers import update_db_dump
+from werkzeug.utils import secure_filename
+import os
+from flask import current_app
 
 room_bp = Blueprint('rooms', __name__, url_prefix='/api/rooms')
 
@@ -108,6 +111,35 @@ def delete_room(room_id):
     update_db_dump()
     
     return jsonify({'message': 'Chambre supprimée'}), 200
+
+@room_bp.route('/upload', methods=['POST'])
+@jwt_required()
+def upload_room_image():
+    """Upload an image for a room"""
+    user_id = get_jwt_identity()
+    from app.models.user import User
+    user = User.query.get(user_id)
+    
+    if not user or not user.access_dashboard:
+        return jsonify({'error': 'Accès interdit'}), 403
+        
+    if 'image' not in request.files:
+        return jsonify({'error': 'Aucun fichier envoyé'}), 400
+        
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'error': 'Nom de fichier vide'}), 400
+        
+    if file:
+        filename = secure_filename(f"room_{user_id}_{file.filename}")
+        upload_folder = os.path.join(current_app.root_path, 'static/uploads/rooms')
+        os.makedirs(upload_folder, exist_ok=True)
+        file.save(os.path.join(upload_folder, filename))
+        
+        image_url = f"/static/uploads/rooms/{filename}"
+        return jsonify({'image_url': image_url}), 200
+    
+    return jsonify({'error': 'Upload échoué'}), 500
 
 @room_bp.route('', methods=['GET'])
 def get_rooms():

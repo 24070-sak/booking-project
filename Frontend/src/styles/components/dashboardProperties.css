@@ -1,4 +1,6 @@
-/* Dashboard Properties - Green Style */
+/* ============================================
+   Dashboard Properties - Responsive Green Style
+   ============================================ */
 
 .dashboard-properties-content {
     max-width: 1400px;
@@ -27,8 +29,10 @@
     border-radius: 2px;
 }
 
+/* ============================================
+   FORM STYLES
+   ============================================ */
 
-/* Properties Form Card */
 .dashboard-properties-form {
     background: linear-gradient(to bottom, #ffffff 0%, rgba(0, 98, 51, 0.02) 100%);
     padding: 28px;
@@ -74,6 +78,12 @@
     background: white;
     color: #2d3748;
     font-family: inherit;
+}
+
+.dashboard-properties-form input::placeholder,
+.dashboard-properties-form textarea::placeholder {
+    color: #a0aec0;
+    font-style: italic;
 }
 
 .dashboard-properties-form input[type="text"]:focus,
@@ -134,7 +144,10 @@
     box-shadow: 0 2px 8px rgba(0, 98, 51, 0.3);
 }
 
-/* Modern Button Styles */
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+
 .btn-primary {
     background: linear-gradient(135deg, var(--primary-green, #006233), var(--dark-green, #004d28));
     color: white;
@@ -148,6 +161,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 12px rgba(0, 98, 51, 0.3);
+    white-space: nowrap;
 }
 
 .btn-primary:hover {
@@ -161,103 +175,6 @@
     box-shadow: 0 2px 8px rgba(0, 98, 51, 0.3);
 }
 
-/* Properties Table Enhancements */
-.properties-list {
-    margin-top: 22px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 98, 51, 0.07);
-    overflow: hidden;
-    border: 1px solid rgba(0, 98, 51, 0.1);
-}
-
-.properties-list table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.properties-list thead {
-    background: linear-gradient(to bottom, rgba(0, 98, 51, 0.04) 0%, rgba(0, 98, 51, 0.02) 100%);
-    border-bottom: 2px solid rgba(0, 98, 51, 0.12);
-}
-
-.properties-list th {
-    padding: 12px 14px;
-    text-align: left;
-    font-weight: 700;
-    color: var(--primary-green, #006233);
-    text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid rgba(0, 98, 51, 0.12);
-    white-space: nowrap;
-}
-
-.properties-list td {
-    padding: 12px 14px;
-    border-bottom: 1px solid #edf2f7;
-    vertical-align: middle;
-    color: #2d3748;
-    font-size: 13px;
-}
-
-.properties-list tbody tr {
-    transition: all 0.3s ease;
-}
-
-.properties-list tbody tr:hover {
-    background: rgba(0, 98, 51, 0.03);
-    transform: scale(1.01);
-    box-shadow: 0 2px 8px rgba(0, 98, 51, 0.06);
-}
-
-/* Image alignment in table */
-.properties-list .hotels-table td:first-child {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    min-width: 250px;
-}
-
-.properties-list .rooms-table th.col-numero,
-.properties-list .rooms-table td.col-numero,
-.properties-list .rooms-table th.col-name,
-.properties-list .rooms-table td.col-name {
-    width: 1%;
-    white-space: nowrap;
-}
-
-.properties-list .rooms-table th.col-numero,
-.properties-list .rooms-table td.col-numero {
-    text-align: center;
-    padding-right: 20px;
-}
-
-.properties-list img {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
-    object-fit: cover;
-    border: 2px solid rgba(0, 98, 51, 0.15);
-    transition: all 0.3s ease;
-}
-
-.properties-list img:hover {
-    transform: scale(1.1);
-    border-color: var(--primary-green, #006233);
-    box-shadow: 0 4px 12px rgba(0, 98, 51, 0.2);
-}
-
-/* Actions column styling */
-.properties-list td:last-child {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-/* Individual Action Buttons */
 .btn-secondary,
 .btn-edit,
 .btn-danger {
@@ -266,7 +183,7 @@
     font-size: 13px;
     font-weight: 700;
     height: 36px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     min-width: 90px;
@@ -275,6 +192,7 @@
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 0.3px;
+    white-space: nowrap;
 }
 
 .btn-secondary {
@@ -322,17 +240,131 @@
 }
 
 /* ============================================
-   RESPONSIVE DESIGN FOR PROPERTIES
+   TABLE / LIST STYLES
    ============================================ */
 
-/* Large Tablets (992px and below) */
+.properties-list {
+    margin-top: 22px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 98, 51, 0.07);
+    overflow: hidden;
+    border: 1px solid rgba(0, 98, 51, 0.1);
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.properties-list table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 500px;
+}
+
+.properties-list thead {
+    background: linear-gradient(to bottom, rgba(0, 98, 51, 0.04) 0%, rgba(0, 98, 51, 0.02) 100%);
+    border-bottom: 2px solid rgba(0, 98, 51, 0.12);
+}
+
+.properties-list th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--primary-green, #006233);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(0, 98, 51, 0.12);
+    white-space: nowrap;
+}
+
+.properties-list td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+    color: #2d3748;
+    font-size: 13px;
+}
+
+.properties-list tbody tr {
+    transition: background 0.2s ease;
+}
+
+.properties-list tbody tr:hover {
+    background: rgba(0, 98, 51, 0.03);
+}
+
+/* Image + Name cell in hotel table */
+.properties-list .hotels-table th:first-child,
+.properties-list .hotels-table td:first-child {
+    width: 55%;
+}
+
+.properties-list .hotels-table td:first-child {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.properties-list .hotels-table th:nth-child(2),
+.properties-list .hotels-table td:nth-child(2) {
+    width: 15%;
+}
+
+.properties-list .hotels-table th:last-child,
+.properties-list .hotels-table td:last-child {
+    width: 30%;
+    white-space: nowrap;
+}
+
+/* Actions cell */
+.actions-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* Room table column widths */
+.properties-list .rooms-table th.col-numero,
+.properties-list .rooms-table td.col-numero,
+.properties-list .rooms-table th.col-name,
+.properties-list .rooms-table td.col-name {
+    white-space: nowrap;
+}
+
+.properties-list .rooms-table th.col-numero,
+.properties-list .rooms-table td.col-numero {
+    text-align: center;
+}
+
+/* Table images */
+.properties-list img {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid rgba(0, 98, 51, 0.15);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.properties-list img:hover {
+    transform: scale(1.1);
+    border-color: var(--primary-green, #006233);
+    box-shadow: 0 4px 12px rgba(0, 98, 51, 0.2);
+}
+
+/* ============================================
+   LARGE TABLETS (992px and below)
+   ============================================ */
+
 @media (max-width: 992px) {
     .dashboard-properties-content {
         padding: 0 16px;
-    }
-
-    .properties-list .hotels-table td:first-child {
-        min-width: 200px;
     }
 
     .properties-list img {
@@ -341,7 +373,10 @@
     }
 }
 
-/* Tablet (768px and below) */
+/* ============================================
+   TABLETS (768px and below)
+   ============================================ */
+
 @media (max-width: 768px) {
     .dashboard-properties-content {
         padding: 0 12px;
@@ -352,7 +387,7 @@
     }
 
     .dashboard-properties-form {
-        padding: 22px;
+        padding: 20px;
         border-radius: 10px;
     }
 
@@ -367,36 +402,37 @@
     }
 
     .properties-list {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
         border-radius: 10px;
     }
 
     .properties-list table {
-        min-width: 600px;
+        min-width: 480px;
     }
 
     .properties-list th,
     .properties-list td {
-        padding: 12px 14px !important;
+        padding: 10px 12px;
         font-size: 12px;
     }
 
     .properties-list img {
-        width: 44px !important;
-        height: 44px !important;
+        width: 44px;
+        height: 44px;
     }
 
     .btn-secondary,
     .btn-edit,
     .btn-danger {
-        min-width: 80px;
+        min-width: 78px;
         font-size: 12px;
-        padding: 7px 14px;
+        padding: 7px 12px;
     }
 }
 
-/* Mobile Phones (480px and below) */
+/* ============================================
+   MOBILE PHONES (480px and below)
+   ============================================ */
+
 @media (max-width: 480px) {
     .dashboard-properties-content {
         padding: 0 8px;
@@ -409,7 +445,7 @@
     }
 
     .dashboard-properties-form {
-        padding: 18px;
+        padding: 16px;
         border-radius: 8px;
     }
 
@@ -425,19 +461,22 @@
 
     .btn-primary {
         width: 100%;
-        padding: 11px 18px;
+        padding: 12px 18px;
         font-size: 13px;
     }
 
-    .btn-secondary {
-        width: 100%;
-        padding: 10px 16px;
-        font-size: 13px;
-    }
+    /* --- Card-based layout for tables on mobile --- */
 
-    /* Card-based layout for properties on mobile */
     .properties-list {
         border-radius: 8px;
+        background: transparent;
+        box-shadow: none;
+        border: none;
+        overflow: visible;
+    }
+
+    .table-responsive {
+        overflow-x: visible;
     }
 
     .properties-list table,
@@ -447,95 +486,144 @@
     .properties-list td,
     .properties-list tr {
         display: block;
+        width: 100%;
     }
 
+    /* Hide table headers visually */
     .properties-list thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
     }
 
-    .properties-list tr {
+    /* Card per row */
+    .properties-list tbody tr {
         margin-bottom: 14px;
         border: 1px solid rgba(0, 98, 51, 0.12);
-        border-radius: 8px;
+        border-radius: 10px;
         padding: 14px;
         background: white;
-        box-shadow: 0 2px 12px rgba(0, 98, 51, 0.06);
-        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(0, 98, 51, 0.07);
     }
 
-    .properties-list tr:hover {
+    .properties-list tbody tr:hover {
         box-shadow: 0 4px 16px rgba(0, 98, 51, 0.1);
-        transform: translateY(-2px);
+        background: white;
     }
 
+    /* Regular cells — data-label prefix */
     .properties-list td {
         border: none;
-        position: relative;
-        padding: 10px 0 10px 120px !important;
-        text-align: left !important;
-        min-height: 40px;
+        border-bottom: 1px solid #f0f4f8;
+        padding: 9px 0 !important;
         display: flex;
         align-items: center;
-    }
-
-    .properties-list td:before {
-        content: attr(data-label);
-        position: absolute;
-        left: 0;
-        width: 110px;
-        font-weight: 700;
-        color: var(--primary-green, #006233);
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 0.5px;
-    }
-
-    .properties-list .hotels-table td:first-child {
-        padding: 10px 0 !important;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border-bottom: 2px solid rgba(0, 98, 51, 0.08);
-        margin-bottom: 10px;
-        padding-bottom: 14px !important;
-    }
-
-    .properties-list .hotels-table td:first-child:before {
-        display: none;
-    }
-
-    .properties-list img {
-        width: 56px !important;
-        height: 56px !important;
-        border-radius: 8px !important;
+        gap: 10px;
+        font-size: 13px;
+        min-height: unset;
     }
 
     .properties-list td:last-child {
-        padding: 10px 0 0 0 !important;
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-        padding-top: 14px !important;
-        border-top: 2px solid rgba(0, 98, 51, 0.08);
-        flex-wrap: wrap;
+        border-bottom: none;
     }
 
-    .properties-list td:last-child:before {
+    .properties-list td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--primary-green, #006233);
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+        flex-shrink: 0;
+        min-width: 90px;
+    }
+
+    /* Hotel name + image cell — no label prefix */
+    .properties-list .hotels-table td:first-child {
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        padding: 0 0 12px 0 !important;
+        border-bottom: 2px solid rgba(0, 98, 51, 0.08) !important;
+        margin-bottom: 6px;
+    }
+
+    .properties-list .hotels-table td:first-child::before {
         display: none;
     }
 
-    .btn-edit,
-    .btn-danger {
+    .properties-list .hotels-table td:first-child span {
+        font-weight: 600;
+        font-size: 15px;
+        color: #1a202c;
+    }
+
+    .properties-list img {
+        width: 52px !important;
+        height: 52px !important;
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+
+    /* Actions cell */
+    .properties-list td:last-child {
+        padding-top: 12px !important;
+        border-top: 2px solid rgba(0, 98, 51, 0.08);
+        border-bottom: none;
+        margin-top: 4px;
+    }
+
+    .properties-list td:last-child::before {
+        display: none;
+    }
+
+    .actions-cell {
+        gap: 8px;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .actions-cell .btn-secondary,
+    .actions-cell .btn-edit,
+    .actions-cell .btn-danger {
         flex: 1;
-        text-align: center;
-        padding: 10px 14px !important;
-        min-width: auto;
+        min-width: 70px;
+        padding: 9px 10px;
+        font-size: 11px;
+        height: auto;
+    }
+
+    /* For cases where actions are direct children of td:last-child */
+    .properties-list td:last-child > .btn-secondary,
+    .properties-list td:last-child > .btn-edit,
+    .properties-list td:last-child > .btn-danger {
+        flex: 1;
+        min-width: 70px;
+        padding: 9px 10px;
+        font-size: 11px;
+        height: auto;
+    }
+
+    /* Room table: hide col-numero label */
+    .properties-list .rooms-table td.col-numero::before {
+        content: "N°";
+    }
+
+    /* Amenities tags in room cards */
+    .properties-list .rooms-table td[data-label="Équipements"] {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    .properties-list .rooms-table td[data-label="Équipements"] > div {
+        flex-wrap: wrap;
     }
 }
 
-/* Extra Small Phones (360px and below) */
+/* ============================================
+   EXTRA SMALL PHONES (360px and below)
+   ============================================ */
+
 @media (max-width: 360px) {
     .dashboard-properties-content {
         padding: 0 6px;
@@ -558,29 +646,28 @@
         font-size: 12px;
     }
 
-    .properties-list tr {
+    .properties-list tbody tr {
         padding: 12px;
         margin-bottom: 12px;
     }
 
-    .properties-list td {
-        padding: 8px 0 8px 100px !important;
-        min-height: 36px;
-    }
-
-    .properties-list td:before {
-        width: 95px;
-        font-size: 10px;
+    .properties-list td::before {
+        min-width: 80px;
+        font-size: 9px;
     }
 
     .properties-list img {
-        width: 48px !important;
-        height: 48px !important;
+        width: 44px !important;
+        height: 44px !important;
     }
 
-    .btn-edit,
-    .btn-danger {
-        font-size: 11px;
-        padding: 8px 10px !important;
+    .actions-cell .btn-secondary,
+    .actions-cell .btn-edit,
+    .actions-cell .btn-danger,
+    .properties-list td:last-child > .btn-secondary,
+    .properties-list td:last-child > .btn-edit,
+    .properties-list td:last-child > .btn-danger {
+        font-size: 10px;
+        padding: 8px 8px;
     }
 }

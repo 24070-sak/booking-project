@@ -1,18 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getMessages, sendMessage, markAsRead, searchUsers } from '../services/messageService';
 import { showError, showSuccess } from '../utils/alerts';
+import { resolveImageUrl } from '../utils/urlHelper';
 import '../styles/components/dashboardMessages.css';
 
-const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
-
-// Fix image URL : if it's a relative path, prefix with backend base URL
-const getProfileUrl = (url) => {
-    if (!url) return null;
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
-};
-
-// Quick reply suggestions
 const QUICK_REPLIES = [
     "D'accord, merci ! 👍",
     "Je vous contacte bientôt.",
@@ -22,9 +14,23 @@ const QUICK_REPLIES = [
     "Bien reçu ✅",
 ];
 
-const DashboardMessages = () => {
+const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
     const [messages, setMessages] = useState([]);
     const [selectedChat, setSelectedChat] = useState(null);
+    const navigate = useNavigate();
+
+    // Auto-select chat if targetSenderId is provided
+    useEffect(() => {
+        if (targetSenderId && messages.length > 0) {
+            const chatToSelect = messages.find(m => 
+                m.sender_id === Number(targetSenderId) || 
+                m.receiver_id === Number(targetSenderId)
+            );
+            if (chatToSelect) {
+                handleChatSelect(chatToSelect);
+            }
+        }
+    }, [targetSenderId, messages]);
     const [loading, setLoading] = useState(true);
     const [newMessage, setNewMessage] = useState("");
     const [showChatOnMobile, setShowChatOnMobile] = useState(false);
@@ -41,18 +47,275 @@ const DashboardMessages = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [searching, setSearching] = useState(false);
 
+    // Chatbot specific states
+    const [chatbotMessages, setChatbotMessages] = useState([
+        { from: "bot", text: "Comment puis-je vous aider ? 👋" }
+    ]);
+    const [chatbotInput, setChatbotInput] = useState("");
+    const [botTyping, setBotTyping] = useState(false);
+    const SUGGESTED_QUESTIONS = [
+        "Quels hôtels sont disponibles actuellement ?",
+        "Propose-moi des hôtels dans cette ville.",
+        "Quelles chambres sont libres cette semaine ?",
+        "Quels sont les hôtels les moins chers ?"
+    ];
+
+    useEffect(() => {
+        if (selectedChat?.isChatbot) {
+            chatMessagesRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+    }, [chatbotMessages, botTyping, selectedChat]);
+
+    const handleChatbotSend = async (customMsg = null) => {
+        const msgToSend = customMsg || chatbotInput;
+        if (!msgToSend.trim()) return;
+
+        const userMsg = msgToSend.trim();
+        setChatbotMessages(prev => [...prev, { from: "user", text: userMsg }]);
+        setChatbotInput("");
+        setBotTyping(true);
+
+        const lowerMsg = userMsg.toLowerCase();
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+        // Fetch all hotels to identify name mentions exactly
+        let allHotels = [];
+        try {
+            const dbRes = await fetch(`${API_URL}/hotels`);
+            const data = await dbRes.json();
+            if (data.hotels) allHotels = data.hotels;
+        } catch(e) {}
+
+        // Check if a Specific Hotel is mentioned
+        let hotelToFetch = null;
+        const mentionedHotel = allHotels.find(h => lowerMsg.includes(h.name.toLowerCase()));
+        
+        if (mentionedHotel) {
+            hotelToFetch = mentionedHotel.name;
+        } else {
+            const explicitMatch = lowerMsg.match(/(?:hôtel|hotel|chambres? d'|images? d'|photos? d'|infos? sur|voir|images? du)\s+(?:l'hôtel\s+|l'hotel\s+|l'|le\s+|la\s+|d'|de\s+|du\s+)?([a-zA-Z0-9éèêàâç]+(?:[\s-][a-zA-Z0-9éèêàâç]+)*)/i);
+            if (explicitMatch) {
+                const word = explicitMatch[1].toLowerCase();
+                if (!['dispo', 'disponibles', 'pas cher', 'les moins chers', 'liste', 'belles'].includes(word) && allHotels.some(h => h.name.toLowerCase().includes(word))) {
+                    hotelToFetch = word;
+                }
+            }
+        }
+
+        if (hotelToFetch) {
+            try {
+                const response = await fetch(`${API_URL}/hotels?search=${encodeURIComponent(hotelToFetch)}`);
+                const data = await response.json();
+                
+                if (data.hotels && data.hotels.length > 0) {
+                    const hotel = data.hotels[0];
+                    const roomsRes = await fetch(`${API_URL}/hotels/${hotel.id}/rooms`);
+                    const roomsData = await roomsRes.json();
+                    
+                    const detailsTexts = [
+                        `Voici les images et détails pour **${hotel.name}** à ${hotel.location} :`,
+                        `Découvrez tout ce qu'il faut savoir sur **${hotel.name}** :`,
+                        `Super ! J'ai trouvé les infos pour **${hotel.name}** :`
+                    ];
+                    
+                    setChatbotMessages(prev => [...prev, { 
+                        from: "bot", 
+                        text: detailsTexts[Math.floor(Math.random() * detailsTexts.length)],
+                        hotelDetails: {
+                            ...hotel,
+                            rooms: roomsData.rooms || []
+                        }
+                    }]);
+                } else {
+                    setChatbotMessages(prev => [...prev, { from: "bot", text: `Je n'ai pas trouvé d'hôtel nommé "${hotelToFetch}". Essayez d'être plus précis !` }]);
+                }
+            } catch (err) {
+                setChatbotMessages(prev => [...prev, { from: "bot", text: "Erreur lors de la recherche des détails de l'hôtel." }]);
+            }
+            setBotTyping(false);
+            return;
+        }
+
+            // Logic for hotels listing
+        const listingTexts = [
+            "Bien sûr ! Voici une sélection d'hôtels disponibles :",
+            "Avec plaisir ! Voici quelques hôtels qui pourraient vous intéresser :",
+            "Voici les établissements actuellement disponibles :",
+            "J'ai trouvé ces hôtels pour vous :"
+        ];
+        
+        if (lowerMsg.includes("hotel") && (lowerMsg.includes("dispo") || lowerMsg.includes("liste") || lowerMsg.includes("propose") || lowerMsg.includes("quelles") || lowerMsg.includes("quels"))) {
+            if (allHotels.length > 0) {
+                setChatbotMessages(prev => [...prev, { 
+                    from: "bot", 
+                    text: listingTexts[Math.floor(Math.random() * listingTexts.length)],
+                    hotels: allHotels.slice(0, 3)
+                }]);
+            } else {
+                setChatbotMessages(prev => [...prev, { from: "bot", text: "Désolé, je ne trouve aucun hôtel disponible." }]);
+            }
+            setBotTyping(false);
+            return;
+        }
+
+        // Catch Generic Hotel Inquiries (Force Visual Cards instead of AI text)
+        const isGenericInquiry = lowerMsg.match(/(hôtels?|hotels?|chambres?|images?|photos?|dispo|liste|propose|quelles?|quels?|moins chers?|belles?|ville)/i);
+        
+        if (isGenericInquiry && allHotels.length > 0) {
+            let selectedHotels = [...allHotels];
+            
+            const genericTexts = [
+                "Voici une superbe sélection d'hôtels pour vous :",
+                "J'ai trouvé ces magnifiques hôtels qui pourraient vous plaire :",
+                "Explorez ces options exceptionnelles :"
+            ];
+            const cheapTexts = [
+                "Voici les hôtels les plus abordables pour votre confort :",
+                "J'ai trié les meilleures offres économiques :",
+                "Ces options respectent votre budget :"
+            ];
+            const imageTexts = [
+                "Voici quelques établissements en images pour vous inspirer :",
+                "Découvrez la beauté de ces hôtels en photos :",
+                "Ces images devraient vous plaire :"
+            ];
+            
+            let textRep = genericTexts[Math.floor(Math.random() * genericTexts.length)];
+            
+            if (lowerMsg.includes("moins cher") || lowerMsg.includes("pas cher")) {
+                selectedHotels.sort((a,b) => a.lowest_price - b.lowest_price);
+                textRep = cheapTexts[Math.floor(Math.random() * cheapTexts.length)];
+            } else if (lowerMsg.includes("image") || lowerMsg.includes("photo") || lowerMsg.includes("belle") || lowerMsg.includes("beau")) {
+                textRep = imageTexts[Math.floor(Math.random() * imageTexts.length)];
+            }
+            
+            // Provide richer visual layout by sending 4 hotels
+            setChatbotMessages(prev => [...prev, { 
+                from: "bot", 
+                text: textRep,
+                hotels: selectedHotels.slice(0, 4)
+            }]);
+            setBotTyping(false);
+            return;
+        }
+
+        // Groq API Logic
+        try {
+            const groqApiKey = import.meta.env.VITE_GROQ_API_KEY;
+            let dbContext = "";
+            try {
+                const dbRes = await fetch(`${API_URL}/hotels`);
+                const data = await dbRes.json();
+                if (data.hotels) {
+                    dbContext = `\n[BDD]: ${data.hotels.map(h => `${h.name} à ${h.location}`).join(", ")}.`;
+                }
+            } catch(e){}
+
+            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${groqApiKey}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "llama-3.1-8b-instant",
+                    messages: [
+                        { role: "system", content: `Tu es l'assistant de Hotely. Tes réponses DOIVENT être extrêmement courtes, maximum une à deux phrases courtes. Ne liste aucun hôtel, car les résultats de base de données s'affichent déjà en cartes. Sois chaleureux et concis.` },
+                        ...chatbotMessages.map(m => ({ role: m.from === "bot" ? "assistant" : "user", content: m.text })),
+                        { role: "user", content: userMsg }
+                    ],
+                    temperature: 0.5, max_tokens: 300
+                })
+            });
+            const data = await response.json();
+            setChatbotMessages(prev => [...prev, { from: "bot", text: data.choices[0].message.content }]);
+        } catch (err) {
+            setChatbotMessages(prev => [...prev, { from: "bot", text: "Oups, une erreur est survenue ! 🤖" }]);
+        } finally {
+            setBotTyping(false);
+        }
+    };
+
     // Derive unique conversations from messages
     const conversations = React.useMemo(() => {
         const user = JSON.parse(localStorage.getItem('user'));
         const groups = {};
         messages.forEach(msg => {
-            const otherId = msg.sender_id === user?.id ? msg.receiver_id : msg.sender_id;
+            const isMeSender = msg.sender_id === user?.id;
+            const role = isMeSender ? msg.receiver_role : msg.sender_role;
+            const name = isMeSender ? msg.receiver_name : msg.sender_name;
+            let otherId = isMeSender ? msg.receiver_id : msg.sender_id;
+
+            const amAdmin = user?.role === 'admin';
+            
+            // Hide System chats from Admin
+            if (amAdmin && name === 'Système') {
+                return;
+            }
+
+            if (!amAdmin && (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || msg.receiver_id === null || msg.sender_id === 0)) {
+                otherId = 'admin-unified';
+            }
+
             if (!groups[otherId] || new Date(msg.created_at) > new Date(groups[otherId].created_at)) {
                 groups[otherId] = msg;
             }
         });
-        return Object.values(groups).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    }, [messages]);
+        
+        const sortedConversations = Object.values(groups).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        
+        // Pin Chatbot & Admin - virtual conversations (For clients and managers)
+        if (user?.role === 'client' || user?.role === 'manager') {
+            const adminChatIndex = sortedConversations.findIndex(c => {
+                const isMeSender = c.sender_id === user?.id;
+                const role = isMeSender ? c.receiver_role : c.sender_role;
+                const name = isMeSender ? c.receiver_name : c.sender_name;
+                return (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || c.receiver_id === null || c.sender_id === 0);
+            });
+            let adminConv;
+            
+            if (adminChatIndex !== -1) {
+                adminConv = sortedConversations[adminChatIndex];
+                sortedConversations.splice(adminChatIndex, 1);
+            } else {
+                const hasUnread = messages.some(m => {
+                    const isMeSender = m.sender_id === user?.id;
+                    const role = isMeSender ? m.receiver_role : m.sender_role;
+                    const name = isMeSender ? m.receiver_name : m.sender_name;
+                    return !m.is_read && m.receiver_id === user?.id && (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || m.sender_id === null || m.sender_id === 0);
+                });
+                adminConv = {
+                    id: 'admin-conversation-virtual',
+                    sender_name: 'Administration Hotely',
+                    sender_picture: null,
+                    content: 'Contactez notre support ici',
+                    created_at: new Date().toISOString(),
+                    is_read: !hasUnread,
+                    receiver_id: null,
+                    subject: 'Support Client'
+                };
+            }
+            
+            const conversations_to_return = [...sortedConversations];
+            conversations_to_return.unshift(adminConv);
+            
+            // Pin Chatbot only for clients
+            if (user?.role === 'client') {
+                const botPreviewContent = lastChatbotMsg || localStorage.getItem('lastChatbotMsg') || 'Comment puis-je vous aider ?';
+                const chatbotConv = {
+                    id: 'chatbot-virtual',
+                    isChatbot: true,
+                    sender_name: 'Assistant Hotely',
+                    sender_picture: null, 
+                    content: botPreviewContent,
+                    created_at: new Date().toISOString(),
+                    is_read: true
+                };
+                conversations_to_return.unshift(chatbotConv);
+            }
+            
+            return conversations_to_return;
+        }
+        
+        return sortedConversations;
+    }, [messages, lastChatbotMsg]);
 
     const fetchMessages = async () => {
         try {
@@ -107,14 +370,33 @@ const DashboardMessages = () => {
     }, [searchQuery]);
 
     const handleChatSelect = async (chat) => {
+        if (chat.isChatbot) {
+            setSelectedChat(chat);
+            setShowChatOnMobile(true);
+            // If on the messages page, trigger the chatbot open state if possible
+            if (window.openChatbot) window.openChatbot();
+            return;
+        }
         setSelectedChat(chat);
         setIsComposing(false);
         setShowChatOnMobile(true);
         setShowSuggestions(false);
         if (!chat.is_read) {
             try {
-                await markAsRead(chat.id);
-                setMessages(prev => prev.map(m => m.id === chat.id ? { ...m, is_read: true } : m));
+                let idToMark = chat.id;
+                if (chat.id === 'admin-conversation-virtual') {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    const latestUnread = messages.find(m => {
+                        const isMeSender = m.sender_id === user?.id;
+                        const role = isMeSender ? m.receiver_role : m.sender_role;
+                        const name = isMeSender ? m.receiver_name : m.sender_name;
+                        return !m.is_read && m.receiver_id === user?.id && (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || m.sender_id === null || m.sender_id === 0);
+                    });
+                    if (latestUnread) idToMark = latestUnread.id;
+                    else return;
+                }
+                await markAsRead(idToMark);
+                setMessages(prev => prev.map(m => m.id === idToMark ? { ...m, is_read: true } : m));
             } catch (error) {
                 console.error("Error marking as read:", error);
             }
@@ -126,10 +408,15 @@ const DashboardMessages = () => {
         if (!msgToSend.trim() || !selectedChat) return;
         try {
             const user = JSON.parse(localStorage.getItem('user'));
-            const receiverId = selectedChat.sender_id === user?.id ? selectedChat.receiver_id : selectedChat.sender_id;
+            let receiverId;
+            if (selectedChat.id === 'admin-conversation-virtual') {
+                receiverId = null; // Target admin
+            } else {
+                receiverId = selectedChat.sender_id === user?.id ? selectedChat.receiver_id : selectedChat.sender_id;
+            }
 
-            let subject = selectedChat.subject;
-            if (!subject.startsWith('Re:')) {
+            let subject = selectedChat.subject || 'Nouveau message';
+            if (subject && !subject.startsWith('Re:')) {
                 subject = `Re: ${subject} `;
             }
 
@@ -194,24 +481,37 @@ const DashboardMessages = () => {
 
     // Helper to get the "other person" info from a chat message
     const getOtherPerson = (chat) => {
+        if (chat.isChatbot) return { name: 'Assistant Hotely', picture: null, email: '' };
         const user = JSON.parse(localStorage.getItem('user'));
         const isMeSender = chat.sender_id === user?.id;
+        const name = isMeSender ? chat.receiver_name : chat.sender_name;
+        const role = isMeSender ? chat.receiver_role : chat.sender_role;
+        
+        let finalName = name || "Inconnu";
+        // Standardize Admin/System names
+        const amAdmin = user?.role === 'admin';
+
+        if (!amAdmin && (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || chat.receiver_id === null || chat.sender_id === 0)) {
+            finalName = "Administration Hotely";
+        } else if (role === 'manager') {
+            finalName = finalName.replace(/Hôtel Manager/gi, "Hôtel").replace(/Manager/gi, "").trim();
+            if (!finalName) finalName = "Hôtel";
+        }
+
         return {
-            name: isMeSender ? chat.receiver_name : chat.sender_name,
-            picture: getProfileUrl(isMeSender ? chat.receiver_picture : chat.sender_picture),
-            email: isMeSender ? chat.receiver_email : chat.sender_email,
+            name: finalName,
+            picture: resolveImageUrl(isMeSender ? chat.receiver_picture : chat.sender_picture),
+            email: isMeSender ? (user?.role === 'admin' ? chat.receiver_email : '') : chat.sender_email,
         };
     };
 
     return (
         <div className="dashboard-content dashboard-messages-content">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                <h2>Messages</h2>
-            </div>
-
             <div className={`messages-container ${showChatOnMobile ? 'show-chat' : ''}`}>
                 {/* ========== CONVERSATIONS LIST ========== */}
                 <div className="messages-list">
+                    {/* The NEW MESSAGE button has been removed by request */}
+                    
                     {conversations.length === 0 ? (
                         <div className="no-conversations">
                             <i className="fa-regular fa-envelope" style={{ fontSize: '32px', color: '#c3d9cc' }}></i>
@@ -225,71 +525,217 @@ const DashboardMessages = () => {
                             const selectedOtherId = selectedChat
                                 ? (selectedChat.sender_id === currentUser?.id ? selectedChat.receiver_id : selectedChat.sender_id)
                                 : null;
-                            const isActive = selectedOtherId === thisOtherId;
+                            const isActive = selectedOtherId === thisOtherId || (selectedChat?.isChatbot && chat.isChatbot);
 
                             return (
                                 <div
                                     key={chat.id}
                                     onClick={() => handleChatSelect(chat)}
-                                    className={`message-item ${isActive ? 'active' : ''} ${!chat.is_read ? 'unread-item' : ''}`}
+                                    className={`message-item ${isActive ? 'active' : ''} ${!chat.is_read ? 'unread-item' : ''} ${chat.isChatbot ? 'chatbot-item' : ''}`}
                                 >
                                     <div className="message-avatar-wrapper">
-                                        {other.picture ? (
-                                            <img
-                                                src={other.picture}
-                                                alt={other.name}
-                                                className="message-avatar-img"
-                                                onError={(e) => {
-                                                    e.target.style.display = 'none';
-                                                    e.target.nextSibling.style.display = 'flex';
-                                                }}
-                                            />
-                                        ) : null}
-                                        <div
-                                            className="message-avatar-placeholder"
-                                            style={{ display: other.picture ? 'none' : 'flex' }}
-                                        >
-                                            <i className="fa-solid fa-user"></i>
-                                        </div>
+                                        {chat.isChatbot ? (
+                                            <div className="message-avatar-placeholder chatbot-avatar-bg" style={{ backgroundColor: '#006233', color: 'white' }}>
+                                                <i className="fa-solid fa-robot"></i>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {other.picture ? (
+                                                    <img
+                                                        src={other.picture}
+                                                        alt={other.name}
+                                                        className="message-avatar-img"
+                                                        onError={(e) => {
+                                                            e.target.style.display = 'none';
+                                                            e.target.nextSibling.style.display = 'flex';
+                                                        }}
+                                                    />
+                                                ) : null}
+                                                <div
+                                                    className="message-avatar-placeholder"
+                                                    style={{ display: other.picture ? 'none' : 'flex' }}
+                                                >
+                                                    <i className="fa-solid fa-user"></i>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                     <div className="message-text-content">
                                         <div className="message-header">
-                                            <strong>{other.name || 'Inconnu'}</strong>
-                                            <span>{new Date(chat.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}</span>
+                                            <strong>{chat.isChatbot ? 'Assistant IA' : (other.name || 'Inconnu')}</strong>
+                                            {chat.isChatbot ? (
+                                                <span className="chatbot-badge" style={{ backgroundColor: '#006233', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '10px' }}>IA</span>
+                                            ) : (
+                                                <span>{new Date(chat.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}</span>
+                                            )}
                                         </div>
                                         <div className={`message-preview ${!chat.is_read ? 'unread' : ''}`}>
                                             {chat.content}
                                         </div>
                                     </div>
-                                    {!chat.is_read && <div className="unread-dot"></div>}
+                                    {chat.isChatbot && <i className="fa-solid fa-thumbtack pin-icon" style={{ color: '#006233', marginLeft: 'auto', fontSize: '12px' }}></i>}
+                                    {!chat.isChatbot && !chat.is_read && <div className="unread-dot"></div>}
                                 </div>
                             );
                         })
                     )}
-                    <button className="fab-new-message" onClick={openComposer} title="Nouveau message">
-                        <i className="fa-solid fa-plus"></i>
-                    </button>
+                    {/* end conversation list */}
                 </div>
 
                 {/* ========== CHAT AREA ========== */}
                 <div className="chat-area">
-                    {selectedChat ? (() => {
+                    {selectedChat ? (selectedChat.isChatbot ? (
+                        <div className="chatbot-integrated-view" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <div className="chat-header">
+                                <button className="chat-btn-back-mobile" onClick={() => setShowChatOnMobile(false)}>
+                                    <i className="fa-solid fa-arrow-left"></i>
+                                </button>
+                                <div className="chatbot-avatar" style={{ background: '#006233', color: 'white', padding: '8px', borderRadius: '50%' }}>
+                                    <i className="fa-solid fa-robot"></i>
+                                </div>
+                                <div className="chat-info">
+                                    <h3>Assistant Hotely</h3>
+                                    <div className="chatbot-status-pill" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#6b8c7a' }}>
+                                        <span className="status-dot online" style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2ecc71' }}></span>
+                                        <span>En ligne</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <div className="chat-messages chatbot-messages-area" ref={chatMessagesRef} style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+                            {chatbotMessages.map((msg, i) => (
+                                <div key={i} className={`chatbot-msg-wrapper ${msg.from}`} style={{ display: 'flex', marginBottom: '16px', flexDirection: msg.from === 'user' ? 'row-reverse' : 'row' }}>
+                                    {msg.from === 'bot' && (
+                                        <div className="bot-msg-avatar-small" style={{ background: '#006233', color: 'white', minWidth: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '12px' }}>
+                                            <i className="fa-solid fa-robot"></i>
+                                        </div>
+                                    )}
+                                    <div className={`chatbot-msg-bubble ${msg.from}`} style={{ background: msg.from === 'user' ? '#006233' : '#f0f7f3', color: msg.from === 'user' ? 'white' : '#1e3a2b', padding: '12px 16px', borderRadius: '16px', borderBottomLeftRadius: msg.from === 'bot' ? '4px' : '16px', borderBottomRightRadius: msg.from === 'user' ? '4px' : '16px', maxWidth: '75%' }}>
+                                        {msg.text}
+                                        {/* Rich Hotels List */}
+                                        {msg.hotels && (
+                                            <div className="bot-hotels-compact-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginTop: '12px' }}>
+                                                {msg.hotels.map(h => (
+                                                    <div key={h.id} className="bot-hotel-mini-card" onClick={() => navigate(`/hotel/${h.id}`)} style={{ cursor: 'pointer', transition: 'transform 0.2s', background: 'white', borderRadius: '8px', padding: '6px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                                                        <img src={resolveImageUrl(h.image_url)} alt={h.name} style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '6px', marginBottom: '8px' }} />
+                                                        <div className="mini-card-text">
+                                                            <strong style={{ fontSize: '12px', display: 'block', color: '#1a1a1a' }}>{h.name}</strong>
+                                                            <span style={{ fontSize: '11px', color: '#666', display: 'block' }}>{h.location} • Dès {h.lowest_price}€</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {/* Rich Hotel Details with Rooms */}
+                                        {msg.hotelDetails && (
+                                            <div className="bot-hotel-details-view" style={{ marginTop: '10px' }}>
+                                                <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s' }} onClick={() => navigate(`/hotel/${msg.hotelDetails.id}`)} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                                                    <img src={resolveImageUrl(msg.hotelDetails.image_url)} alt={msg.hotelDetails.name} style={{ width: '100%', height: '120px', objectFit: 'cover' }} />
+                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', color: 'white' }}>
+                                                        <strong style={{ display: 'block' }}>{msg.hotelDetails.name}</strong>
+                                                        <span style={{ fontSize: '11px' }}><i className="fa-solid fa-location-dot"></i> {msg.hotelDetails.location}</span>
+                                                    </div>
+                                                </div>
+                                                {msg.hotelDetails.rooms?.length > 0 && (
+                                                    <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                        <span style={{ fontSize: '12px', color: '#6b8c7a', fontWeight: 'bold' }}>Chambres recommandées :</span>
+                                                        {msg.hotelDetails.rooms.slice(0, 2).map(r => (
+                                                            <div key={r.id} style={{ display: 'flex', gap: '8px', alignItems: 'center', background: '#e3ece7', padding: '6px', borderRadius: '6px', cursor: 'pointer', transition: 'background 0.2s' }} onClick={() => navigate(`/room/${r.id}`)} onMouseEnter={(e) => e.currentTarget.style.background = '#d0dfd7'} onMouseLeave={(e) => e.currentTarget.style.background = '#e3ece7'}>
+                                                                <img src={resolveImageUrl(r.image_url)} alt={r.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+                                                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                                                    <strong style={{ fontSize: '12px', color: '#006233' }}>{r.name}</strong>
+                                                                    <span style={{ fontSize: '10px', color: '#6b8c7a' }}>{r.max_guests} max • {r.price_per_night}€/nuit</span>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            {botTyping && (
+                                <div className="chatbot-msg-wrapper bot" style={{ display: 'flex', marginBottom: '16px' }}>
+                                    <div className="bot-msg-avatar-small" style={{ background: '#006233', color: 'white', minWidth: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '12px' }}>
+                                        <i className="fa-solid fa-robot"></i>
+                                    </div>
+                                    <div className="chatbot-msg-bubble bot typing" style={{ background: '#f0f7f3', padding: '12px 16px', borderRadius: '16px', borderBottomLeftRadius: '4px', maxWidth: '75%', display: 'flex', gap: '4px' }}>
+                                        <span className="typing-dot" style={{ width: '6px', height: '6px', backgroundColor: '#abc3b5', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out both' }}></span>
+                                        <span className="typing-dot" style={{ width: '6px', height: '6px', backgroundColor: '#abc3b5', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out both', animationDelay: '0.2s' }}></span>
+                                        <span className="typing-dot" style={{ width: '6px', height: '6px', backgroundColor: '#abc3b5', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out both', animationDelay: '0.4s' }}></span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Suggestions always visible if no user input yet or at start */}
+                            <div className="chatbot-interactive-suggestions" style={{ marginTop: '20px' }}>
+                                <p style={{ fontSize: '13px', color: '#6b8c7a', marginBottom: '10px' }}>Suggestions d'aide :</p>
+                                <div className="suggestions-scroll" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    {SUGGESTED_QUESTIONS.map((q, idx) => (
+                                        <button key={idx} className="suggestion-pill" onClick={() => handleChatbotSend(q)} style={{ background: '#ffffff', border: '1px solid #d0dfd7', padding: '8px 14px', borderRadius: '20px', fontSize: '13px', color: '#006233', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#f0f7f3'; e.currentTarget.style.borderColor = '#006233'; }} onMouseLeave={(e) => { e.currentTarget.style.background = '#ffffff'; e.currentTarget.style.borderColor = '#d0dfd7'; }}>
+                                            {q}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div style={{ height: '10px' }} />
+                        </div>
+
+                        <div className="chat-input-wrapper integrated-bot-input" style={{ padding: '16px', background: 'white', borderTop: '1px solid #edf2f7' }}>
+                            <div className="chat-input-area" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                <input
+                                    type="text"
+                                    className="chat-input"
+                                    placeholder="Posez votre question à l'assistant..."
+                                    value={chatbotInput}
+                                    onChange={(e) => setChatbotInput(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && handleChatbotSend()}
+                                    style={{ flex: 1, padding: '12px 18px', borderRadius: '24px', border: '1px solid #d0dfd7', outline: 'none', background: '#f8faf9' }}
+                                />
+                                <button className="btn-send" onClick={() => handleChatbotSend()} style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#006233', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <i className="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                        </div>
+                    ) : (() => {
                         const currentUser = JSON.parse(localStorage.getItem('user'));
                         const other = getOtherPerson(selectedChat);
-                        const otherPersonId = selectedChat.sender_id === currentUser?.id
-                            ? selectedChat.receiver_id
-                            : selectedChat.sender_id;
+                        const otherPersonId = (() => {
+                            if (selectedChat.id === 'admin-conversation-virtual') return null;
+                            const isMeSender = selectedChat.sender_id === currentUser?.id;
+                            if (isMeSender) return selectedChat.receiver_id;
+                            return selectedChat.sender_id;
+                        })();
 
-                        const conversationMessages = messages.filter(m =>
-                            (m.sender_id === currentUser?.id && m.receiver_id === otherPersonId) ||
-                            (m.sender_id === otherPersonId && m.receiver_id === currentUser?.id)
-                        ).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                        const conversationMessages = messages.filter(m => {
+                            const isMe = m.sender_id === currentUser?.id;
+                            const isOther = (m.sender_id === otherPersonId && otherPersonId !== null);
+                            const amAdmin = currentUser?.role === 'admin';
+
+                            if (otherPersonId === null) {
+                                // For client/manager viewing Support chat
+                                if (isMe && (m.receiver_id === null || m.receiver_id === 0)) return true;
+                                if (m.receiver_id === currentUser?.id && (m.sender_id === null || m.sender_id === 0 || m.sender_role === 'admin')) return true;
+                                return false;
+                            }
+                            
+                            // For Admin viewing a specific user
+                            if (amAdmin) {
+                                return (isMe && m.receiver_id === otherPersonId) ||
+                                       (isOther && (m.receiver_id === currentUser?.id || m.receiver_id === null || m.receiver_id === 0));
+                            }
+
+                            return (isMe && m.receiver_id === otherPersonId) ||
+                                   (isOther && m.receiver_id === currentUser?.id);
+                        }).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
                         return (
                             <>
                                 {/* Chat Header */}
                                 <div className="chat-header">
-                                    <button className="btn-back" onClick={() => setShowChatOnMobile(false)}>
+                                    <button className="chat-btn-back-mobile" onClick={() => setShowChatOnMobile(false)}>
                                         <i className="fa-solid fa-arrow-left"></i>
                                     </button>
                                     <div className="chat-header-avatar">
@@ -412,13 +858,11 @@ const DashboardMessages = () => {
                                 </div>
                             </>
                         );
-                    })() : (
+                    })()) : (
                         <div className="no-chat-selected">
                             <i className="fa-regular fa-comments" style={{ fontSize: '52px', color: '#c3d9cc' }}></i>
-                            <p>Sélectionnez une conversation<br />ou commencez-en une nouvelle</p>
-                            <button className="btn-start-new" onClick={openComposer}>
-                                <i className="fa-solid fa-plus"></i> Nouveau message
-                            </button>
+                            <p>Sélectionnez une conversation</p>
+                            {/* Removed btn-start-new per user request */}
                         </div>
                     )}
                 </div>
@@ -426,127 +870,85 @@ const DashboardMessages = () => {
 
             {/* ========== COMPOSE MODAL ========== */}
             {isComposing && (
-                <div className="modal-overlay" onClick={(e) => { if (e.target.classList.contains('modal-overlay')) setIsComposing(false); }}>
-                    <div className="modal-content-mac">
-                        <div className="modal-header-mac">
-                            <div className="window-controls">
-                                <div className="control-dot dot-red" onClick={() => setIsComposing(false)}></div>
-                                <div className="control-dot dot-yellow"></div>
-                                <div className="control-dot dot-green"></div>
-                            </div>
+                <div className="modern-modal-overlay" onClick={(e) => { if (e.target.classList.contains('modern-modal-overlay')) setIsComposing(false); }}>
+                    <div className="modern-compose-modal">
+                        <div className="modal-header-premium">
                             <h3>Nouveau Message</h3>
-                            <div style={{ width: '40px' }}></div>
+                            <button className="modal-close-btn" onClick={() => setIsComposing(false)}>
+                                <i className="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
-                        <div className="modal-body-mac">
-                            {/* User Search */}
-                            <div className="search-user-wrapper">
-                                <i className="fa-solid fa-search search-icon"></i>
-                                <input
-                                    type="text"
-                                    placeholder="Rechercher un utilisateur par nom ou email..."
-                                    className="search-user-input"
-                                    value={searchQuery}
-                                    onChange={e => {
-                                        setSearchQuery(e.target.value);
-                                        if (selectedUser) setSelectedUser(null);
-                                    }}
-                                />
+                        
+                        <div className="modal-body-modern">
+                            {/* Search Section */}
+                            <div className="form-group-modern">
+                                <label>Destinataire</label>
+                                <div className="modern-search-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="Nom ou email..."
+                                        className="modern-form-input no-icon"
+                                        value={searchQuery}
+                                        onChange={e => {
+                                            setSearchQuery(e.target.value);
+                                            if (selectedUser) setSelectedUser(null);
+                                        }}
+                                    />
+                                    {searching && <div className="modern-spinner-mini"></div>}
+                                </div>
 
-                                {/* Selected user badge */}
                                 {selectedUser && (
-                                    <div className="selected-user-badge">
-                                        <div className="badge-avatar">
-                                            {selectedUser.profile_picture ? (
-                                                <img src={getProfileUrl(selectedUser.profile_picture)} alt="" />
-                                            ) : (
-                                                <span><i className="fa-solid fa-user"></i></span>
-                                            )}
+                                    <div className="modern-selected-user">
+                                        <div className="user-info-pill">
+                                            <i className="fa-solid fa-user"></i>
+                                            <span>{selectedUser.first_name} {selectedUser.last_name}</span>
+                                            <button onClick={() => {
+                                                setSelectedUser(null);
+                                                setSearchQuery('');
+                                                setComposeData(prev => ({ ...prev, receiver_id: null }));
+                                            }}>
+                                                <i className="fa-solid fa-x"></i>
+                                            </button>
                                         </div>
-                                        <span>{selectedUser.first_name} {selectedUser.last_name}</span>
-                                        <button onClick={() => {
-                                            setSelectedUser(null);
-                                            setSearchQuery('');
-                                            setComposeData(prev => ({ ...prev, receiver_id: null }));
-                                        }}>
-                                            <i className="fa-solid fa-xmark"></i>
-                                        </button>
                                     </div>
                                 )}
 
-                                {/* Search Results Dropdown */}
-                                {searchQuery.length >= 2 && !selectedUser && (
-                                    <div className="search-results-dropdown">
-                                        {searching ? (
-                                            <div className="search-loading">
-                                                <i className="fa-solid fa-spinner fa-spin"></i>
-                                                Recherche...
-                                            </div>
-                                        ) : searchResults.length > 0 ? (
+                                {!selectedUser && searchQuery.length >= 2 && (
+                                    <div className="modern-results-dropdown">
+                                        {searchResults.length > 0 ? (
                                             searchResults.map(user => (
-                                                <div
-                                                    key={user.id}
-                                                    className="search-result-item"
-                                                    onClick={() => handleSelectUserForCompose(user)}
-                                                >
-                                                    <div className="search-result-avatar">
-                                                        {user.profile_picture ? (
-                                                            <img src={getProfileUrl(user.profile_picture)} alt="" />
-                                                        ) : (
-                                                            <span><i className="fa-solid fa-user"></i></span>
-                                                        )}
+                                                <div key={user.id} className="modern-result-item" onClick={() => handleSelectUserForCompose(user)}>
+                                                    <img src={resolveImageUrl(user.profile_picture) || `https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}`} alt="" className="avatar-sm" />
+                                                    <div className="item-text">
+                                                        <span className="name">{user.first_name} {user.last_name}</span>
+                                                        <span className="email">{user.email}</span>
                                                     </div>
-                                                    <div className="search-result-info">
-                                                        <strong>{user.first_name} {user.last_name}</strong>
-                                                        <span>{user.email}</span>
-                                                    </div>
-                                                    {user.role !== 'client' && (
-                                                        <span className="search-result-role">{user.role}</span>
-                                                    )}
                                                 </div>
                                             ))
-                                        ) : (
-                                            <div className="search-no-results">
-                                                <i className="fa-solid fa-user-slash"></i>
-                                                Aucun utilisateur trouvé
-                                            </div>
+                                        ) : !searching && (
+                                            <div className="search-empty">Aucun utilisateur trouvé</div>
                                         )}
                                     </div>
                                 )}
                             </div>
 
-                            {/* Subject */}
-                            <div style={{ marginBottom: '12px' }}>
-                                <input
-                                    type="text"
-                                    placeholder="Sujet du message..."
-                                    className="search-user-input"
-                                    style={{ paddingLeft: '16px' }}
-                                    value={composeData.subject}
-                                    onChange={e => setComposeData({ ...composeData, subject: e.target.value })}
-                                />
-                            </div>
-
                             {/* Message Body */}
-                            <div className="modal-message-area">
+                            <div className="form-group-modern full-flex">
+                                <label>Message</label>
                                 <textarea
-                                    className="modal-textarea"
-                                    placeholder="Votre message..."
+                                    className="modern-form-textarea"
+                                    placeholder="Votre message ici..."
                                     value={composeData.content}
                                     onChange={e => setComposeData({ ...composeData, content: e.target.value })}
                                 />
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '13px', color: '#718096' }}>
-                                        {selectedUser
-                                            ? `→ ${selectedUser.first_name} ${selectedUser.last_name}`
-                                            : '→ Administration (par défaut)'
-                                        }
-                                    </span>
-                                    <button className="btn-send-mac" onClick={handleComposeMessage}>
-                                        Envoyer <i className="fa-solid fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                                <button className="btn-send-premium" onClick={handleComposeMessage}>
-                                    Envoyer <i className="fa-solid fa-paper-plane" style={{ marginLeft: '8px' }}></i>
+                            </div>
+                        </div>
+
+                        <div className="modal-footer-modern">
+                            <div className="footer-actions">
+                                <button className="btn-cancel-flat" onClick={() => setIsComposing(false)}>Annuler</button>
+                                <button className="btn-send-solid" onClick={handleComposeMessage} disabled={!composeData.content || (searchQuery.length > 0 && !selectedUser)}>
+                                    Envoyer <i className="fa-solid fa-paper-plane"></i>
                                 </button>
                             </div>
                         </div>

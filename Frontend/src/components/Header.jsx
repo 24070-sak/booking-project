@@ -14,10 +14,18 @@ function Header() {
     const navRef = useRef(null);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
+        const fetchUser = () => {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                setUser(JSON.parse(storedUser));
+            } else {
+                setUser(null);
+            }
+        };
+
+        fetchUser();
+        window.addEventListener('authChange', fetchUser);
+        return () => window.removeEventListener('authChange', fetchUser);
     }, []);
 
     useEffect(() => {
@@ -33,6 +41,7 @@ function Header() {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        window.dispatchEvent(new Event('authChange'));
         window.location.href = '/';
     };
 
@@ -161,10 +170,10 @@ function Header() {
                                             )}
                                             <div className="nav-dropdown-user-info">
                                                 <span className="nav-dropdown-fullname">
-                                                    {user.role === 'manager' || user.role === 'admin' ? user.first_name : `${user.first_name} ${user.last_name}`}
+                                                    {user.role === 'admin' ? user.first_name : (user.role === 'manager' ? (user.first_name?.replace(/Hôtel Manager/gi, "Hôtel") || "Hôtel") : `${user.first_name} ${user.last_name}`)}
                                                 </span>
                                                 <span className="nav-dropdown-role">
-                                                    {user.access_dashboard ? 'Administrateur' : 'Membre'}
+                                                    {user.role === 'admin' ? 'Administrateur' : (user.role === 'manager' ? 'Hôtel' : 'Membre')}
                                                 </span>
                                             </div>
                                         </div>

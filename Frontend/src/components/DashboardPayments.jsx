@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getPayments } from '../services/dashboardService';
 import { verifyPayment } from '../services/bookingService';
 import { showError, showSuccess, showConfirm } from '../utils/alerts';
+import { resolveImageUrl } from '../utils/urlHelper';
 import '../styles/components/dashboardPayments.css';
 
 const DashboardPayments = () => {
@@ -114,7 +115,18 @@ const DashboardPayments = () => {
                             payments.map(payment => (
                                 <tr key={payment.id}>
                                     <td data-label="ID">#{payment.id}</td>
-                                    <td data-label="Guest" style={{ fontWeight: 'bold' }}>{payment.guest_name}</td>
+                                    <td data-label="Guest">
+                                        <div className="guest-cell">
+                                            <div className="guest-avatar">
+                                                {payment.guest_picture ? (
+                                                    <img src={resolveImageUrl(payment.guest_picture)} alt={payment.guest_name} />
+                                                ) : (
+                                                    <i className="fa-solid fa-user"></i>
+                                                )}
+                                            </div>
+                                            <span style={{ fontWeight: 'bold' }}>{payment.guest_name}</span>
+                                        </div>
+                                    </td>
                                     <td data-label="Property">{payment.hotel_name}</td>
                                     <td data-label="Date">{payment.paid_at ? new Date(payment.paid_at).toLocaleDateString() : 'N/A'}</td>
                                     <td data-label="Method">
@@ -157,8 +169,22 @@ const DashboardPayments = () => {
                             <button className="modal-close" onClick={() => setSelectedPayment(null)}>&times;</button>
                         </div>
                         <div className="modal-body">
+                             <div className="modal-guest-header" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
+                                <div className="modal-guest-avatar" style={{ width: '50px', height: '50px', borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(0, 98, 51, 0.1)', flexShrink: 0 }}>
+                                    {selectedPayment.guest_picture ? (
+                                        <img src={resolveImageUrl(selectedPayment.guest_picture)} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f4f8', color: '#718096' }}>
+                                            <i className="fa-solid fa-user"></i>
+                                        </div>
+                                    )}
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '12px', color: '#718096', fontWeight: 'bold', textTransform: 'uppercase' }}>Client</div>
+                                    <div style={{ fontSize: '16px', fontWeight: '800', color: '#1a202c' }}>{selectedPayment.guest_name}</div>
+                                </div>
+                            </div>
                             <div className="modal-info-grid">
-                                <div><strong>Client:</strong> {selectedPayment.guest_name}</div>
                                 <div><strong>Référence:</strong> {selectedPayment.booking_reference}</div>
                                 <div><strong>Montant:</strong> {selectedPayment.amount} €</div>
                                 <div><strong>Méthode:</strong> {selectedPayment.payment_method === 'credit_card' ? "Assurance (Payé à l'hôtel)" : selectedPayment.payment_method === 'local_app' ? "App Bancaire" : selectedPayment.payment_method}</div>

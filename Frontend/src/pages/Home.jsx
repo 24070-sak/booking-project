@@ -87,7 +87,7 @@ function Home() {
                             <HotelCard
                                 key={hotel.id}
                                 id={hotel.id}
-                                title={hotel.name}
+                                title={hotel.name.replace(/Manager/gi, '').trim()}
                                 location={hotel.location}
                                 price={hotel.lowest_price ? `${t('from')} ${hotel.lowest_price} €` : t('price_unavailable')}
                                 imageUrl={hotel.image_url}

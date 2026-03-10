@@ -670,7 +670,7 @@ def admin_create_user():
         return jsonify({'error': 'Accès interdit. Haute permission requise.'}), 403
 
     data = request.get_json()
-    required_fields = ['email', 'password', 'first_name', 'last_name']
+    required_fields = ['email', 'password', 'first_name']
     for field in required_fields:
         if not data.get(field):
             return jsonify({'error': f'{field} est requis'}), 400
@@ -687,7 +687,7 @@ def admin_create_user():
     new_user = User(
         email=data['email'],
         first_name=first_name,
-        last_name=data['last_name'],
+        last_name=data.get('last_name', ''),
         phone=data.get('phone'),
         username=username,
         access_dashboard=True,
@@ -699,5 +699,75 @@ def admin_create_user():
     db.session.add(new_user)
     db.session.commit()
     update_db_dump()
-
     return jsonify({'message': 'Utilisateur créé avec succès', 'user': new_user.to_dict()}), 201
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Admin: List, Update, Delete Managers
+# ─────────────────────────────────────────────────────────────────────────────
+
+@auth_bp.route('/admin/users', methods=['GET'])
+@jwt_required()
+def admin_get_users():
+    current_user_id = get_jwt_identity()
+    admin = User.query.get(current_user_id)
+    if not admin or not admin.access_control_center:
+        return jsonify({'error': 'Accès interdit. Haute permission requise.'}), 403
+
+    users = User.query.filter(User.role.in_(['manager', 'admin'])).all()
+    return jsonify({'users': [u.to_dict() for u in users]}), 200
+
+
+@auth_bp.route('/admin/users/<int:user_id>', methods=['PUT'])
+@jwt_required()
+def admin_update_user(user_id):
+    current_user_id = get_jwt_identity()
+    admin = User.query.get(current_user_id)
+    if not admin or not admin.access_control_center:
+        return jsonify({'error': 'Accès interdit. Haute permission requise.'}), 403
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+    data = request.get_json()
+
+    if 'first_name' in data:
+        user.first_name = data['first_name']
+    if 'last_name' in data:
+        user.last_name = data['last_name']
+    if 'email' in data:
+        new_email = data['email']
+        if new_email != user.email and User.query.filter_by(email=new_email).first():
+            return jsonify({'error': 'Cet email est déjà pris'}), 400
+        user.email = new_email
+    if 'phone' in data:
+        user.phone = data['phone']
+    if 'password' in data and data['password']:
+        user.set_password(data['password'])
+
+    db.session.commit()
+    update_db_dump()
+
+    return jsonify({'message': 'Utilisateur mis à jour', 'user': user.to_dict()}), 200
+
+
+@auth_bp.route('/admin/users/<int:user_id>', methods=['DELETE'])
+@jwt_required()
+def admin_delete_user(user_id):
+    current_user_id = get_jwt_identity()
+    admin = User.query.get(current_user_id)
+    if not admin or not admin.access_control_center:
+        return jsonify({'error': 'Accès interdit. Haute permission requise.'}), 403
+
+    if str(user_id) == str(current_user_id):
+        return jsonify({'error': 'Vous ne pouvez pas supprimer votre propre compte.'}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+    db.session.delete(user)
+    db.session.commit()
+    update_db_dump()
+
+    return jsonify({'message': 'Utilisateur supprimé avec succès'}), 200

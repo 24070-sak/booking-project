@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { getRoomById } from "../services/roomService";
 import { createBooking, getUserBookings, cancelBooking } from "../services/bookingService";
+import { sendMessage } from "../services/messageService";
+import { resolveImageUrl } from "../utils/urlHelper";
 import { showSuccess } from "../utils/alerts";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -149,7 +151,9 @@ function RoomDetails() {
                 </Link>
 
                 <div className="room-detail-card">
-                    <img src={room.image_url} alt={room.name} className="room-hero-img" />
+                    <div className="room-hero">
+                        <img src={resolveImageUrl(room.image_url)} alt={room.name} className="room-hero-img" />
+                    </div>
 
                     <div className="room-detail-body">
                         <div className="room-title-row">
@@ -186,7 +190,7 @@ function RoomDetails() {
                                 <div className="booking-status-panel">
                                     {(!userBooking.payment || userBooking.payment.status === 'failed') && (
                                         <div>
-                                            <h3>You have booked this room – Payment pending</h3>
+                                            <h3>Vous avez réservé cette chambre – Paiement en attente</h3>
                                             <div className="booking-status-warning">
                                                 <p>Veuillez régler votre réservation de <strong>{userBooking.total_price} €</strong> (Statut : remboursement) avant l'expiration du délai.</p>
                                                 <div className="booking-timer">
@@ -213,11 +217,13 @@ function RoomDetails() {
 
                                     {userBooking.payment && userBooking.payment.status === 'pending' && (
                                         <div>
-                                            <h3>You have booked this room</h3>
+                                            <h3>Vous avez réservé cette chambre</h3>
                                             <div className="booking-status-pending">
-                                                <h4>Proof – Pending Approval</h4>
+                                                <h4>Preuve – En attente d'approbation</h4>
                                                 {userBooking.payment.screenshot_url && (
-                                                    <img src={userBooking.payment.screenshot_url} alt="Preuve" className="booking-proof-img" />
+                                                    <div className="proof-container">
+                                                        <img src={resolveImageUrl(userBooking.payment.screenshot_url)} alt="Preuve" className="booking-proof-img" />
+                                                    </div>
                                                 )}
                                                 <p>Votre preuve de paiement a été soumise et est en attente d'approbation par l'hôtel.</p>
                                                 <p><strong>Total:</strong> {userBooking.total_price} € (Statut: en attente)</p>

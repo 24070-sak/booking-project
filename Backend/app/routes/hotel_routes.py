@@ -4,6 +4,9 @@ from app.models.room import Room
 from app.extensions import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.utils.helpers import update_db_dump
+from werkzeug.utils import secure_filename
+import os
+from flask import current_app
 
 hotel_bp = Blueprint('hotels', __name__, url_prefix='/api/hotels')
 
@@ -124,7 +127,9 @@ def create_hotel():
         description=data.get('description'),
         image_url=data.get('image_url'),
         rating=data.get('rating', 0.0),
-        user_id=user_id # Assign owner
+        user_id=user_id, # Assign owner
+        views=5,          # Start with initial baseline view count
+        unique_visitors=3 # Start with initial unique visitor count
     )
     
     db.session.add(new_hotel)
@@ -206,6 +211,36 @@ def delete_hotel(hotel_id):
     update_db_dump()
     
     return jsonify({'message': 'Hôtel supprimé'}), 200
+
+@hotel_bp.route('/upload', methods=['POST'])
+@jwt_required()
+def upload_hotel_image():
+    """Upload an image for a hotel"""
+    user_id = get_jwt_identity()
+    from app.models.user import User
+    user = User.query.get(user_id)
+    
+    if not user or not user.access_dashboard:
+        return jsonify({'error': 'Accès interdit'}), 403
+        
+    if 'image' not in request.files:
+        return jsonify({'error': 'Aucun fichier envoyé'}), 400
+        
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'error': 'Nom de fichier vide'}), 400
+        
+    if file:
+        filename = secure_filename(f"hotel_{user_id}_{file.filename}")
+        upload_folder = os.path.join(current_app.root_path, 'static/uploads/hotels')
+        os.makedirs(upload_folder, exist_ok=True)
+        file.save(os.path.join(upload_folder, filename))
+        
+        # Use development URL logic, can be adapted for production
+        image_url = f"/static/uploads/hotels/{filename}"
+        return jsonify({'image_url': image_url}), 200
+    
+    return jsonify({'error': 'Upload échoué'}), 500
 
 @hotel_bp.route('/<int:hotel_id>/rooms', methods=['GET'])
 @jwt_required(optional=True)

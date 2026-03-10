@@ -42,6 +42,9 @@ function Login() {
 
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.access_token);
+      
+      // Notify other components of auth change
+      window.dispatchEvent(new Event('authChange'));
 
       if (data.user?.access_dashboard) {
         navigate("/dashboard");
@@ -81,6 +84,9 @@ function Login() {
 
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.access_token);
+        
+        // Notify other components of auth change
+        window.dispatchEvent(new Event('authChange'));
 
         // Redirect to dashboard if user has access, otherwise home
         if (data.user?.access_dashboard) {
