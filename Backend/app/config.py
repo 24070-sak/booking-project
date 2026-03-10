@@ -22,6 +22,14 @@ class Config:
             _db_url = _db_url.replace("postgres://", "postgresql+pg8000://", 1)
         elif _db_url.startswith("postgresql://"):
             _db_url = _db_url.replace("postgresql://", "postgresql+pg8000://", 1)
+        # pg8000 doesn't support sslmode/channel_binding in the URL — strip them
+        from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+        parsed = urlparse(_db_url)
+        qs = parse_qs(parsed.query)
+        qs.pop('sslmode', None)
+        qs.pop('channel_binding', None)
+        cleaned_query = urlencode({k: v[0] for k, v in qs.items()})
+        _db_url = urlunparse(parsed._replace(query=cleaned_query))
             
     SQLALCHEMY_DATABASE_URI = _db_url or \
         f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}'
@@ -29,7 +37,9 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_recycle': 3600,
-        'pool_pre_ping': True
+        'pool_pre_ping': True,
+        # SSL for pg8000 when connecting to Neon/PostgreSQL
+        **({'connect_args': {'ssl_context': True}} if os.environ.get('DATABASE_URL') else {})
     }
     
     # Configuration JWT
