@@ -37,6 +37,9 @@ function Messages() {
 
             {/* Mobile Header (Only visible on small screens) */}
             <div className="mobile-only-header">
+                <Link to="/" className="mobile-back-btn" title="Accueil">
+                    <i className="fa-solid fa-arrow-left"></i>
+                </Link>
                 <h2>
                     Messages
                     {notifications.filter(n => !n.is_read && n.type === 'message').length > 0 && (
