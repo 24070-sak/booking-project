@@ -425,15 +425,33 @@
     /* Kill ALL spacing so the page fills edge-to-edge */
     .messages-page-wrapper {
         min-height: 100vh;
-        height: auto;
+        height: 100vh;
         background: white !important;
         width: 100vw !important;
+        max-width: 100vw !important;
         padding: 0 !important;
         margin: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: 0 !important;
         overflow-x: hidden !important;
         border-radius: 0 !important;
-        padding-bottom: 75px;
-        /* Space for MobileNavbar */
+        box-sizing: border-box !important;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Hide the entire mobile header section when a chat is open */
+    .messages-page-wrapper:has(.show-chat) .mobile-only-header,
+    .messages-page-wrapper:has(.show-chat) .mobile-chatbot-pin {
+        display: none !important;
+    }
+
+    /* Override global body padding that was causing the gap */
+    body:has(.messages-page-wrapper) {
+        padding: 0 !important;
+        background: white !important;
+        overflow: hidden !important;
     }
 
     .messages-top-nav {
@@ -444,19 +462,46 @@
     .mobile-only-header {
         display: flex !important;
         align-items: center;
-        padding: 16px 20px;
+        padding: 14px 16px;
         background: white;
-        gap: 15px;
+        gap: 12px;
         flex-shrink: 0;
-        border-bottom: 1px solid #f0f7f3;
+        border-bottom: 1px solid #e8f3ee;
         z-index: 20;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0 !important;
+        position: sticky;
+        top: 0;
+    }
+
+    .mobile-only-header .mobile-back-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #f0f7f3;
+        border: 1px solid #d1e8db;
+        color: #006233;
+        text-decoration: none;
+        font-size: 13px;
+        flex-shrink: 0;
+        transition: background 0.2s;
+    }
+
+    .mobile-only-header .mobile-back-btn:hover {
+        background: #006233;
+        color: white;
     }
 
     .mobile-only-header h2 {
         margin: 0;
-        font-size: 20px;
+        font-size: 18px;
         color: #1a3a2a;
         font-weight: 700;
+        flex: 1;
     }
 
     .mobile-chatbot-pin {
@@ -515,6 +560,7 @@
         display: flex !important;
         flex-direction: column !important;
         min-height: 0;
+        padding-bottom: 65px !important; /* MobileNavbar space */
     }
 
     /* Message Bubbles for Mobile */
