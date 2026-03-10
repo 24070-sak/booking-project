@@ -11,7 +11,7 @@ flask-mail
 sqlalchemy
 pymysql
 cryptography
-psycopg2-binary
+pg8000
 
 # Serveur de production
 gunicorn
