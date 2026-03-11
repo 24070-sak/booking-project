@@ -1,22 +1,14 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useNotification } from '../context/NotificationContext';
 import '../styles/components/mobileNavbar.css';
 
 const MobileNavbar = () => {
     const { notifications } = useNotification();
-    const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
 
     const unreadMessages = notifications.filter(n => !n.is_read && n.type === 'message').length;
     const unreadNotifications = notifications.filter(n => !n.is_read && n.type !== 'message').length;
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        navigate('/connexion');
-        window.location.reload();
-    };
 
     if (!user) return null;
 
@@ -35,15 +27,18 @@ const MobileNavbar = () => {
                 <span>Alertes</span>
             </NavLink>
 
+            <NavLink to="/messages" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                <div className="icon-wrapper">
+                    <i className="fa-solid fa-comment-dots"></i>
+                    {unreadMessages > 0 && <span className="badge">{unreadMessages}</span>}
+                </div>
+                <span>Messages</span>
+            </NavLink>
+
             <NavLink to="/profile" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
                 <i className="fa-solid fa-user"></i>
                 <span>Profil</span>
             </NavLink>
-
-            <button onClick={handleLogout} className="nav-item logout-btn">
-                <i className="fa-solid fa-right-from-bracket"></i>
-                <span>Quitter</span>
-            </button>
         </div>
     );
 };

@@ -294,10 +294,41 @@ function Profile() {
                                 fontSize: '1.1rem',
                                 fontWeight: 'bold',
                                 cursor: 'pointer',
-                                opacity: loading ? 0.7 : 1
+                                opacity: loading ? 0.7 : 1,
+                                marginBottom: '15px'
                             }}
                         >
                             {loading ? 'Mise à jour...' : 'Sauvegarder les modifications'}
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                localStorage.removeItem('token');
+                                localStorage.removeItem('user');
+                                window.location.href = '/connexion';
+                            }}
+                            style={{
+                                width: '100%',
+                                padding: '15px',
+                                backgroundColor: 'transparent',
+                                color: '#e74c3c',
+                                border: '1px solid #e74c3c',
+                                borderRadius: '8px',
+                                fontSize: '1.1rem',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                            }}
+                            onMouseOver={(e) => {
+                                e.currentTarget.style.backgroundColor = '#fdf2f2';
+                            }}
+                            onMouseOut={(e) => {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                            }}
+                        >
+                            <i className="fa-solid fa-right-from-bracket" style={{ marginRight: '10px' }}></i>
+                            Se déconnecter
                         </button>
                     </form>
 

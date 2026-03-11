@@ -16,6 +16,12 @@ const FloatingChatbot = () => {
     const [botTyping, setBotTyping] = useState(false);
     const chatMessagesRef = useRef(null);
 
+    // Draggable state
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const fabRef = useRef(null);
+
     const SUGGESTED_QUESTIONS = [
         "Quels hôtels sont disponibles actuellement ?",
         "Propose-moi des hôtels dans cette ville.",
@@ -24,7 +30,6 @@ const FloatingChatbot = () => {
     ];
 
     useEffect(() => {
-        // Check if user is regular (not admin/manager)
         const userStr = localStorage.getItem('user');
         let shouldShow = true;
         
@@ -39,13 +44,68 @@ const FloatingChatbot = () => {
             }
         }
         setIsVisible(shouldShow);
-    }, [location.pathname]); // Refresh on route change just in case of login/logout
+    }, [location.pathname]);
 
     useEffect(() => {
         if (chatbotOpen) {
             chatMessagesRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
         }
     }, [chatbotMessages, botTyping, chatbotOpen]);
+
+    // Handle dragging
+    const onMouseDown = (e) => {
+        if (chatbotOpen) return;
+        setIsDragging(true);
+        setDragStart({
+            x: e.clientX - position.x,
+            y: e.clientY - position.y
+        });
+    };
+
+    const onTouchStart = (e) => {
+        if (chatbotOpen) return;
+        setIsDragging(true);
+        const touch = e.touches[0];
+        setDragStart({
+            x: touch.clientX - position.x,
+            y: touch.clientY - position.y
+        });
+    };
+
+    useEffect(() => {
+        const onMouseMove = (e) => {
+            if (!isDragging) return;
+            setPosition({
+                x: e.clientX - dragStart.x,
+                y: e.clientY - dragStart.y
+            });
+        };
+
+        const onTouchMove = (e) => {
+            if (!isDragging) return;
+            const touch = e.touches[0];
+            setPosition({
+                x: touch.clientX - dragStart.x,
+                y: touch.clientY - dragStart.y
+            });
+        };
+
+        const onMouseUp = () => setIsDragging(false);
+
+        if (isDragging) {
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+            window.addEventListener('touchmove', onTouchMove);
+            window.addEventListener('touchend', onMouseUp);
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+            window.removeEventListener('touchmove', onTouchMove);
+            window.removeEventListener('touchend', onMouseUp);
+        };
+    }, [isDragging, dragStart]);
 
     const handleChatbotSend = async (customMsg = null) => {
         const msgToSend = customMsg || chatbotInput;
@@ -59,7 +119,6 @@ const FloatingChatbot = () => {
         const lowerMsg = userMsg.toLowerCase();
         const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-        // Fetch all hotels to identify name mentions exactly
         let allHotels = [];
         try {
             const dbRes = await fetch(`${API_URL}/hotels`);
@@ -67,7 +126,6 @@ const FloatingChatbot = () => {
             if (data.hotels) allHotels = data.hotels;
         } catch(e) {}
 
-        // Check if a Specific Hotel is mentioned
         let hotelToFetch = null;
         const mentionedHotel = allHotels.find(h => lowerMsg.includes(h.name.toLowerCase()));
         
@@ -117,7 +175,6 @@ const FloatingChatbot = () => {
             return;
         }
 
-        // Logic for hotels listing
         const listingTexts = [
             "Bien sûr ! Voici une sélection d'hôtels disponibles :",
             "Avec plaisir ! Voici quelques hôtels qui pourraient vous intéresser :",
@@ -139,7 +196,6 @@ const FloatingChatbot = () => {
             return;
         }
 
-        // Catch Generic Hotel Inquiries
         const isGenericInquiry = lowerMsg.match(/(hôtels?|hotels?|chambres?|images?|photos?|dispo|liste|propose|quelles?|quels?|moins chers?|belles?|ville)/i);
         
         if (isGenericInquiry && allHotels.length > 0) {
@@ -179,7 +235,6 @@ const FloatingChatbot = () => {
             return;
         }
 
-        // Groq API Logic
         try {
             const groqApiKey = import.meta.env.VITE_GROQ_API_KEY;
             let dbContext = "";
@@ -216,7 +271,13 @@ const FloatingChatbot = () => {
     if (!isVisible) return null;
 
     return (
-        <div className="floating-chatbot-container">
+        <div 
+            className="floating-chatbot-container"
+            style={{
+                transform: `translate(${position.x}px, ${position.y}px)`,
+                transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)'
+            }}
+        >
             {/* Chatbot Window */}
             {chatbotOpen && (
                 <div className="fc-window slide-up-animation">
@@ -248,7 +309,6 @@ const FloatingChatbot = () => {
                                 )}
                                 <div className={`fc-msg-bubble ${msg.from}`}>
                                     {msg.text}
-                                    {/* Rich Hotels List */}
                                     {msg.hotels && (
                                         <div className="fc-hotels-compact-grid">
                                             {msg.hotels.map(h => (
@@ -262,7 +322,6 @@ const FloatingChatbot = () => {
                                             ))}
                                         </div>
                                     )}
-                                    {/* Rich Hotel Details with Rooms */}
                                     {msg.hotelDetails && (
                                         <div className="fc-hotel-details-view">
                                             <div className="fc-hotel-details-img-wrapper" onClick={() => navigate(`/hotel/${msg.hotelDetails.id}`)}>
@@ -279,8 +338,8 @@ const FloatingChatbot = () => {
                                                         <div key={r.id} className="fc-room-item" onClick={() => navigate(`/room/${r.id}`)}>
                                                             <img src={resolveImageUrl(r.image_url)} alt={r.name} />
                                                             <div className="fc-room-info">
-                                                                <strong>{r.name}</strong>
-                                                                <span>{r.max_guests} max • {r.price_per_night}€/nuit</span>
+                                                                 <strong>{r.name}</strong>
+                                                                 <span>{r.max_guests} max • {r.price_per_night}€/nuit</span>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -304,7 +363,6 @@ const FloatingChatbot = () => {
                             </div>
                         )}
 
-                        {/* Suggestions - only visible if chatbot output is empty except greeting */}
                         {chatbotMessages.length <= 2 && (
                             <div className="fc-suggestions">
                                 <p>Suggestions d'aide :</p>
@@ -338,8 +396,12 @@ const FloatingChatbot = () => {
             {/* Floating FAB Button */}
             {!chatbotOpen && (
                 <button 
+                    ref={fabRef}
                     className="fc-fab pulse-animation" 
-                    onClick={() => setChatbotOpen(true)}
+                    onClick={() => { if (!isDragging) setChatbotOpen(true); }}
+                    onMouseDown={onMouseDown}
+                    onTouchStart={onTouchStart}
+                    style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
                     title="Assistant Hotely"
                 >
                     <i className="fa-solid fa-robot"></i>
