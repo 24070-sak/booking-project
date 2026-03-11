@@ -21,7 +21,18 @@ def admin_required():
     return decorator
 
 def update_db_dump():
-    """Met à jour le fichier booking_database.sql avec les données actuelles"""
+    """Met à jour le fichier booking_database.sql avec les données actuelles.
+    
+    Cette fonction ne s'exécute qu'en local (développement) car mysqldump
+    n'est pas disponible sur Render (production) et le backend utilise PostgreSQL.
+    """
+    import shutil
+
+    # Si mysqldump n'est pas disponible (ex: Render production), on skip silencieusement
+    if not shutil.which("mysqldump"):
+        print("⚠️  mysqldump non disponible – sync SQL ignoré (environnement cloud)")
+        return False
+
     try:
         # Déterminer le chemin absolu du fichier SQL
         # On remonte de app/utils à la racine Backend/database/

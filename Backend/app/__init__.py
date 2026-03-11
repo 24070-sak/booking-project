@@ -10,8 +10,16 @@ def create_app(config_name='development'):
     # Chargement de la configuration
     app.config.from_object(config[config_name])
     
-    # Activer CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # Activer CORS – supports_credentials=True needed for JWT auth headers
+    CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+
+    @app.after_request
+    def add_cors_headers(response):
+        """Garantir les headers CORS sur TOUTES les réponses, y compris les erreurs 5xx."""
+        response.headers.setdefault("Access-Control-Allow-Origin", "*")
+        response.headers.setdefault("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.setdefault("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
+        return response
     
     # Initialisation des extensions
     db.init_app(app)
