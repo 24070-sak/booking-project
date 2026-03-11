@@ -12,7 +12,7 @@ def migrate():
     os.chdir(backend_dir)
     
     sqlite_url = "sqlite:////home/sak/Desktop/booking-project/Backend/booking.db"
-    mysql_url = "mysql+pymysql://avnadmin:REPLACE_ME@mysql-1814249b-supnum-1298.b.aivencloud.com:23295/defaultdb"
+    mysql_url = os.environ.get("MYSQL_URL", "mysql+pymysql://avnadmin:REPLACE_ME@mysql-1814249b-supnum-1298.b.aivencloud.com:23295/defaultdb")
     
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
