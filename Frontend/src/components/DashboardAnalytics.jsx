@@ -42,7 +42,7 @@ const DashboardAnalytics = () => {
             <p className="dashboard-section-subtitle">Performances de vos établissements</p>
 
             <div className="analytics-grid">
-                
+
                 {/* CARD 1: Visitor Stats */}
                 <div className="analytics-card visitor-stats-card">
                     <h3><i className="fa-solid fa-users"></i> Statistiques Visiteurs</h3>
@@ -100,8 +100,8 @@ const DashboardAnalytics = () => {
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={analytics?.revenueByDay} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} tickFormatter={(val) => `€${val}`} />
+                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} tickFormatter={(val) => `€${val}`} />
                                 <Tooltip
                                     cursor={{ fill: 'rgba(0, 98, 51, 0.05)' }}
                                     contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 15px rgba(0,0,0,0.08)' }}

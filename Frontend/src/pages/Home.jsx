@@ -10,6 +10,7 @@ import bed from '../assets/imgs/bed.png'
 import shield from '../assets/imgs/shield.png'
 import search from '../assets/imgs/search.png'
 import Footer from "../components/Footer";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 import { useLanguage } from "../context/LanguageContext";
 
@@ -79,7 +80,11 @@ function Home() {
                         <h2>{t('home_offers_title')}</h2>
                     </div>
 
-                    {loading && <p style={{ textAlign: 'center' }}>{t('loading_offers')}</p>}
+                    {loading && (
+                        <div style={{ padding: '40px 0', display: 'flex', justifyContent: 'center' }}>
+                            <LoadingSpinner text={t('loading_offers')} />
+                        </div>
+                    )}
                     {error && <p style={{ textAlign: 'center', color: 'red' }}>{error}</p>}
 
                     <div className="hotels-grid" key={offset}>

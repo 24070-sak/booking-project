@@ -22,8 +22,8 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
     // Auto-select chat if targetSenderId is provided
     useEffect(() => {
         if (targetSenderId && messages.length > 0) {
-            const chatToSelect = messages.find(m => 
-                m.sender_id === Number(targetSenderId) || 
+            const chatToSelect = messages.find(m =>
+                m.sender_id === Number(targetSenderId) ||
                 m.receiver_id === Number(targetSenderId)
             );
             if (chatToSelect) {
@@ -84,12 +84,12 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
             const dbRes = await fetch(`${API_URL}/hotels`);
             const data = await dbRes.json();
             if (data.hotels) allHotels = data.hotels;
-        } catch(e) {}
+        } catch (e) { }
 
         // Check if a Specific Hotel is mentioned
         let hotelToFetch = null;
         const mentionedHotel = allHotels.find(h => lowerMsg.includes(h.name.toLowerCase()));
-        
+
         if (mentionedHotel) {
             hotelToFetch = mentionedHotel.name;
         } else {
@@ -106,20 +106,20 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
             try {
                 const response = await fetch(`${API_URL}/hotels?search=${encodeURIComponent(hotelToFetch)}`);
                 const data = await response.json();
-                
+
                 if (data.hotels && data.hotels.length > 0) {
                     const hotel = data.hotels[0];
                     const roomsRes = await fetch(`${API_URL}/hotels/${hotel.id}/rooms`);
                     const roomsData = await roomsRes.json();
-                    
+
                     const detailsTexts = [
                         `Voici les images et détails pour **${hotel.name}** à ${hotel.location} :`,
                         `Découvrez tout ce qu'il faut savoir sur **${hotel.name}** :`,
                         `Super ! J'ai trouvé les infos pour **${hotel.name}** :`
                     ];
-                    
-                    setChatbotMessages(prev => [...prev, { 
-                        from: "bot", 
+
+                    setChatbotMessages(prev => [...prev, {
+                        from: "bot",
                         text: detailsTexts[Math.floor(Math.random() * detailsTexts.length)],
                         hotelDetails: {
                             ...hotel,
@@ -136,18 +136,18 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
             return;
         }
 
-            // Logic for hotels listing
+        // Logic for hotels listing
         const listingTexts = [
             "Bien sûr ! Voici une sélection d'hôtels disponibles :",
             "Avec plaisir ! Voici quelques hôtels qui pourraient vous intéresser :",
             "Voici les établissements actuellement disponibles :",
             "J'ai trouvé ces hôtels pour vous :"
         ];
-        
+
         if (lowerMsg.includes("hotel") && (lowerMsg.includes("dispo") || lowerMsg.includes("liste") || lowerMsg.includes("propose") || lowerMsg.includes("quelles") || lowerMsg.includes("quels"))) {
             if (allHotels.length > 0) {
-                setChatbotMessages(prev => [...prev, { 
-                    from: "bot", 
+                setChatbotMessages(prev => [...prev, {
+                    from: "bot",
                     text: listingTexts[Math.floor(Math.random() * listingTexts.length)],
                     hotels: allHotels.slice(0, 3)
                 }]);
@@ -160,10 +160,10 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
 
         // Catch Generic Hotel Inquiries (Force Visual Cards instead of AI text)
         const isGenericInquiry = lowerMsg.match(/(hôtels?|hotels?|chambres?|images?|photos?|dispo|liste|propose|quelles?|quels?|moins chers?|belles?|ville)/i);
-        
+
         if (isGenericInquiry && allHotels.length > 0) {
             let selectedHotels = [...allHotels];
-            
+
             const genericTexts = [
                 "Voici une superbe sélection d'hôtels pour vous :",
                 "J'ai trouvé ces magnifiques hôtels qui pourraient vous plaire :",
@@ -179,19 +179,19 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                 "Découvrez la beauté de ces hôtels en photos :",
                 "Ces images devraient vous plaire :"
             ];
-            
+
             let textRep = genericTexts[Math.floor(Math.random() * genericTexts.length)];
-            
+
             if (lowerMsg.includes("moins cher") || lowerMsg.includes("pas cher")) {
-                selectedHotels.sort((a,b) => a.lowest_price - b.lowest_price);
+                selectedHotels.sort((a, b) => a.lowest_price - b.lowest_price);
                 textRep = cheapTexts[Math.floor(Math.random() * cheapTexts.length)];
             } else if (lowerMsg.includes("image") || lowerMsg.includes("photo") || lowerMsg.includes("belle") || lowerMsg.includes("beau")) {
                 textRep = imageTexts[Math.floor(Math.random() * imageTexts.length)];
             }
-            
+
             // Provide richer visual layout by sending 4 hotels
-            setChatbotMessages(prev => [...prev, { 
-                from: "bot", 
+            setChatbotMessages(prev => [...prev, {
+                from: "bot",
                 text: textRep,
                 hotels: selectedHotels.slice(0, 4)
             }]);
@@ -209,7 +209,7 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                 if (data.hotels) {
                     dbContext = `\n[BDD]: ${data.hotels.map(h => `${h.name} à ${h.location}`).join(", ")}.`;
                 }
-            } catch(e){}
+            } catch (e) { }
 
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: "POST",
@@ -244,13 +244,16 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
             let otherId = isMeSender ? msg.receiver_id : msg.sender_id;
 
             const amAdmin = user?.role === 'admin';
-            
+            const amManager = user?.role === 'manager';
+
             // Hide System chats from Admin
             if (amAdmin && name === 'Système') {
                 return;
             }
 
-            if (!amAdmin && (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || msg.receiver_id === null || msg.sender_id === 0)) {
+            // For clients only: collapse all admin/system chats into a single unified thread.
+            // Managers must see each individual conversation separately.
+            if (!amAdmin && !amManager && (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || msg.receiver_id === null || msg.sender_id === 0)) {
                 otherId = 'admin-unified';
             }
 
@@ -258,9 +261,9 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                 groups[otherId] = msg;
             }
         });
-        
+
         const sortedConversations = Object.values(groups).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        
+
         // Pin Chatbot & Admin - virtual conversations (For clients and managers)
         if (user?.role === 'client' || user?.role === 'manager') {
             const adminChatIndex = sortedConversations.findIndex(c => {
@@ -270,7 +273,7 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                 return (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || c.receiver_id === null || c.sender_id === 0);
             });
             let adminConv;
-            
+
             if (adminChatIndex !== -1) {
                 adminConv = sortedConversations[adminChatIndex];
                 sortedConversations.splice(adminChatIndex, 1);
@@ -292,10 +295,10 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                     subject: 'Support Client'
                 };
             }
-            
+
             const conversations_to_return = [...sortedConversations];
             conversations_to_return.unshift(adminConv);
-            
+
             // Pin Chatbot only for clients
             if (user?.role === 'client') {
                 const botPreviewContent = lastChatbotMsg || localStorage.getItem('lastChatbotMsg') || 'Comment puis-je vous aider ?';
@@ -303,17 +306,17 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                     id: 'chatbot-virtual',
                     isChatbot: true,
                     sender_name: 'Assistant Hotely',
-                    sender_picture: null, 
+                    sender_picture: null,
                     content: botPreviewContent,
                     created_at: new Date().toISOString(),
                     is_read: true
                 };
                 conversations_to_return.unshift(chatbotConv);
             }
-            
+
             return conversations_to_return;
         }
-        
+
         return sortedConversations;
     }, [messages, lastChatbotMsg]);
 
@@ -486,12 +489,13 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
         const isMeSender = chat.sender_id === user?.id;
         const name = isMeSender ? chat.receiver_name : chat.sender_name;
         const role = isMeSender ? chat.receiver_role : chat.sender_role;
-        
+
         let finalName = name || "Inconnu";
         // Standardize Admin/System names
         const amAdmin = user?.role === 'admin';
+        const amManager = user?.role === 'manager';
 
-        if (!amAdmin && (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || chat.receiver_id === null || chat.sender_id === 0)) {
+        if (!amAdmin && !amManager && (role === 'admin' || name === 'Système' || name === 'Administration' || name === 'Administration Hotely' || chat.receiver_id === null || chat.sender_id === 0)) {
             finalName = "Administration Hotely";
         } else if (role === 'manager') {
             finalName = finalName.replace(/Hôtel Manager/gi, "Hôtel").replace(/Manager/gi, "").trim();
@@ -511,7 +515,7 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                 {/* ========== CONVERSATIONS LIST ========== */}
                 <div className="messages-list">
                     {/* The NEW MESSAGE button has been removed by request */}
-                    
+
                     {conversations.length === 0 ? (
                         <div className="no-conversations">
                             <i className="fa-regular fa-envelope" style={{ fontSize: '32px', color: '#c3d9cc' }}></i>
@@ -602,102 +606,102 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                                 </div>
                             </div>
 
-                        <div className="chat-messages chatbot-messages-area" ref={chatMessagesRef} style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
-                            {chatbotMessages.map((msg, i) => (
-                                <div key={i} className={`chatbot-msg-wrapper ${msg.from}`} style={{ display: 'flex', marginBottom: '16px', flexDirection: msg.from === 'user' ? 'row-reverse' : 'row' }}>
-                                    {msg.from === 'bot' && (
+                            <div className="chat-messages chatbot-messages-area" ref={chatMessagesRef} style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
+                                {chatbotMessages.map((msg, i) => (
+                                    <div key={i} className={`chatbot-msg-wrapper ${msg.from}`} style={{ display: 'flex', marginBottom: '16px', flexDirection: msg.from === 'user' ? 'row-reverse' : 'row' }}>
+                                        {msg.from === 'bot' && (
+                                            <div className="bot-msg-avatar-small" style={{ background: '#006233', color: 'white', minWidth: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '12px' }}>
+                                                <i className="fa-solid fa-robot"></i>
+                                            </div>
+                                        )}
+                                        <div className={`chatbot-msg-bubble ${msg.from}`} style={{ background: msg.from === 'user' ? '#006233' : '#f0f7f3', color: msg.from === 'user' ? 'white' : '#1e3a2b', padding: '12px 16px', borderRadius: '16px', borderBottomLeftRadius: msg.from === 'bot' ? '4px' : '16px', borderBottomRightRadius: msg.from === 'user' ? '4px' : '16px', maxWidth: '75%' }}>
+                                            {msg.text}
+                                            {/* Rich Hotels List */}
+                                            {msg.hotels && (
+                                                <div className="bot-hotels-compact-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginTop: '12px' }}>
+                                                    {msg.hotels.map(h => (
+                                                        <div key={h.id} className="bot-hotel-mini-card" onClick={() => navigate(`/hotel/${h.id}`)} style={{ cursor: 'pointer', transition: 'transform 0.2s', background: 'white', borderRadius: '8px', padding: '6px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                                                            <img src={resolveImageUrl(h.image_url)} alt={h.name} style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '6px', marginBottom: '8px' }} />
+                                                            <div className="mini-card-text">
+                                                                <strong style={{ fontSize: '12px', display: 'block', color: '#1a1a1a' }}>{h.name}</strong>
+                                                                <span style={{ fontSize: '11px', color: '#666', display: 'block' }}>{h.location} • Dès {h.lowest_price}€</span>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {/* Rich Hotel Details with Rooms */}
+                                            {msg.hotelDetails && (
+                                                <div className="bot-hotel-details-view" style={{ marginTop: '10px' }}>
+                                                    <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s' }} onClick={() => navigate(`/hotel/${msg.hotelDetails.id}`)} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+                                                        <img src={resolveImageUrl(msg.hotelDetails.image_url)} alt={msg.hotelDetails.name} style={{ width: '100%', height: '120px', objectFit: 'cover' }} />
+                                                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', color: 'white' }}>
+                                                            <strong style={{ display: 'block' }}>{msg.hotelDetails.name}</strong>
+                                                            <span style={{ fontSize: '11px' }}><i className="fa-solid fa-location-dot"></i> {msg.hotelDetails.location}</span>
+                                                        </div>
+                                                    </div>
+                                                    {msg.hotelDetails.rooms?.length > 0 && (
+                                                        <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                            <span style={{ fontSize: '12px', color: '#6b8c7a', fontWeight: 'bold' }}>Chambres recommandées :</span>
+                                                            {msg.hotelDetails.rooms.slice(0, 2).map(r => (
+                                                                <div key={r.id} style={{ display: 'flex', gap: '8px', alignItems: 'center', background: '#e3ece7', padding: '6px', borderRadius: '6px', cursor: 'pointer', transition: 'background 0.2s' }} onClick={() => navigate(`/room/${r.id}`)} onMouseEnter={(e) => e.currentTarget.style.background = '#d0dfd7'} onMouseLeave={(e) => e.currentTarget.style.background = '#e3ece7'}>
+                                                                    <img src={resolveImageUrl(r.image_url)} alt={r.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+                                                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                                                        <strong style={{ fontSize: '12px', color: '#006233' }}>{r.name}</strong>
+                                                                        <span style={{ fontSize: '10px', color: '#6b8c7a' }}>{r.max_guests} max • {r.price_per_night}€/nuit</span>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                                {botTyping && (
+                                    <div className="chatbot-msg-wrapper bot" style={{ display: 'flex', marginBottom: '16px' }}>
                                         <div className="bot-msg-avatar-small" style={{ background: '#006233', color: 'white', minWidth: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '12px' }}>
                                             <i className="fa-solid fa-robot"></i>
                                         </div>
-                                    )}
-                                    <div className={`chatbot-msg-bubble ${msg.from}`} style={{ background: msg.from === 'user' ? '#006233' : '#f0f7f3', color: msg.from === 'user' ? 'white' : '#1e3a2b', padding: '12px 16px', borderRadius: '16px', borderBottomLeftRadius: msg.from === 'bot' ? '4px' : '16px', borderBottomRightRadius: msg.from === 'user' ? '4px' : '16px', maxWidth: '75%' }}>
-                                        {msg.text}
-                                        {/* Rich Hotels List */}
-                                        {msg.hotels && (
-                                            <div className="bot-hotels-compact-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginTop: '12px' }}>
-                                                {msg.hotels.map(h => (
-                                                    <div key={h.id} className="bot-hotel-mini-card" onClick={() => navigate(`/hotel/${h.id}`)} style={{ cursor: 'pointer', transition: 'transform 0.2s', background: 'white', borderRadius: '8px', padding: '6px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                                                        <img src={resolveImageUrl(h.image_url)} alt={h.name} style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '6px', marginBottom: '8px' }} />
-                                                        <div className="mini-card-text">
-                                                            <strong style={{ fontSize: '12px', display: 'block', color: '#1a1a1a' }}>{h.name}</strong>
-                                                            <span style={{ fontSize: '11px', color: '#666', display: 'block' }}>{h.location} • Dès {h.lowest_price}€</span>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                        {/* Rich Hotel Details with Rooms */}
-                                        {msg.hotelDetails && (
-                                            <div className="bot-hotel-details-view" style={{ marginTop: '10px' }}>
-                                                <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s' }} onClick={() => navigate(`/hotel/${msg.hotelDetails.id}`)} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                                                    <img src={resolveImageUrl(msg.hotelDetails.image_url)} alt={msg.hotelDetails.name} style={{ width: '100%', height: '120px', objectFit: 'cover' }} />
-                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', color: 'white' }}>
-                                                        <strong style={{ display: 'block' }}>{msg.hotelDetails.name}</strong>
-                                                        <span style={{ fontSize: '11px' }}><i className="fa-solid fa-location-dot"></i> {msg.hotelDetails.location}</span>
-                                                    </div>
-                                                </div>
-                                                {msg.hotelDetails.rooms?.length > 0 && (
-                                                    <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                                        <span style={{ fontSize: '12px', color: '#6b8c7a', fontWeight: 'bold' }}>Chambres recommandées :</span>
-                                                        {msg.hotelDetails.rooms.slice(0, 2).map(r => (
-                                                            <div key={r.id} style={{ display: 'flex', gap: '8px', alignItems: 'center', background: '#e3ece7', padding: '6px', borderRadius: '6px', cursor: 'pointer', transition: 'background 0.2s' }} onClick={() => navigate(`/room/${r.id}`)} onMouseEnter={(e) => e.currentTarget.style.background = '#d0dfd7'} onMouseLeave={(e) => e.currentTarget.style.background = '#e3ece7'}>
-                                                                <img src={resolveImageUrl(r.image_url)} alt={r.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
-                                                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                                                    <strong style={{ fontSize: '12px', color: '#006233' }}>{r.name}</strong>
-                                                                    <span style={{ fontSize: '10px', color: '#6b8c7a' }}>{r.max_guests} max • {r.price_per_night}€/nuit</span>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
+                                        <div className="chatbot-msg-bubble bot typing" style={{ background: '#f0f7f3', padding: '12px 16px', borderRadius: '16px', borderBottomLeftRadius: '4px', maxWidth: '75%', display: 'flex', gap: '4px' }}>
+                                            <span className="typing-dot" style={{ width: '6px', height: '6px', backgroundColor: '#abc3b5', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out both' }}></span>
+                                            <span className="typing-dot" style={{ width: '6px', height: '6px', backgroundColor: '#abc3b5', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out both', animationDelay: '0.2s' }}></span>
+                                            <span className="typing-dot" style={{ width: '6px', height: '6px', backgroundColor: '#abc3b5', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out both', animationDelay: '0.4s' }}></span>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                            {botTyping && (
-                                <div className="chatbot-msg-wrapper bot" style={{ display: 'flex', marginBottom: '16px' }}>
-                                    <div className="bot-msg-avatar-small" style={{ background: '#006233', color: 'white', minWidth: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '12px' }}>
-                                        <i className="fa-solid fa-robot"></i>
-                                    </div>
-                                    <div className="chatbot-msg-bubble bot typing" style={{ background: '#f0f7f3', padding: '12px 16px', borderRadius: '16px', borderBottomLeftRadius: '4px', maxWidth: '75%', display: 'flex', gap: '4px' }}>
-                                        <span className="typing-dot" style={{ width: '6px', height: '6px', backgroundColor: '#abc3b5', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out both' }}></span>
-                                        <span className="typing-dot" style={{ width: '6px', height: '6px', backgroundColor: '#abc3b5', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out both', animationDelay: '0.2s' }}></span>
-                                        <span className="typing-dot" style={{ width: '6px', height: '6px', backgroundColor: '#abc3b5', borderRadius: '50%', animation: 'typing 1.4s infinite ease-in-out both', animationDelay: '0.4s' }}></span>
-                                    </div>
-                                </div>
-                            )}
+                                )}
 
-                            {/* Suggestions always visible if no user input yet or at start */}
-                            <div className="chatbot-interactive-suggestions" style={{ marginTop: '20px' }}>
-                                <p style={{ fontSize: '13px', color: '#6b8c7a', marginBottom: '10px' }}>Suggestions d'aide :</p>
-                                <div className="suggestions-scroll" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                    {SUGGESTED_QUESTIONS.map((q, idx) => (
-                                        <button key={idx} className="suggestion-pill" onClick={() => handleChatbotSend(q)} style={{ background: '#ffffff', border: '1px solid #d0dfd7', padding: '8px 14px', borderRadius: '20px', fontSize: '13px', color: '#006233', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#f0f7f3'; e.currentTarget.style.borderColor = '#006233'; }} onMouseLeave={(e) => { e.currentTarget.style.background = '#ffffff'; e.currentTarget.style.borderColor = '#d0dfd7'; }}>
-                                            {q}
-                                        </button>
-                                    ))}
+                                {/* Suggestions always visible if no user input yet or at start */}
+                                <div className="chatbot-interactive-suggestions" style={{ marginTop: '20px' }}>
+                                    <p style={{ fontSize: '13px', color: '#6b8c7a', marginBottom: '10px' }}>Suggestions d'aide :</p>
+                                    <div className="suggestions-scroll" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                        {SUGGESTED_QUESTIONS.map((q, idx) => (
+                                            <button key={idx} className="suggestion-pill" onClick={() => handleChatbotSend(q)} style={{ background: '#ffffff', border: '1px solid #d0dfd7', padding: '8px 14px', borderRadius: '20px', fontSize: '13px', color: '#006233', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#f0f7f3'; e.currentTarget.style.borderColor = '#006233'; }} onMouseLeave={(e) => { e.currentTarget.style.background = '#ffffff'; e.currentTarget.style.borderColor = '#d0dfd7'; }}>
+                                                {q}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div style={{ height: '10px' }} />
+                            </div>
+
+                            <div className="chat-input-wrapper integrated-bot-input" style={{ padding: '16px', background: 'white', borderTop: '1px solid #edf2f7' }}>
+                                <div className="chat-input-area" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                    <input
+                                        type="text"
+                                        className="chat-input"
+                                        placeholder="Posez votre question à l'assistant..."
+                                        value={chatbotInput}
+                                        onChange={(e) => setChatbotInput(e.target.value)}
+                                        onKeyDown={(e) => e.key === "Enter" && handleChatbotSend()}
+                                        style={{ flex: 1, padding: '12px 18px', borderRadius: '24px', border: '1px solid #d0dfd7', outline: 'none', background: '#f8faf9' }}
+                                    />
+                                    <button className="btn-send" onClick={() => handleChatbotSend()} style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#006233', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="fa-solid fa-paper-plane"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div style={{ height: '10px' }} />
-                        </div>
-
-                        <div className="chat-input-wrapper integrated-bot-input" style={{ padding: '16px', background: 'white', borderTop: '1px solid #edf2f7' }}>
-                            <div className="chat-input-area" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                <input
-                                    type="text"
-                                    className="chat-input"
-                                    placeholder="Posez votre question à l'assistant..."
-                                    value={chatbotInput}
-                                    onChange={(e) => setChatbotInput(e.target.value)}
-                                    onKeyDown={(e) => e.key === "Enter" && handleChatbotSend()}
-                                    style={{ flex: 1, padding: '12px 18px', borderRadius: '24px', border: '1px solid #d0dfd7', outline: 'none', background: '#f8faf9' }}
-                                />
-                                <button className="btn-send" onClick={() => handleChatbotSend()} style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#006233', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <i className="fa-solid fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </div>
                         </div>
                     ) : (() => {
                         const currentUser = JSON.parse(localStorage.getItem('user'));
@@ -720,15 +724,15 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                                 if (m.receiver_id === currentUser?.id && (m.sender_id === null || m.sender_id === 0 || m.sender_role === 'admin')) return true;
                                 return false;
                             }
-                            
+
                             // For Admin viewing a specific user
                             if (amAdmin) {
                                 return (isMe && m.receiver_id === otherPersonId) ||
-                                       (isOther && (m.receiver_id === currentUser?.id || m.receiver_id === null || m.receiver_id === 0));
+                                    (isOther && (m.receiver_id === currentUser?.id || m.receiver_id === null || m.receiver_id === 0));
                             }
 
                             return (isMe && m.receiver_id === otherPersonId) ||
-                                   (isOther && m.receiver_id === currentUser?.id);
+                                (isOther && m.receiver_id === currentUser?.id);
                         }).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
                         return (
@@ -878,7 +882,7 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                                 <i className="fa-solid fa-xmark"></i>
                             </button>
                         </div>
-                        
+
                         <div className="modal-body-modern">
                             {/* Search Section */}
                             <div className="form-group-modern">

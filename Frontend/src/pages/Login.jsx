@@ -163,8 +163,13 @@ function Login() {
             </span>
           </div>
 
-          <button type="submit" className="login-button" name="login" disabled={loading}>
-            {loading ? t('logging_in') : t('login_button')}
+          <button type="submit" className="login-button" name="login" disabled={loading} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+            {loading ? (
+                <>
+                    <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                    {t('logging_in')}
+                </>
+            ) : t('login_button')}
           </button>
         </form>
 

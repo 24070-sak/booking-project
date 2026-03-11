@@ -32,7 +32,7 @@ const FloatingChatbot = () => {
     useEffect(() => {
         const userStr = localStorage.getItem('user');
         let shouldShow = true;
-        
+
         if (userStr) {
             try {
                 const user = JSON.parse(userStr);
@@ -90,7 +90,29 @@ const FloatingChatbot = () => {
             });
         };
 
-        const onMouseUp = () => setIsDragging(false);
+        const onMouseUp = () => {
+            if (!isDragging) return;
+            setIsDragging(false);
+
+            if (fabRef.current) {
+                const rect = fabRef.current.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                
+                const padding = 24; // Distance from screen edge
+                const centerX = rect.left + rect.width / 2;
+                
+                // Determine whether it's closer to the left or right edge
+                const targetX = centerX < windowWidth / 2 ? padding : windowWidth - rect.width - padding;
+                
+                // Ensure it doesn't go off the top or bottom
+                let targetY = rect.top;
+                if (targetY < padding) targetY = padding;
+                if (targetY > windowHeight - rect.height - padding) targetY = windowHeight - rect.height - padding;
+                
+                setPosition({ x: targetX, y: targetY });
+            }
+        };
 
         if (isDragging) {
             window.addEventListener('mousemove', onMouseMove);
@@ -124,11 +146,11 @@ const FloatingChatbot = () => {
             const dbRes = await fetch(`${API_URL}/hotels`);
             const data = await dbRes.json();
             if (data.hotels) allHotels = data.hotels;
-        } catch(e) {}
+        } catch (e) { }
 
         let hotelToFetch = null;
         const mentionedHotel = allHotels.find(h => lowerMsg.includes(h.name.toLowerCase()));
-        
+
         if (mentionedHotel) {
             hotelToFetch = mentionedHotel.name;
         } else {
@@ -145,20 +167,20 @@ const FloatingChatbot = () => {
             try {
                 const response = await fetch(`${API_URL}/hotels?search=${encodeURIComponent(hotelToFetch)}`);
                 const data = await response.json();
-                
+
                 if (data.hotels && data.hotels.length > 0) {
                     const hotel = data.hotels[0];
                     const roomsRes = await fetch(`${API_URL}/hotels/${hotel.id}/rooms`);
                     const roomsData = await roomsRes.json();
-                    
+
                     const detailsTexts = [
                         `Voici les images et détails pour **${hotel.name}** à ${hotel.location} :`,
                         `Découvrez tout ce qu'il faut savoir sur **${hotel.name}** :`,
                         `Super ! J'ai trouvé les infos pour **${hotel.name}** :`
                     ];
-                    
-                    setChatbotMessages(prev => [...prev, { 
-                        from: "bot", 
+
+                    setChatbotMessages(prev => [...prev, {
+                        from: "bot",
                         text: detailsTexts[Math.floor(Math.random() * detailsTexts.length)],
                         hotelDetails: {
                             ...hotel,
@@ -181,11 +203,11 @@ const FloatingChatbot = () => {
             "Voici les établissements actuellement disponibles :",
             "J'ai trouvé ces hôtels pour vous :"
         ];
-        
+
         if (lowerMsg.includes("hotel") && (lowerMsg.includes("dispo") || lowerMsg.includes("liste") || lowerMsg.includes("propose") || lowerMsg.includes("quelles") || lowerMsg.includes("quels"))) {
             if (allHotels.length > 0) {
-                setChatbotMessages(prev => [...prev, { 
-                    from: "bot", 
+                setChatbotMessages(prev => [...prev, {
+                    from: "bot",
                     text: listingTexts[Math.floor(Math.random() * listingTexts.length)],
                     hotels: allHotels.slice(0, 3)
                 }]);
@@ -197,10 +219,10 @@ const FloatingChatbot = () => {
         }
 
         const isGenericInquiry = lowerMsg.match(/(hôtels?|hotels?|chambres?|images?|photos?|dispo|liste|propose|quelles?|quels?|moins chers?|belles?|ville)/i);
-        
+
         if (isGenericInquiry && allHotels.length > 0) {
             let selectedHotels = [...allHotels];
-            
+
             const genericTexts = [
                 "Voici une superbe sélection d'hôtels pour vous :",
                 "J'ai trouvé ces magnifiques hôtels qui pourraient vous plaire :",
@@ -216,18 +238,18 @@ const FloatingChatbot = () => {
                 "Découvrez la beauté de ces hôtels en photos :",
                 "Ces images devraient vous plaire :"
             ];
-            
+
             let textRep = genericTexts[Math.floor(Math.random() * genericTexts.length)];
-            
+
             if (lowerMsg.includes("moins cher") || lowerMsg.includes("pas cher")) {
-                selectedHotels.sort((a,b) => a.lowest_price - b.lowest_price);
+                selectedHotels.sort((a, b) => a.lowest_price - b.lowest_price);
                 textRep = cheapTexts[Math.floor(Math.random() * cheapTexts.length)];
             } else if (lowerMsg.includes("image") || lowerMsg.includes("photo") || lowerMsg.includes("belle") || lowerMsg.includes("beau")) {
                 textRep = imageTexts[Math.floor(Math.random() * imageTexts.length)];
             }
-            
-            setChatbotMessages(prev => [...prev, { 
-                from: "bot", 
+
+            setChatbotMessages(prev => [...prev, {
+                from: "bot",
                 text: textRep,
                 hotels: selectedHotels.slice(0, 4)
             }]);
@@ -244,7 +266,7 @@ const FloatingChatbot = () => {
                 if (data.hotels) {
                     dbContext = `\n[BDD]: ${data.hotels.map(h => `${h.name} à ${h.location}`).join(", ")}.`;
                 }
-            } catch(e){}
+            } catch (e) { }
 
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: "POST",
@@ -271,7 +293,7 @@ const FloatingChatbot = () => {
     if (!isVisible) return null;
 
     return (
-        <div 
+        <div
             className="floating-chatbot-container"
             style={{
                 transform: `translate(${position.x}px, ${position.y}px)`,
@@ -338,8 +360,8 @@ const FloatingChatbot = () => {
                                                         <div key={r.id} className="fc-room-item" onClick={() => navigate(`/room/${r.id}`)}>
                                                             <img src={resolveImageUrl(r.image_url)} alt={r.name} />
                                                             <div className="fc-room-info">
-                                                                 <strong>{r.name}</strong>
-                                                                 <span>{r.max_guests} max • {r.price_per_night}€/nuit</span>
+                                                                <strong>{r.name}</strong>
+                                                                <span>{r.max_guests} max • {r.price_per_night}€/nuit</span>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -395,13 +417,20 @@ const FloatingChatbot = () => {
 
             {/* Floating FAB Button */}
             {!chatbotOpen && (
-                <button 
+                <button
                     ref={fabRef}
-                    className="fc-fab pulse-animation" 
+                    className="fc-fab pulse-animation"
                     onClick={() => { if (!isDragging) setChatbotOpen(true); }}
                     onMouseDown={onMouseDown}
                     onTouchStart={onTouchStart}
-                    style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
+                    style={{
+                        cursor: isDragging ? 'grabbing' : 'pointer',
+                        left: `${position.x}px`,
+                        top: `${position.y}px`,
+                        right: 'auto',
+                        bottom: 'auto',
+                        position: 'fixed'
+                    }}
                     title="Assistant Hotely"
                 >
                     <i className="fa-solid fa-robot"></i>

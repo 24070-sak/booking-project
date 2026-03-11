@@ -312,8 +312,13 @@ function Register() {
           </div>
 
           {/* SUBMIT */}
-          <button type="submit" className="register-button" disabled={loading}>
-            {loading ? t('registering') : t('register_button')}
+          <button type="submit" className="register-button" disabled={loading} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+            {loading ? (
+                <>
+                    <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                    {t('registering')}
+                </>
+            ) : t('register_button')}
           </button>
         </form>
 

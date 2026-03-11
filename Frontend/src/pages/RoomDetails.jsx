@@ -4,9 +4,10 @@ import { getRoomById } from "../services/roomService";
 import { createBooking, getUserBookings, cancelBooking } from "../services/bookingService";
 import { sendMessage } from "../services/messageService";
 import { resolveImageUrl } from "../utils/urlHelper";
-import { showSuccess } from "../utils/alerts";
+import { showSuccess, showError, showAlert } from "../utils/alerts";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import LoadingSpinner from "../components/LoadingSpinner";
 import "../styles/pages/roomDetails.css";
 
 function RoomDetails() {
@@ -86,7 +87,7 @@ function RoomDetails() {
                 setTimeLeft("00:00");
                 if (userBooking.status !== 'cancelled') {
                     cancelBooking(userBooking.id).then(() => {
-                        alert("Votre réservation a été annulée car le délai de paiement a expiré.");
+                        showError("Votre réservation a été annulée car le délai de paiement a expiré.");
                         window.location.reload();
                     }).catch(console.error);
                 }
@@ -105,13 +106,13 @@ function RoomDetails() {
 
         const token = localStorage.getItem("token");
         if (!token) {
-            alert("Veuillez vous connecter pour réserver.");
+            showAlert("Veuillez vous connecter pour réserver.", "Attention", "warning");
             navigate("/connexion");
             return;
         }
 
         if (!checkIn || days < 1) {
-            alert("Veuillez indiquer une date d'arrivée valide et le nombre de jours.");
+            showError("Veuillez indiquer une date d'arrivée valide et le nombre de jours.");
             return;
         }
 
@@ -134,11 +135,19 @@ function RoomDetails() {
         } catch (err) {
             console.error(err);
             setBookingStatus('error');
-            alert(err.message);
+            showError(err.message);
         }
     };
 
-    if (loading) return <div style={{ padding: '50px', textAlign: 'center' }}>Chargement...</div>;
+    if (loading) return (
+        <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column' }}>
+            <Header />
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <LoadingSpinner />
+            </div>
+            <Footer />
+        </div>
+    );
     if (error) return <div style={{ padding: '50px', textAlign: 'center', color: 'red' }}>{error}</div>;
     if (!room) return null;
 
@@ -289,8 +298,14 @@ function RoomDetails() {
                                             type="submit"
                                             disabled={bookingStatus === 'loading'}
                                             className="room-submit-btn"
+                                            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
                                         >
-                                            {bookingStatus === 'loading' ? 'Traitement...' : 'Confirmer la réservation'}
+                                            {bookingStatus === 'loading' ? (
+                                                <>
+                                                    <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                                    Traitement...
+                                                </>
+                                            ) : 'Confirmer la réservation'}
                                         </button>
                                     </form>
                                 </>

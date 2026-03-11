@@ -115,9 +115,9 @@ const Notifications = () => {
                                 {/* Icon */}
                                 <div className={`notif-page-icon ${!notif.is_read ? 'unread-icon' : ''}`}>
                                     {notif.type === 'message' && notif.sender_picture ? (
-                                        <img 
-                                            src={resolveImageUrl(notif.sender_picture)} 
-                                            alt="" 
+                                        <img
+                                            src={resolveImageUrl(notif.sender_picture)}
+                                            alt=""
                                             className="notif-sender-img"
                                             onError={(e) => {
                                                 e.target.style.display = 'none';

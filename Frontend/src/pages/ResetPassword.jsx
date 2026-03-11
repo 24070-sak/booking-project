@@ -167,10 +167,15 @@ function ResetPassword() {
                         <button
                             type="submit"
                             className="login-button"
-                            style={{ marginTop: "20px" }}
+                            style={{ marginTop: "20px", display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
                             disabled={loading}
                         >
-                            {loading ? "Enregistrement..." : "Enregistrer le mot de passe"}
+                            {loading ? (
+                                <>
+                                    <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                    Enregistrement...
+                                </>
+                            ) : "Enregistrer le mot de passe"}
                         </button>
 
                         <div style={{ textAlign: "center", marginTop: "15px" }}>

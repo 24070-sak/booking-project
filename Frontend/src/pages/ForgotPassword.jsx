@@ -83,8 +83,13 @@ function ForgotPassword() {
                                 </div>
                             </div>
 
-                            <button type="submit" className="login-button" disabled={loading}>
-                                {loading ? "Envoi en cours..." : "Envoyer le code"}
+                            <button type="submit" className="login-button" disabled={loading} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}>
+                                {loading ? (
+                                    <>
+                                        <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                        Envoi en cours...
+                                    </>
+                                ) : "Envoyer le code"}
                             </button>
                         </>
                     )}

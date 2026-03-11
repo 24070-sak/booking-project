@@ -175,10 +175,19 @@ function VerificationPage() {
                                         cursor: loading ? 'not-allowed' : 'pointer',
                                         opacity: loading ? 0.7 : 1,
                                         transition: 'background 0.2s',
-                                        marginBottom: '20px'
+                                        marginBottom: '20px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        gap: '8px'
                                     }}
                                 >
-                                    {loading ? 'Vérification en cours...' : 'Vérifier mon compte'}
+                                    {loading ? (
+                                        <>
+                                            <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                            Vérification en cours...
+                                        </>
+                                    ) : 'Vérifier mon compte'}
                                 </button>
                             </form>
 

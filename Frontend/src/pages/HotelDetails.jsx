@@ -7,6 +7,8 @@ import { sendMessage } from "../services/messageService";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { resolveImageUrl } from "../utils/urlHelper";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { showSuccess, showError } from "../utils/alerts";
 import "../styles/pages/hotelDetails.css"; // New Premium Styles
 
 function HotelDetails() {
@@ -103,11 +105,11 @@ function HotelDetails() {
                 subject: messageData.subject || "Question",
                 receiver_id: hotel.owner_id
             });
-            alert("Message envoyé avec succès !");
+            showSuccess("Message envoyé avec succès !");
             setShowContactModal(false);
             setMessageData({ subject: '', content: '' });
         } catch (err) {
-            alert("Erreur: " + err.message);
+            showError("Erreur: " + err.message);
         }
     };
 
@@ -121,7 +123,7 @@ function HotelDetails() {
         }
 
         if (!effectiveRoomId) {
-            alert("Aucune chambre disponible pour cet hôtel.");
+            showError("Aucune chambre disponible pour cet hôtel.");
             return;
         }
 
@@ -138,19 +140,23 @@ function HotelDetails() {
                 average: newReviewsData.average_rating || 0,
                 count: newReviewsData.total || 0
             });
+            
+            showSuccess("Avis publié avec succès !");
 
             // Reset
             setShowReviewModal(false);
             setReviewData({ rating: 5, comment: '' });
         } catch (err) {
-            alert("Erreur: " + err.message);
+            showError("Erreur: " + err.message);
         }
     };
 
     if (loading) return (
         <>
             <Header />
-            <div style={{ padding: '100px 0', textAlign: 'center' }}>Chargement...</div>
+            <div style={{ padding: '100px 0', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <LoadingSpinner />
+            </div>
             <Footer />
         </>
     );

@@ -59,7 +59,10 @@ def submit_local_payment():
         return jsonify({'error': 'Capture d\'écran requise'}), 400
     
     file = request.files['screenshot']
-    booking_id = request.form.get('booking_id')
+    try:
+        booking_id = int(request.form.get('booking_id', 0))
+    except ValueError:
+        booking_id = None
     bank_app = request.form.get('bank_app')
     phone = request.form.get('transaction_phone')
     

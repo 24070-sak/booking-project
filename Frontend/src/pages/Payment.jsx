@@ -4,6 +4,7 @@ import { getBooking, processPayment, submitLocalPayment } from "../services/book
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { resolveImageUrl } from "../utils/urlHelper";
+import { showSuccess, showError } from "../utils/alerts";
 import '../styles/pages/payment.css';
 
 function Payment() {
@@ -59,6 +60,7 @@ function Payment() {
                 formData.append('screenshot', screenshot);
 
                 await submitLocalPayment(formData);
+                showSuccess("Paiement soumis pour vérification ! Vous serez notifié dès que l'établissement le confirmera.");
                 navigate(`/room/${booking.room.id}`, { state: { paymentSuccess: true } });
                 return;
             } else {
@@ -73,8 +75,10 @@ function Payment() {
                 await processPayment(bookingId, paymentPayload);
             }
 
+            showSuccess("Paiement traité avec succès ! Votre réservation est confirmée.");
             navigate(`/room/${booking.room.id}`, { state: { paymentSuccess: true } });
         } catch (err) {
+            showError(err.message);
             setError(err.message);
             setProcessing(false);
         }

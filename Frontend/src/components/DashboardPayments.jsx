@@ -169,7 +169,7 @@ const DashboardPayments = () => {
                             <button className="modal-close" onClick={() => setSelectedPayment(null)}>&times;</button>
                         </div>
                         <div className="modal-body">
-                             <div className="modal-guest-header" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
+                            <div className="modal-guest-header" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
                                 <div className="modal-guest-avatar" style={{ width: '50px', height: '50px', borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(0, 98, 51, 0.1)', flexShrink: 0 }}>
                                     {selectedPayment.guest_picture ? (
                                         <img src={resolveImageUrl(selectedPayment.guest_picture)} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

@@ -295,10 +295,19 @@ function Profile() {
                                 fontWeight: 'bold',
                                 cursor: 'pointer',
                                 opacity: loading ? 0.7 : 1,
-                                marginBottom: '15px'
+                                marginBottom: '15px',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '8px'
                             }}
                         >
-                            {loading ? 'Mise à jour...' : 'Sauvegarder les modifications'}
+                            {loading ? (
+                                <>
+                                    <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                    Mise à jour...
+                                </>
+                            ) : 'Sauvegarder les modifications'}
                         </button>
 
                         <button

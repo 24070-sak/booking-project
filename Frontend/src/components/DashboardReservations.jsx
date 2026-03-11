@@ -4,6 +4,7 @@ import { getPayments } from '../services/dashboardService';
 import { showError, showSuccess, showConfirm } from '../utils/alerts';
 import { useNotification } from '../context/NotificationContext';
 import { resolveImageUrl } from '../utils/urlHelper';
+import LoadingSpinner from './LoadingSpinner';
 import '../styles/components/dashboardReservations.css';
 
 const DashboardReservations = ({ targetBookingId, targetPaymentId, initialTab }) => {
@@ -161,7 +162,11 @@ const DashboardReservations = ({ targetBookingId, targetPaymentId, initialTab })
     const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
     const pendingPayments = payments.filter(p => p.status === 'pending').length;
 
-    if (loading) return <div style={{ padding: '40px', textAlign: 'center', color: '#718096' }}><i className="fa-solid fa-spinner fa-spin"></i> Chargement...</div>;
+    if (loading) return (
+        <div style={{ padding: '40px 0', display: 'flex', justifyContent: 'center' }}>
+            <LoadingSpinner text="Chargement..." />
+        </div>
+    );
     if (error) return <div style={{ padding: '20px', color: '#dc2626' }}>{error}</div>;
 
     return (
@@ -268,8 +273,8 @@ const DashboardReservations = ({ targetBookingId, targetPaymentId, initialTab })
                                             <div className="client-cell">
                                                 <div className="client-avatar-wrap">
                                                     {res.user?.profile_picture ? (
-                                                        <img 
-                                                            src={resolveImageUrl(res.user.profile_picture)} 
+                                                        <img
+                                                            src={resolveImageUrl(res.user.profile_picture)}
                                                             alt={`${res.user?.first_name} ${res.user?.last_name}`}
                                                             className="client-avatar-img"
                                                             onError={(e) => {

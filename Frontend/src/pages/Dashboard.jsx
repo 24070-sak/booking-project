@@ -13,6 +13,7 @@ import DashboardMessages from "../components/DashboardMessages";
 import DashboardAnalytics from "../components/DashboardAnalytics";
 import DashboardSettings from "../components/DashboardSettings";
 import { useNotification } from "../context/NotificationContext";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 // Import SVG icons
 import {
@@ -94,7 +95,11 @@ function Dashboard() {
   }, [isAdmin, activeTab]);
 
   if (!user || (!user.access_dashboard && user.role !== 'admin')) {
-    return <div className="dashboard-loading">Chargement ou Accès refusé...</div>;
+    return (
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <LoadingSpinner text="Chargement ou Accès refusé..." />
+      </div>
+    );
   }
 
   const renderContent = () => {
@@ -141,121 +146,121 @@ function Dashboard() {
           <button className="mobile-close-btn" onClick={() => setIsSidebarOpen(false)}>
             &times;
           </button>
-        <div className="logo-container">
-          <img src={logo} alt="Logo" className="logo" />
-        </div>
-        <div className="dashboard-labels">
-          {!isAdmin && (
-            <>
-              <span className={`label ${activeTab === 'dashboard' ? 'selected' : ''}`} id="dashboard" onClick={handleLabelClick}>
-                <DashboardIcon className="icon" />
-                <span>Dashboard</span>
-              </span>
+          <div className="logo-container">
+            <img src={logo} alt="Logo" className="logo" />
+          </div>
+          <div className="dashboard-labels">
+            {!isAdmin && (
+              <>
+                <span className={`label ${activeTab === 'dashboard' ? 'selected' : ''}`} id="dashboard" onClick={handleLabelClick}>
+                  <DashboardIcon className="icon" />
+                  <span>Dashboard</span>
+                </span>
 
-              <span className={`label ${activeTab === 'properties' ? 'selected' : ''}`} id="properties" onClick={handleLabelClick}>
-                <PropertiesIcon className="icon" />
-                <span>Propriétés</span>
-              </span>
+                <span className={`label ${activeTab === 'properties' ? 'selected' : ''}`} id="properties" onClick={handleLabelClick}>
+                  <PropertiesIcon className="icon" />
+                  <span>Propriétés</span>
+                </span>
 
-              <span className={`label ${activeTab === 'reservations' ? 'selected' : ''}`} id="reservations" onClick={handleLabelClick}>
-                <ReservationsIcon className="icon" />
-                <span>Réservations</span>
-                {notifications.filter(n => !n.is_read && n.type === 'booking').length > 0 && (
-                  <span className="label-badge">
-                    {notifications.filter(n => !n.is_read && n.type === 'booking').length}
-                  </span>
-                )}
-              </span>
+                <span className={`label ${activeTab === 'reservations' ? 'selected' : ''}`} id="reservations" onClick={handleLabelClick}>
+                  <ReservationsIcon className="icon" />
+                  <span>Réservations</span>
+                  {notifications.filter(n => !n.is_read && n.type === 'booking').length > 0 && (
+                    <span className="label-badge">
+                      {notifications.filter(n => !n.is_read && n.type === 'booking').length}
+                    </span>
+                  )}
+                </span>
 
-              <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
-                <AnalyticsIcon className="icon" />
-                <span>Analytique</span>
-              </span>
-            </>
-          )}
-
-          <span className={`label ${activeTab === 'messages' ? 'selected' : ''}`} id="messages" onClick={handleLabelClick}>
-            <MessagesIcon className="icon" />
-            <span>Messages</span>
-            {!isAdmin && notifications.filter(n => !n.is_read && n.type === 'message').length > 0 && (
-              <span className="label-badge">
-                {notifications.filter(n => !n.is_read && n.type === 'message').length}
-              </span>
+                <span className={`label ${activeTab === 'analytics' ? 'selected' : ''}`} id="analytics" onClick={handleLabelClick}>
+                  <AnalyticsIcon className="icon" />
+                  <span>Analytique</span>
+                </span>
+              </>
             )}
-          </span>
 
-          {!isAdmin && (
-            <span className={`label ${activeTab === 'reviews' ? 'selected' : ''}`} id="reviews" onClick={handleLabelClick}>
-              <ReviewsIcon className="icon" />
-              <span>Avis</span>
+            <span className={`label ${activeTab === 'messages' ? 'selected' : ''}`} id="messages" onClick={handleLabelClick}>
+              <MessagesIcon className="icon" />
+              <span>Messages</span>
+              {!isAdmin && notifications.filter(n => !n.is_read && n.type === 'message').length > 0 && (
+                <span className="label-badge">
+                  {notifications.filter(n => !n.is_read && n.type === 'message').length}
+                </span>
+              )}
             </span>
-          )}
 
-          <span className={`label ${activeTab === 'settings' ? 'selected' : ''}`} id="settings" onClick={handleLabelClick}>
-            <SettingsIcon className="icon" />
-            <span>Paramètres</span>
-          </span>
-
-          {user?.access_control_center && (
-            <Link to="/control-center" className="label" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <DashboardIcon className="icon" id="control-center-link" />
-              <span>Centre de Contrôle</span>
-            </Link>
-          )}
-
-          <Link to="/" className="label">
-            <HomeIcon className="icon" />
-            <span>Aller à l'accueil</span>
-          </Link>
-        </div>
-        <div>
-          <Link to="/connexion" id="logout" onClick={() => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-          }}>
-            <LogoutIcon className="icon" />
-            Déconnexion
-          </Link>
-        </div>
-
-      </div>
-      <div className="dashboard-body">
-        <div className="dashboard-user-profile">
-          <div className="profile-img-container">
-            {user.profile_picture ? (
-              <img src={resolveImageUrl(user.profile_picture)} alt="Profile" />
-            ) : (
-              <div className="initials-fallback">
-                {getInitials(user.first_name, user.last_name)}
-              </div>
+            {!isAdmin && (
+              <span className={`label ${activeTab === 'reviews' ? 'selected' : ''}`} id="reviews" onClick={handleLabelClick}>
+                <ReviewsIcon className="icon" />
+                <span>Avis</span>
+              </span>
             )}
+
+            <span className={`label ${activeTab === 'settings' ? 'selected' : ''}`} id="settings" onClick={handleLabelClick}>
+              <SettingsIcon className="icon" />
+              <span>Paramètres</span>
+            </span>
+
+            {user?.access_control_center && (
+              <Link to="/control-center" className="label" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <DashboardIcon className="icon" id="control-center-link" />
+                <span>Centre de Contrôle</span>
+              </Link>
+            )}
+
+            <Link to="/" className="label">
+              <HomeIcon className="icon" />
+              <span>Aller à l'accueil</span>
+            </Link>
           </div>
           <div>
-            <h2>
-              {user.role === 'admin' ? user.first_name : (user.role === 'manager' ? (user.first_name?.replace(/Hôtel Manager/gi, "Hôtel") || "Hôtel") : `${user.first_name} ${user.last_name}`)}
-            </h2>
-            <p>{user.email}</p>
+            <Link to="/connexion" id="logout" onClick={() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+            }}>
+              <LogoutIcon className="icon" />
+              Déconnexion
+            </Link>
           </div>
-        </div>
 
-        {notification && (
-          <div className="dashboard-notification" style={{
-            padding: '15px 20px',
-            backgroundColor: '#d1fae5',
-            color: '#065f46',
-            borderRadius: '8px',
-            marginBottom: '20px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            border: '1px solid #10b981'
-          }}>
-            <span><i className="fa-solid fa-circle-check" style={{ marginRight: '10px' }}></i> {notification}</span>
-            <button onClick={() => setNotification(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#065f46', fontSize: '18px' }}>&times;</button>
+        </div>
+        <div className="dashboard-body">
+          <div className="dashboard-user-profile">
+            <div className="profile-img-container">
+              {user.profile_picture ? (
+                <img src={resolveImageUrl(user.profile_picture)} alt="Profile" />
+              ) : (
+                <div className="initials-fallback">
+                  {getInitials(user.first_name, user.last_name)}
+                </div>
+              )}
+            </div>
+            <div>
+              <h2>
+                {user.role === 'admin' ? user.first_name : (user.role === 'manager' ? (user.first_name?.replace(/Hôtel Manager/gi, "Hôtel") || "Hôtel") : `${user.first_name} ${user.last_name}`)}
+              </h2>
+              <p>{user.email}</p>
+            </div>
           </div>
-        )}
-        {renderContent()}
-      </div>
+
+          {notification && (
+            <div className="dashboard-notification" style={{
+              padding: '15px 20px',
+              backgroundColor: '#d1fae5',
+              color: '#065f46',
+              borderRadius: '8px',
+              marginBottom: '20px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              border: '1px solid #10b981'
+            }}>
+              <span><i className="fa-solid fa-circle-check" style={{ marginRight: '10px' }}></i> {notification}</span>
+              <button onClick={() => setNotification(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#065f46', fontSize: '18px' }}>&times;</button>
+            </div>
+          )}
+          {renderContent()}
+        </div>
       </div>
     </div>
   )
