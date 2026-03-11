@@ -6,12 +6,12 @@ import { resolveImageUrl } from '../utils/urlHelper';
 import '../styles/components/dashboardMessages.css';
 
 const QUICK_REPLIES = [
-    "D'accord, merci ! 👍",
+    "D'accord, merci ! ",
     "Je vous contacte bientôt.",
     "Pouvez-vous m'en dire plus ?",
     "Merci pour votre réponse !",
     "Je vais vérifier ça.",
-    "Bien reçu ✅",
+    "Bien reçu ",
 ];
 
 const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
@@ -49,15 +49,16 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
 
     // Chatbot specific states
     const [chatbotMessages, setChatbotMessages] = useState([
-        { from: "bot", text: "Comment puis-je vous aider ? 👋" }
+        { from: "bot", text: "Comment puis-je vous aider ? " }
     ]);
     const [chatbotInput, setChatbotInput] = useState("");
     const [botTyping, setBotTyping] = useState(false);
     const SUGGESTED_QUESTIONS = [
-        "Quels hôtels sont disponibles actuellement ?",
-        "Propose-moi des hôtels dans cette ville.",
-        "Quelles chambres sont libres cette semaine ?",
-        "Quels sont les hôtels les moins chers ?"
+        "Montrez-moi les hôtels les moins chers",
+        "Quelles chambres sont disponibles cette semaine ?",
+        "Trouvez des hôtels à Nouakchott",
+        "Montrez-moi les photos des hôtels",
+        "Quelles sont les meilleures offres du moment ?",
     ];
 
     useEffect(() => {
@@ -67,171 +68,143 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
     }, [chatbotMessages, botTyping, selectedChat]);
 
     const handleChatbotSend = async (customMsg = null) => {
-        const msgToSend = customMsg || chatbotInput;
-        if (!msgToSend.trim()) return;
+        const msgToSend = (customMsg || chatbotInput).trim();
+        if (!msgToSend || botTyping) return;
 
-        const userMsg = msgToSend.trim();
+        const userMsg = msgToSend;
         setChatbotMessages(prev => [...prev, { from: "user", text: userMsg }]);
         setChatbotInput("");
         setBotTyping(true);
 
-        const lowerMsg = userMsg.toLowerCase();
         const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-        // Fetch all hotels to identify name mentions exactly
-        let allHotels = [];
         try {
-            const dbRes = await fetch(`${API_URL}/hotels`);
-            const data = await dbRes.json();
-            if (data.hotels) allHotels = data.hotels;
-        } catch (e) { }
-
-        // Check if a Specific Hotel is mentioned
-        let hotelToFetch = null;
-        const mentionedHotel = allHotels.find(h => lowerMsg.includes(h.name.toLowerCase()));
-
-        if (mentionedHotel) {
-            hotelToFetch = mentionedHotel.name;
-        } else {
-            const explicitMatch = lowerMsg.match(/(?:hôtel|hotel|chambres? d'|images? d'|photos? d'|infos? sur|voir|images? du)\s+(?:l'hôtel\s+|l'hotel\s+|l'|le\s+|la\s+|d'|de\s+|du\s+)?([a-zA-Z0-9éèêàâç]+(?:[\s-][a-zA-Z0-9éèêàâç]+)*)/i);
-            if (explicitMatch) {
-                const word = explicitMatch[1].toLowerCase();
-                if (!['dispo', 'disponibles', 'pas cher', 'les moins chers', 'liste', 'belles'].includes(word) && allHotels.some(h => h.name.toLowerCase().includes(word))) {
-                    hotelToFetch = word;
-                }
-            }
-        }
-
-        if (hotelToFetch) {
+            // Fetch platform data
+            let hotels = [];
             try {
-                const response = await fetch(`${API_URL}/hotels?search=${encodeURIComponent(hotelToFetch)}`);
-                const data = await response.json();
+                const res = await fetch(`${API_URL}/hotels?limit=50`);
+                const data = await res.json();
+                hotels = data.hotels || [];
+            } catch { hotels = []; }
 
-                if (data.hotels && data.hotels.length > 0) {
-                    const hotel = data.hotels[0];
-                    const roomsRes = await fetch(`${API_URL}/hotels/${hotel.id}/rooms`);
-                    const roomsData = await roomsRes.json();
+            const lower = userMsg.toLowerCase();
 
-                    const detailsTexts = [
-                        `Voici les images et détails pour **${hotel.name}** à ${hotel.location} :`,
-                        `Découvrez tout ce qu'il faut savoir sur **${hotel.name}** :`,
-                        `Super ! J'ai trouvé les infos pour **${hotel.name}** :`
-                    ];
+            // ---- Intent detection ----
+            const mentionedHotel = hotels.find(h => lower.includes(h.name.toLowerCase()));
+            const cheapRoomMatch = lower.match(/chambre.*moins.cher|moins.cher.*chambre|chambre.*pas.cher|chambre.*abordable|chambre.*budget|chambre.*prix/i);
+            const cheapHotelMatch = lower.match(/moins.cher|pas.cher|abordable|economique|budget|prix.bas|meilleur.prix|offre/i);
+            const photoMatch = lower.match(/photo|image|voir|montrer/i);
 
-                    setChatbotMessages(prev => [...prev, {
-                        from: "bot",
-                        text: detailsTexts[Math.floor(Math.random() * detailsTexts.length)],
-                        hotelDetails: {
-                            ...hotel,
-                            rooms: roomsData.rooms || []
-                        }
-                    }]);
-                } else {
-                    setChatbotMessages(prev => [...prev, { from: "bot", text: `Je n'ai pas trouvé d'hôtel nommé "${hotelToFetch}". Essayez d'être plus précis !` }]);
+            let detectedLocation = null;
+            for (const kw of ['a ', 'dans ', 'en ', 'a ']) {
+                const idx = lower.indexOf(kw);
+                if (idx !== -1) {
+                    const word = lower.slice(idx + kw.length).trim().split(/[\s,\.!?]/)[0];
+                    if (word && word.length > 2 && hotels.some(h => h.location && h.location.toLowerCase().includes(word))) {
+                        detectedLocation = word;
+                        break;
+                    }
                 }
-            } catch (err) {
-                setChatbotMessages(prev => [...prev, { from: "bot", text: "Erreur lors de la recherche des détails de l'hôtel." }]);
             }
-            setBotTyping(false);
-            return;
-        }
 
-        // Logic for hotels listing
-        const listingTexts = [
-            "Bien sûr ! Voici une sélection d'hôtels disponibles :",
-            "Avec plaisir ! Voici quelques hôtels qui pourraient vous intéresser :",
-            "Voici les établissements actuellement disponibles :",
-            "J'ai trouvé ces hôtels pour vous :"
-        ];
+            const listMatch = lower.match(/disponible|dispo|liste|hotels?|hotel|voir.tous/i);
 
-        if (lowerMsg.includes("hotel") && (lowerMsg.includes("dispo") || lowerMsg.includes("liste") || lowerMsg.includes("propose") || lowerMsg.includes("quelles") || lowerMsg.includes("quels"))) {
-            if (allHotels.length > 0) {
+            if (mentionedHotel) {
+                // Specific hotel detail
+                let rooms = [];
+                try {
+                    const rRes = await fetch(`${API_URL}/hotels/${mentionedHotel.id}/rooms`);
+                    const rData = await rRes.json();
+                    rooms = rData.rooms || [];
+                } catch { rooms = []; }
                 setChatbotMessages(prev => [...prev, {
                     from: "bot",
-                    text: listingTexts[Math.floor(Math.random() * listingTexts.length)],
-                    hotels: allHotels.slice(0, 3)
+                    text: `Voici les détails pour **${mentionedHotel.name}** à ${mentionedHotel.location} :`,
+                    hotelDetails: { ...mentionedHotel, rooms }
                 }]);
-            } else {
-                setChatbotMessages(prev => [...prev, { from: "bot", text: "Désolé, je ne trouve aucun hôtel disponible." }]);
-            }
-            setBotTyping(false);
-            return;
-        }
-
-        // Catch Generic Hotel Inquiries (Force Visual Cards instead of AI text)
-        const isGenericInquiry = lowerMsg.match(/(hôtels?|hotels?|chambres?|images?|photos?|dispo|liste|propose|quelles?|quels?|moins chers?|belles?|ville)/i);
-
-        if (isGenericInquiry && allHotels.length > 0) {
-            let selectedHotels = [...allHotels];
-
-            const genericTexts = [
-                "Voici une superbe sélection d'hôtels pour vous :",
-                "J'ai trouvé ces magnifiques hôtels qui pourraient vous plaire :",
-                "Explorez ces options exceptionnelles :"
-            ];
-            const cheapTexts = [
-                "Voici les hôtels les plus abordables pour votre confort :",
-                "J'ai trié les meilleures offres économiques :",
-                "Ces options respectent votre budget :"
-            ];
-            const imageTexts = [
-                "Voici quelques établissements en images pour vous inspirer :",
-                "Découvrez la beauté de ces hôtels en photos :",
-                "Ces images devraient vous plaire :"
-            ];
-
-            let textRep = genericTexts[Math.floor(Math.random() * genericTexts.length)];
-
-            if (lowerMsg.includes("moins cher") || lowerMsg.includes("pas cher")) {
-                selectedHotels.sort((a, b) => a.lowest_price - b.lowest_price);
-                textRep = cheapTexts[Math.floor(Math.random() * cheapTexts.length)];
-            } else if (lowerMsg.includes("image") || lowerMsg.includes("photo") || lowerMsg.includes("belle") || lowerMsg.includes("beau")) {
-                textRep = imageTexts[Math.floor(Math.random() * imageTexts.length)];
-            }
-
-            // Provide richer visual layout by sending 4 hotels
-            setChatbotMessages(prev => [...prev, {
-                from: "bot",
-                text: textRep,
-                hotels: selectedHotels.slice(0, 4)
-            }]);
-            setBotTyping(false);
-            return;
-        }
-
-        // Groq API Logic
-        try {
-            const groqApiKey = import.meta.env.VITE_GROQ_API_KEY;
-            let dbContext = "";
-            try {
-                const dbRes = await fetch(`${API_URL}/hotels`);
-                const data = await dbRes.json();
-                if (data.hotels) {
-                    dbContext = `\n[BDD]: ${data.hotels.map(h => `${h.name} à ${h.location}`).join(", ")}.`;
+            } else if (cheapRoomMatch) {
+                // Cheapest rooms
+                let allRooms = [];
+                for (const hotel of hotels.slice(0, 8)) {
+                    try {
+                        const rRes = await fetch(`${API_URL}/hotels/${hotel.id}/rooms`);
+                        const rData = await rRes.json();
+                        (rData.rooms || []).forEach(r => allRooms.push({ ...r, hotel_name: hotel.name, hotel_location: hotel.location }));
+                    } catch { }
                 }
-            } catch (e) { }
+                const sorted = allRooms.filter(r => r.is_available && r.price_per_night != null).sort((a, b) => a.price_per_night - b.price_per_night).slice(0, 5);
+                if (sorted.length > 0) {
+                    setChatbotMessages(prev => [...prev, { from: "bot", text: "Voici les chambres les moins ch\u00e8res disponibles :", rooms: sorted }]);
+                } else {
+                    setChatbotMessages(prev => [...prev, { from: "bot", text: "Aucune chambre disponible trouv\u00e9e pour le moment." }]);
+                }
+            } else if (cheapHotelMatch) {
+                // Cheapest hotels
+                const sorted = [...hotels].filter(h => h.lowest_price != null).sort((a, b) => (a.lowest_price || 0) - (b.lowest_price || 0)).slice(0, 5);
+                if (sorted.length > 0) {
+                    setChatbotMessages(prev => [...prev, { from: "bot", text: "Voici les h\u00f4tels les plus abordables :", hotels: sorted }]);
+                } else {
+                    setChatbotMessages(prev => [...prev, { from: "bot", text: "Impossible de r\u00e9cup\u00e9rer les prix pour le moment." }]);
+                }
+            } else if (detectedLocation) {
+                // Location search
+                const matched = hotels.filter(h => h.location && h.location.toLowerCase().includes(detectedLocation)).slice(0, 5);
+                if (matched.length > 0) {
+                    setChatbotMessages(prev => [...prev, { from: "bot", text: `\ud83d\udccd J'ai trouv\u00e9 ${matched.length} h\u00f4tel(s) dans cette r\u00e9gion :`, hotels: matched }]);
+                } else {
+                    setChatbotMessages(prev => [...prev, { from: "bot", text: "Je n'ai pas trouv\u00e9 d'h\u00f4tels dans cette localisation. Essayez Nouakchott, Kiffa ou Rosso." }]);
+                }
+            } else if (photoMatch) {
+                const withImages = hotels.filter(h => h.image_url).slice(0, 5);
+                setChatbotMessages(prev => [...prev, { from: "bot", text: "Voici quelques h\u00f4tels en images :", hotels: withImages }]);
+            } else if (listMatch) {
+                const toShow = hotels.filter(h => h.has_availability).slice(0, 5);
+                setChatbotMessages(prev => [...prev, { from: "bot", text: "H\u00f4tels disponibles en ce moment :", hotels: toShow.length > 0 ? toShow : hotels.slice(0, 5) }]);
+            } else {
+                // Groq AI fallback
+                const groqApiKey = import.meta.env.VITE_GROQ_API_KEY;
+                const hotelCtx = hotels.slice(0, 10).map(h => `${h.name} (${h.location}, d\u00e8s ${h.lowest_price || "?"}€)`).join(", ");
+                const systemPrompt = `Tu es l'assistant IA de Hotely. Donn\u00e9es: ${hotelCtx}. R\u00e9ponds en fran\u00e7ais, max 2 phrases, chaleureux et concis.`;
 
-            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                method: "POST",
-                headers: { "Authorization": `Bearer ${groqApiKey}`, "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    model: "llama-3.1-8b-instant",
-                    messages: [
-                        { role: "system", content: `Tu es l'assistant de Hotely. Tes réponses DOIVENT être extrêmement courtes, maximum une à deux phrases courtes. Ne liste aucun hôtel, car les résultats de base de données s'affichent déjà en cartes. Sois chaleureux et concis.` },
-                        ...chatbotMessages.map(m => ({ role: m.from === "bot" ? "assistant" : "user", content: m.text })),
-                        { role: "user", content: userMsg }
-                    ],
-                    temperature: 0.5, max_tokens: 300
-                })
-            });
-            const data = await response.json();
-            setChatbotMessages(prev => [...prev, { from: "bot", text: data.choices[0].message.content }]);
+                if (!groqApiKey) {
+                    setChatbotMessages(prev => [...prev, { from: "bot", text: "Je suis l'assistant Hotely ! Demandez-moi de voir les h\u00f4tels, les prix ou les photos. \ud83d\ude0a" }]);
+                } else {
+                    try {
+                        const apiRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                            method: "POST",
+                            headers: { "Authorization": `Bearer ${groqApiKey}`, "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                model: "llama-3.1-8b-instant",
+                                messages: [
+                                    { role: "system", content: systemPrompt },
+                                    ...chatbotMessages.slice(-6).map(m => ({ role: m.from === "bot" ? "assistant" : "user", content: m.text || "" })),
+                                    { role: "user", content: userMsg }
+                                ],
+                                temperature: 0.6, max_tokens: 200
+                            })
+                        });
+                        if (!apiRes.ok) throw new Error("Groq error");
+                        const aiData = await apiRes.json();
+                        const aiText = aiData?.choices?.[0]?.message?.content;
+                        if (!aiText) throw new Error("Empty response");
+                        setChatbotMessages(prev => [...prev, { from: "bot", text: aiText }]);
+                    } catch {
+                        // Fallback: show hotels
+                        setChatbotMessages(prev => [...prev, {
+                            from: "bot",
+                            text: "Voici nos h\u00f4tels disponibles :",
+                            hotels: hotels.slice(0, 4)
+                        }]);
+                    }
+                }
+            }
         } catch (err) {
-            setChatbotMessages(prev => [...prev, { from: "bot", text: "Oups, une erreur est survenue ! 🤖" }]);
+            console.error("Chatbot error:", err);
+            setChatbotMessages(prev => [...prev, { from: "bot", text: "Une erreur s'est produite. Veuillez r\u00e9essayer. \ud83d\udd04" }]);
         } finally {
             setBotTyping(false);
         }
-    };
+    }
 
     // Derive unique conversations from messages
     const conversations = React.useMemo(() => {
@@ -621,10 +594,26 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                                                 <div className="bot-hotels-compact-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginTop: '12px' }}>
                                                     {msg.hotels.map(h => (
                                                         <div key={h.id} className="bot-hotel-mini-card" onClick={() => navigate(`/hotel/${h.id}`)} style={{ cursor: 'pointer', transition: 'transform 0.2s', background: 'white', borderRadius: '8px', padding: '6px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                                                            <img src={resolveImageUrl(h.image_url)} alt={h.name} style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '6px', marginBottom: '8px' }} />
+                                                            <img src={resolveImageUrl(h.image_url)} alt={h.name} style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '6px', marginBottom: '8px' }} onError={(e) => { e.target.style.display = 'none'; }} />
                                                             <div className="mini-card-text">
                                                                 <strong style={{ fontSize: '12px', display: 'block', color: '#1a1a1a' }}>{h.name}</strong>
-                                                                <span style={{ fontSize: '11px', color: '#666', display: 'block' }}>{h.location} • Dès {h.lowest_price}€</span>
+                                                                <span style={{ fontSize: '11px', color: '#666', display: 'block' }}>{h.location}</span>
+                                                                {h.lowest_price != null && <span style={{ fontSize: '11px', color: '#006233', fontWeight: '600' }}>Dès {h.lowest_price} €</span>}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {/* Rooms List */}
+                                            {msg.rooms && (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
+                                                    {msg.rooms.map(r => (
+                                                        <div key={r.id} style={{ display: 'flex', gap: '8px', alignItems: 'center', background: '#e3ece7', padding: '8px', borderRadius: '8px', cursor: 'pointer', transition: 'background 0.2s' }} onClick={() => navigate(`/room/${r.id}`)} onMouseEnter={(e) => e.currentTarget.style.background = '#d0dfd7'} onMouseLeave={(e) => e.currentTarget.style.background = '#e3ece7'}>
+                                                            <img src={resolveImageUrl(r.image_url)} alt={r.name} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '6px', flexShrink: 0 }} onError={(e) => { e.target.style.display = 'none'; }} />
+                                                            <div style={{ flex: 1 }}>
+                                                                <strong style={{ fontSize: '12px', color: '#006233', display: 'block' }}>{r.name}</strong>
+                                                                <span style={{ fontSize: '11px', color: '#6b8c7a', display: 'block' }}>{r.hotel_name} • {r.hotel_location}</span>
+                                                                <span style={{ fontSize: '11px', fontWeight: '700', color: '#1a1a1a' }}>{r.price_per_night} €/nuit</span>
                                                             </div>
                                                         </div>
                                                     ))}
@@ -634,7 +623,7 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                                             {msg.hotelDetails && (
                                                 <div className="bot-hotel-details-view" style={{ marginTop: '10px' }}>
                                                     <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s' }} onClick={() => navigate(`/hotel/${msg.hotelDetails.id}`)} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-                                                        <img src={resolveImageUrl(msg.hotelDetails.image_url)} alt={msg.hotelDetails.name} style={{ width: '100%', height: '120px', objectFit: 'cover' }} />
+                                                        <img src={resolveImageUrl(msg.hotelDetails.image_url)} alt={msg.hotelDetails.name} style={{ width: '100%', height: '120px', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none'; }} />
                                                         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px', background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', color: 'white' }}>
                                                             <strong style={{ display: 'block' }}>{msg.hotelDetails.name}</strong>
                                                             <span style={{ fontSize: '11px' }}><i className="fa-solid fa-location-dot"></i> {msg.hotelDetails.location}</span>
@@ -643,12 +632,12 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                                                     {msg.hotelDetails.rooms?.length > 0 && (
                                                         <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                                             <span style={{ fontSize: '12px', color: '#6b8c7a', fontWeight: 'bold' }}>Chambres recommandées :</span>
-                                                            {msg.hotelDetails.rooms.slice(0, 2).map(r => (
+                                                            {msg.hotelDetails.rooms.slice(0, 3).map(r => (
                                                                 <div key={r.id} style={{ display: 'flex', gap: '8px', alignItems: 'center', background: '#e3ece7', padding: '6px', borderRadius: '6px', cursor: 'pointer', transition: 'background 0.2s' }} onClick={() => navigate(`/room/${r.id}`)} onMouseEnter={(e) => e.currentTarget.style.background = '#d0dfd7'} onMouseLeave={(e) => e.currentTarget.style.background = '#e3ece7'}>
-                                                                    <img src={resolveImageUrl(r.image_url)} alt={r.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+                                                                    <img src={resolveImageUrl(r.image_url)} alt={r.name} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} onError={(e) => { e.target.style.display = 'none'; }} />
                                                                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                                                                         <strong style={{ fontSize: '12px', color: '#006233' }}>{r.name}</strong>
-                                                                        <span style={{ fontSize: '10px', color: '#6b8c7a' }}>{r.max_guests} max • {r.price_per_night}€/nuit</span>
+                                                                        <span style={{ fontSize: '10px', color: '#6b8c7a' }}>{r.max_guests} max • {r.price_per_night} €/nuit</span>
                                                                     </div>
                                                                 </div>
                                                             ))}
@@ -672,17 +661,19 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                                     </div>
                                 )}
 
-                                {/* Suggestions always visible if no user input yet or at start */}
-                                <div className="chatbot-interactive-suggestions" style={{ marginTop: '20px' }}>
-                                    <p style={{ fontSize: '13px', color: '#6b8c7a', marginBottom: '10px' }}>Suggestions d'aide :</p>
-                                    <div className="suggestions-scroll" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                        {SUGGESTED_QUESTIONS.map((q, idx) => (
-                                            <button key={idx} className="suggestion-pill" onClick={() => handleChatbotSend(q)} style={{ background: '#ffffff', border: '1px solid #d0dfd7', padding: '8px 14px', borderRadius: '20px', fontSize: '13px', color: '#006233', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#f0f7f3'; e.currentTarget.style.borderColor = '#006233'; }} onMouseLeave={(e) => { e.currentTarget.style.background = '#ffffff'; e.currentTarget.style.borderColor = '#d0dfd7'; }}>
-                                                {q}
-                                            </button>
-                                        ))}
+                                {/* Suggestions only visible if bot not typing */}
+                                {!botTyping && (
+                                    <div className="chatbot-interactive-suggestions" style={{ marginTop: '20px' }}>
+                                        <p style={{ fontSize: '13px', color: '#6b8c7a', marginBottom: '10px' }}>Suggestions :</p>
+                                        <div className="suggestions-scroll" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                            {SUGGESTED_QUESTIONS.map((q, idx) => (
+                                                <button key={idx} className="suggestion-pill" onClick={() => handleChatbotSend(q)} style={{ background: '#ffffff', border: '1px solid #d0dfd7', padding: '8px 14px', borderRadius: '20px', fontSize: '13px', color: '#006233', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#f0f7f3'; e.currentTarget.style.borderColor = '#006233'; }} onMouseLeave={(e) => { e.currentTarget.style.background = '#ffffff'; e.currentTarget.style.borderColor = '#d0dfd7'; }}>
+                                                    {q}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                                 <div style={{ height: '10px' }} />
                             </div>
 
@@ -691,13 +682,30 @@ const DashboardMessages = ({ targetSenderId, lastChatbotMsg }) => {
                                     <input
                                         type="text"
                                         className="chat-input"
-                                        placeholder="Posez votre question à l'assistant..."
+                                        placeholder={botTyping ? "L'assistant réfléchit..." : "Posez votre question à l'assistant..."}
                                         value={chatbotInput}
                                         onChange={(e) => setChatbotInput(e.target.value)}
-                                        onKeyDown={(e) => e.key === "Enter" && handleChatbotSend()}
-                                        style={{ flex: 1, padding: '12px 18px', borderRadius: '24px', border: '1px solid #d0dfd7', outline: 'none', background: '#f8faf9' }}
+                                        onKeyDown={(e) => e.key === "Enter" && !botTyping && handleChatbotSend()}
+                                        disabled={botTyping}
+                                        style={{ flex: 1, padding: '12px 18px', borderRadius: '24px', border: '1px solid #d0dfd7', outline: 'none', background: botTyping ? '#f0f0f0' : '#f8faf9', cursor: botTyping ? 'not-allowed' : 'text' }}
                                     />
-                                    <button className="btn-send" onClick={() => handleChatbotSend()} style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#006233', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <button 
+                                        className="btn-send" 
+                                        onClick={() => handleChatbotSend()} 
+                                        disabled={!chatbotInput.trim() || botTyping}
+                                        style={{ 
+                                            width: '44px', 
+                                            height: '44px', 
+                                            borderRadius: '50%', 
+                                            background: (botTyping || !chatbotInput.trim()) ? '#ccc' : '#006233', 
+                                            color: 'white', 
+                                            border: 'none', 
+                                            cursor: (botTyping || !chatbotInput.trim()) ? 'not-allowed' : 'pointer',
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            justify_content: 'center' 
+                                        }}
+                                    >
                                         <i className="fa-solid fa-paper-plane"></i>
                                     </button>
                                 </div>

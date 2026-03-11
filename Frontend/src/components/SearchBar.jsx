@@ -15,6 +15,15 @@ function SearchBar() {
     const [minRating, setMinRating] = useState(searchParams.get('min_rating') || "");
 
     useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [isOpen]);
+
+    useEffect(() => {
         setLocation(searchParams.get('location') || "");
         setMinPrice(searchParams.get('min_price') || "");
         setMaxPrice(searchParams.get('max_price') || "");

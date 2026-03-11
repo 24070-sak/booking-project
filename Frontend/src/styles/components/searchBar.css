@@ -226,42 +226,72 @@
 
 @media (max-width: 600px) {
     .filter-modal-overlay {
-        align-items: flex-end; /* Modern slide-up feel */
+        align-items: center; /* Center it instead of bottom-sheet */
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.7); /* Darker background for better focus */
+        backdrop-filter: blur(8px); /* More pronounced blur to eliminate 'white blur' haze */
     }
 
     .filter-modal {
         width: 100%;
-        max-width: 100%;
-        border-radius: 25px 25px 0 0;
+        max-width: 380px; /* Constrain width on mobile for better look */
+        border-radius: 20px; /* Keep consistent with desktop */
         height: auto;
-        max-height: 92vh;
-        padding: 24px 20px 40px;
-        animation: slideUpMobile 0.4s ease-out;
-    }
-
-    @keyframes slideUpMobile {
-        from { transform: translateY(100%); }
-        to { transform: translateY(0); }
+        max-height: 85vh;
+        padding: 20px;
+        margin: 0 auto;
+        animation: slideUp 0.3s ease-out; /* Use standard slideUp */
     }
 
     .filter-body {
-        max-height: 60vh;
+        max-height: 50vh;
         overflow-y: auto;
-        padding-bottom: 20px;
+        padding-right: 5px;
+    }
+
+    /* Scrollbar for filter body */
+    .filter-body::-webkit-scrollbar {
+        width: 4px;
+    }
+    .filter-body::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
     }
 
     .filter-header {
-        position: sticky;
-        top: 0;
-        background: white;
-        z-index: 5;
-        margin-top: -10px;
-        padding-top: 10px;
+        margin-top: 0;
+        padding-top: 0;
+        margin-bottom: 20px;
     }
 
     .filter-footer {
-        padding-top: 20px;
-        margin-top: 20px;
-        border-top: 1px solid #eee;
+        padding-top: 15px;
+        margin-top: 15px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .btn-clear, .btn-apply {
+        width: 100%;
+        padding: 12px;
+        justify-content: center;
+        display: flex;
+        font-size: 14px;
+    }
+
+    .beautiful-filter-btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+        margin: 0 auto;
+        padding: 10px 20px;
+        font-size: 15px;
+    }
+
+    .filter-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
     }
 }
