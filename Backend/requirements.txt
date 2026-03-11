@@ -12,6 +12,7 @@ sqlalchemy
 pymysql
 cryptography
 pg8000
+psycopg2-binary
 
 # Serveur de production
 gunicorn

@@ -4,6 +4,7 @@ services:
     env: python
     region: frankfurt
     plan: free
-    buildCommand: "pip install -r Backend/requirements.txt"
+    pythonVersion: "3.12.0"
+    buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn run:app"
     rootDir: Backend
