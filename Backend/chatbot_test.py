@@ -9,7 +9,7 @@ from langchain_classic.chains.combine_documents import create_stuff_documents_ch
 from langchain_classic.chains import create_retrieval_chain
 
 # 1. API Key Groq (Plus besoin de VPN en Mauritanie !)
-os.environ["GROQ_API_KEY"] = "xxxxxxxxxxxxxx"
+os.environ["GROQ_API_KEY"] = "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"
 
 print("📚 Lecture du document Word...")
 # 2. Charger le document Word
@@ -31,14 +31,12 @@ retriever = vectorstore.as_retriever()
 
 # 5. Configurer le NOUVEAU Cerveau IA (LLaMA 3 ultra-rapide) 👇
 llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0)
-
 # 6. Le Prompt strict
 system_prompt = (
-    "Tu es l'assistant du support client officiel de Vibepi. "
+    "Tu es l'assistant du support client officiel de Hotely. "
     "Utilise UNIQUEMENT les éléments de contexte suivants pour répondre à la question de l'utilisateur. "
-    "Si tu ne trouves pas la réponse exacte dans le document, ne l'invente pas. "
-    "À la place, réponds exactement ceci : 'Je suis désolé, je n'ai pas cette information dans mes fichiers. "
-    "Veuillez contacter le support à l'adresse suivante : 24070@supnum.mr'\n"
+    "Si tu ne connais pas la réponse ou si ce n'est pas dans le contexte, dis : 'Je suis désolé, je n'ai pas cette information, veuillez contacter le support Hotely.' "
+    "N'invente aucune information.\n"
     "RÉPONDS TOUJOURS EN FRANÇAIS.\n\n"
     "{context}"
 )
@@ -60,4 +58,4 @@ question = "À quelle heure est l'enregistrement (check-in) ?"
 print(f"User: {question}")
 
 response = rag_chain.invoke({"input": question})
-print(f"Vibepi Bot: {response['answer']}")
+print(f"Hotely Bot: {response['answer']}")

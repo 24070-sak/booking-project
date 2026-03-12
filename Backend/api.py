@@ -4,21 +4,24 @@ from pydantic import BaseModel
 from langchain_community.document_loaders import Docx2txtLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
-from langchain_groq import ChatGroq
+from langchain_groq import ChatGroq  # 👈 NOUVEAU : On importe Groq
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains import create_retrieval_chain
+from langchain_classic.chains.combine_documents import create_stuff_documents_chain
+from langchain_classic.chains import create_retrieval_chain
 
-# 1. Ta clé Groq
-os.environ["GROQ_API_KEY"] = "VOTRE_CLE_API_GROQ_ICI"
+# 1. API Key Groq (Plus de blocage, plus de VPN !)
+os.environ["GROQ_API_KEY"] = "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"
 
-app = FastAPI()
+# 2. Initialiser l'application Web
+app = FastAPI(title="Vibepi AI Bot API")
 
-# 2. Préparation de la base de données (exécuté au démarrage)
+print("⏳ Démarrage du serveur et chargement de la mémoire...")
+
+# 3. Préparer la mémoire
 loader = Docx2txtLoader("vibepi_rules.docx")
 docs = loader.load()
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 splits = text_splitter.split_documents(docs)
 
 vectorstore = Chroma.from_documents(
@@ -26,17 +29,16 @@ vectorstore = Chroma.from_documents(
     embedding=FastEmbedEmbeddings(),
     persist_directory="./chroma_db"
 )
-retriever = vectorstore.as_retriever(search_kwargs={"k": 3}) # Lit 3 morceaux au lieu d'un seul
+retriever = vectorstore.as_retriever()
 
-# 3. Le Cerveau IA
-llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0)
+# 4. Préparer le NOUVEAU Cerveau IA (LLaMA 3 via Groq) 👇
+llm = ChatGroq(model="llama3-8b-8192", temperature=0)
 
 system_prompt = (
     "Tu es l'assistant du support client officiel de Vibepi. "
-    "Utilise UNIQUEMENT le contexte suivant pour répondre à l'utilisateur. "
-    "Si l'information est absente du document, réponds exactement ceci : "
-    "'Je suis désolé, je n'ai pas cette information dans mes fichiers. "
-    "Veuillez contacter notre support aux adresses suivantes : sak technicien ou 24041@supnum.mr'\n"
+    "Utilise UNIQUEMENT les éléments de contexte suivants pour répondre à la question de l'utilisateur. "
+    "Si tu ne connais pas la réponse, dis : 'Je suis désolé, je n'ai pas cette information, veuillez contacter le support Vibepi.' "
+    "N'invente aucune information.\n"
     "RÉPONDS TOUJOURS EN FRANÇAIS.\n\n"
     "{context}"
 )
@@ -46,23 +48,17 @@ prompt = ChatPromptTemplate.from_messages([
     ("human", "{input}"),
 ])
 
-chain = create_retrieval_chain(retriever, create_stuff_documents_chain(llm, prompt))
-from fastapi.middleware.cors import CORSMiddleware
+question_answer_chain = create_stuff_documents_chain(llm, prompt)
+rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
-app = FastAPI()
+print("✅ Serveur prêt et connecté à Groq !")
 
-# Ajoute ce bloc pour autoriser React (qui tourne sur le port 3000 ou 5173)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], # On autorise tout pour le développement
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-class Question(BaseModel):
-    input: str
+# 5. Créer le format de la question attendue
+class UserRequest(BaseModel):
+    question: str
 
+# 6. Créer la "Porte d'entrée" (Endpoint) de l'API
 @app.post("/chat")
-def chat(request: Question):
-    response = chain.invoke({"input": request.input})
-    return {"answer": response["answer"]}
+def chat_with_bot(request: UserRequest):
+    response = rag_chain.invoke({"input": request.question})
+    return {"bot_response": response['answer']}

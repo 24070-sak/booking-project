@@ -62,7 +62,10 @@ def create_app(config_name='development'):
     from app.routes.review_routes import review_bp
     from app.routes.message_routes import message_bp
     from app.routes.notification_routes import notification_bp
-    
+    from app.routes.chatbot_routes import chatbot_bp
+   
+   
+    app.register_blueprint(chatbot_bp) 
     app.register_blueprint(auth_bp)
     app.register_blueprint(booking_bp)
     app.register_blueprint(room_bp)
