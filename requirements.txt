@@ -690,3 +690,9 @@ zopfli==0.2.3.post1
 zstandard==0.24.0
 PyMySQL
 cryptography
+Flask
+Flask-SQLAlchemy
+Flask-Cors
+PyMySQL
+cryptography
+gunicorn
