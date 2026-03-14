@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "dev": "cd Frontend && npm run dev",
+    "start": "./run.sh"
+  },
   "dependencies": {
     "sweetalert2": "^11.26.20"
   }
